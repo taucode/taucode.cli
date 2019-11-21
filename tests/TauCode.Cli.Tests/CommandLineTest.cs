@@ -3,7 +3,7 @@ using TauCode.Cli.Building;
 using TauCode.Cli.Parsing;
 using TauCode.Cli.Reading;
 
-namespace TauCode.Cli.Tests.CommandLine
+namespace TauCode.Cli.Tests
 {
     [TestFixture]
     public class CommandLineTest

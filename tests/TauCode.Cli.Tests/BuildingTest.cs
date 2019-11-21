@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using TauCode.Cli.Building;
 
-namespace TauCode.Cli.Tests.CommandLine
+namespace TauCode.Cli.Tests
 {
     [TestFixture]
     public class BuildingTest

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using TauCode.Cli.Parsing;
 using TauCode.Cli.Parsing.Tokens;
 
-namespace TauCode.Cli.Tests.CommandLine
+namespace TauCode.Cli.Tests
 {
     [TestFixture]
     public class ParserTest

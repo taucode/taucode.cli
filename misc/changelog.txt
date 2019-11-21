@@ -1,0 +1,4 @@
+2019-11-22
+==========
+    Version: v3.0.0
+    1. Migrated from TauCode.Utils.

@@ -4,13 +4,13 @@ using TauCode.Cli.Building;
 using TauCode.Cli.Parsing;
 using TauCode.Cli.Reading;
 
-namespace TauCode.Cli.Tests.CommandLine
+namespace TauCode.Cli.Tests
 {
     [TestFixture]
     public class ReadingTest
     {
         [Test]
-        public void Constructor_NotCompeltedSyntax_ThrowsInvalidOperationException()
+        public void Constructor_NotCompletedSyntax_ThrowsInvalidOperationException()
         {
             // Arrange
             var sb = new RootSyntaxBuilder()
