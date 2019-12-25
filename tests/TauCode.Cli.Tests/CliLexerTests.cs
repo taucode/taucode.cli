@@ -8,7 +8,7 @@ namespace TauCode.Cli.Tests
     public class CliLexerTests
     {
         [Test]
-        public void TodoWat()
+        public void CliLexer_Lexize_ProducesExpectedTokens()
         {
             // Arrange
             var input = "pub -t one '{\"name\" : \"ak\"}' --repeat 88 -log c:/temp/logs --level 1a-c";
