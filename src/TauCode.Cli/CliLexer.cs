@@ -6,30 +6,37 @@ namespace TauCode.Cli
 {
     public class CliLexer : LexerBase
     {
+        protected virtual TokenExtractorBase CreateIntegerExtractor() => new IntegerExtractor(this.Environment);
+        protected virtual TokenExtractorBase CreateTermExtractor() => new TermExtractor(this.Environment);
+        protected virtual TokenExtractorBase CreateKeyExtractor() => new KeyExtractor(this.Environment);
+        protected virtual TokenExtractorBase CreateStringExtractor() => new StringExtractor(this.Environment);
+        protected virtual TokenExtractorBase CreatePathExtractor() => new PathExtractor(this.Environment);
+        protected virtual TokenExtractorBase CreateEqualsExtractor() => new EqualsExtractor(this.Environment);
+
         protected override void InitTokenExtractors()
         {
             // integer
-            var integerExtractor = new IntegerExtractor(this.Environment);
+            var integerExtractor = this.CreateIntegerExtractor();
             this.AddTokenExtractor(integerExtractor);
 
             // term
-            var termExtractor = new TermExtractor(this.Environment);
+            var termExtractor = this.CreateTermExtractor();
             this.AddTokenExtractor(termExtractor);
 
             // key
-            var keyExtractor = new KeyExtractor(this.Environment);
+            var keyExtractor = this.CreateKeyExtractor();
             this.AddTokenExtractor(keyExtractor);
 
             // string
-            var stringExtractor = new StringExtractor(this.Environment);
+            var stringExtractor = this.CreateStringExtractor();
             this.AddTokenExtractor(stringExtractor);
 
             // path
-            var pathExtractor = new PathExtractor(this.Environment);
+            var pathExtractor = this.CreatePathExtractor();
             this.AddTokenExtractor(pathExtractor);
 
             // equals
-            var equalsExtractor = new EqualsExtractor(this.Environment);
+            var equalsExtractor = this.CreateEqualsExtractor();
             this.AddTokenExtractor(equalsExtractor);
 
             // *** Links ***
