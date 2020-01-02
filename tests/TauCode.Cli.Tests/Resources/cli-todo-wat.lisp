@@ -1,5 +1,5 @@
 ; Migrate metadata (mm)
-; e.g.: mm --conn="Server=.;Database=econera.diet.tracking;Trusted_Connection=True;" --provider=sqlserver --to=sqlite --target-path=c:/temp/mysqlite.json
+; e.g.: mm --conn="Server=.;Database=econera.diet.tracking;Trusted_Connection=True;" --provider=sqlserver --to=sqlite --target-path=c:/temp/mysqlite.json -v
 
 (defblock :name mm :is-top t
 	(sub-command :value "mm")

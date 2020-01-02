@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Linq;
+using TauCode.Cli.Nodes;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
-using TauCode.Parsing.Lab;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.TinyLisp;
 using TauCode.Parsing.TinyLisp.Data;
 using TauCode.Parsing.Tokens;
+using TauCode.Parsing.Tokens.TextClasses;
 
 namespace TauCode.Cli
 {
     public class CliNodeFactory : NodeFactory
     {
-        public CliNodeFactory(string nodeFamilyName) : base(nodeFamilyName)
+        #region Constructor
+
+        public CliNodeFactory(string nodeFamilyName)
+            : base(nodeFamilyName)
         {
         }
+
+        #endregion
+
+        #region Overridden
 
         public override INode CreateNode(PseudoList item)
         {
@@ -43,29 +51,9 @@ namespace TauCode.Cli
             return node;
         }
 
-        private INode CreateKeyNode(PseudoList item)
-        {
-            var todo = item.ToString();
+        #endregion
 
-            var keyNames = item
-                .GetAllKeywordArguments(":key-names")
-                .Select(x => ((StringAtom)x).Value)
-                .ToList();
-
-            var node = new MultiTextRepresentationNodeLab(
-                keyNames,
-                new ITextClass[] {KeyTextClass.Instance, },
-                this.ProcessKeyAction,
-                this.NodeFamily,
-                item.GetItemName());
-
-            return node;
-        }
-
-        private void ProcessKeyAction(IToken arg1, IResultAccumulator arg2)
-        {
-            throw new NotImplementedException();
-        }
+        #region Node Creators
 
         private INode CreateSubCommandNode(PseudoList item)
         {
@@ -75,25 +63,47 @@ namespace TauCode.Cli
             INode node = new ExactTextNode(
                 value.Value,
                 TermTextClass.Instance,
-                this.AddSubCommandAction,
+                this.ProcessSubCommand,
                 this.NodeFamily,
                 name);
 
             return node;
         }
 
+        private INode CreateKeyNode(PseudoList item)
+        {
+            var todo = item.ToString();
+
+            var keyNames = item
+                .GetAllKeywordArguments(":key-names")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: may throw
+
+            var node = new MultiTextRepresentationNodeLab(
+                keyNames,
+                new ITextClass[] { KeyTextClass.Instance, },
+                this.ProcessKey,
+                this.NodeFamily,
+                item.GetItemName());
+
+            return node;
+        }
+
         private INode CreateKeyWithValueNode(PseudoList item)
         {
-            var textVariants = new string[] { "todo1", "todo2" };
+            var keyNames = item
+                .GetAllKeywordArguments(":key-names")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: may throw
 
             ActionNode keyNameNode = new MultiTextRepresentationNodeLab(
-                textVariants,
+                keyNames,
                 new ITextClass[] { KeyTextClass.Instance },
-                this.AddKeyWithNodeKeyAction,
+                this.ProcessKeyWithValue,
                 this.NodeFamily,
                 item.GetItemName());
             INode equalsNode = new ExactPunctuationNode('=', null, this.NodeFamily, null);
-            INode choiceNode = this.CreateChoiceNode(item);
+            INode choiceNode = this.CreateKeyChoiceNode(item);
 
             keyNameNode.EstablishLink(equalsNode);
             equalsNode.EstablishLink(choiceNode);
@@ -101,7 +111,7 @@ namespace TauCode.Cli
             return keyNameNode;
         }
 
-        private INode CreateChoiceNode(PseudoList item)
+        private INode CreateKeyChoiceNode(PseudoList item)
         {
             var keyValuesSubform = item.GetSingleKeywordArgument(":key-values");
             if (keyValuesSubform.GetCarSymbolName() != "CHOICE")
@@ -129,31 +139,73 @@ namespace TauCode.Cli
             INode choiceNode = new MultiTextRepresentationNodeLab(
                 textValues,
                 classTypes,
-                WatTodo,
+                ProcessKeyChoice,
                 this.NodeFamily,
                 null);
 
             return choiceNode;
         }
 
-        private void WatTodo(IToken token, IResultAccumulator resultAccumulator)
+        #endregion
+
+        #region Node Actions
+
+        private void ProcessSubCommand(IToken token, IResultAccumulator resultAccumulator)
         {
-            throw new NotImplementedException();
+            var cliCommand = new CliCommand();
+            cliCommand.Name = ((TextToken)token).Text;
+
+            resultAccumulator.AddResult(cliCommand);
         }
+
+        private void ProcessKey(IToken token, IResultAccumulator resultAccumulator)
+        {
+            var subCommand = resultAccumulator.GetLastResult<CliCommand>();
+            var entry = new CliCommandEntry();
+            entry.Key = ((TextToken)token).Text;
+            subCommand.Entries.Add(entry);
+        }
+
+        private void ProcessKeyWithValue(IToken token, IResultAccumulator resultAccumulator)
+        {
+            var subCommand = resultAccumulator.GetLastResult<CliCommand>();
+            var entry = new CliCommandEntry();
+            entry.Key = ((TextToken)token).Text;
+            subCommand.Entries.Add(entry);
+        }
+
+        private void ProcessKeyChoice(IToken token, IResultAccumulator resultAccumulator)
+        {
+            var subCommand = resultAccumulator.GetLastResult<CliCommand>();
+            var entry = subCommand.Entries.Last();
+            entry.Value = ((TextToken)token).Text;
+        }
+
+        #endregion
+
+        #region Misc
 
         private ITextClass ParseTextClass(string textClassSymbolName)
         {
-            throw new NotImplementedException();
+            switch (textClassSymbolName)
+            {
+                case "STRING":
+                    return StringTextClass.Instance;
+
+                case "TERM":
+                    return TermTextClass.Instance;
+
+                case "KEY":
+                    return KeyTextClass.Instance;
+
+                case "PATH":
+                    return PathTextClass.Instance;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
-        private void AddKeyWithNodeKeyAction(IToken token, IResultAccumulator resultAccumulator)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void AddSubCommandAction(IToken token, IResultAccumulator resultAccumulator)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }

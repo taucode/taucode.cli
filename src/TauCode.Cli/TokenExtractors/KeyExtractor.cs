@@ -1,5 +1,4 @@
-﻿using System;
-using TauCode.Cli.TextClasses;
+﻿using TauCode.Cli.TextClasses;
 using TauCode.Cli.TextDecorations;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
@@ -81,7 +80,13 @@ namespace TauCode.Cli.TokenExtractors
 
         protected override CharChallengeResult ChallengeEnd()
         {
-            throw new NotImplementedException();
+            var str = this.ExtractResultString();
+            if (str != "-" && str != "--")
+            {
+                return CharChallengeResult.Finish;
+            }
+
+            return CharChallengeResult.GiveUp;
         }
     }
 }
