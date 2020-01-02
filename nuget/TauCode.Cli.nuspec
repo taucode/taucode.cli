@@ -14,7 +14,7 @@
     </releaseNotes>
     <tags>taucode command line interface cli</tags>
     <dependencies>
-      <dependency id="TauCode.Parsing" version="1.0.0-dev-2019-12-25-20-35" />
+      <dependency id="TauCode.Parsing" version="1.0.0-dev-2020-01-02-17-42" />
     </dependencies>
   </metadata>
   <files>
