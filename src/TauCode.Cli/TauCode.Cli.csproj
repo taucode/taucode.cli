@@ -6,20 +6,14 @@
 
   <ItemGroup>
     <None Remove="Resources\cli-grammar-sample.lisp" />
-    <None Remove="Resources\cli-todo-wat.lisp" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\cli-grammar-sample.lisp" />
-    <EmbeddedResource Include="Resources\cli-todo-wat.lisp" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-02-17-42" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\taucode\TauCode.Parsing.Lab\TauCode.Parsing.Lab.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,13 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\cli-grammar-sample.lisp" />
-    <None Remove="Resources\cli-todo-wat.lisp" />
+    <None Remove="Resources\cli-grammar.lisp" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\cli-grammar-sample.lisp" />
-    <EmbeddedResource Include="Resources\cli-todo-wat.lisp" />
+    <EmbeddedResource Include="Resources\cli-grammar.lisp" />
   </ItemGroup>
 
   <ItemGroup>

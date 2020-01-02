@@ -1,30 +1,41 @@
 ; Migrate metadata (mm)
-; e.g.: mm --conn="Server=.;Database=econera.diet.tracking;Trusted_Connection=True;" --provider=sqlserver --to=sqlite --target=c:/temp/mysqlite.json
+; e.g.: mm --conn="Server=.;Database=econera.diet.tracking;Trusted_Connection=True;" --provider=sqlserver --to=sqlite --target-path=c:/temp/mysqlite.json -v
 
 (defblock :name mm :is-top t
-	(exact-text :classes term :value "mm" :name command-mm)
+	(sub-command :value "mm")
 	(idle :name args)
 	(alt
-		(seq
-			(exact-text :classes key :value "conn" :name connection-key)
-			(punctuation :value "=")
-			(some-text :classes string :name connection-value)
-		)
-		(seq
-			(exact-text :classes key :value "provider" :name provider-key)
-			(punctuation :value "=")
-			(some-text :classes term :name provider-value)
-		)
-		(seq
-			(exact-text :classes key :value "to" :name to-key)
-			(punctuation :value "=")
-			(some-text :classes term :name to-value)
-		)
-		(seq
-			(exact-text :classes key :value "target" :name target-key)
-			(punctuation :value "=")
-			(some-text :classes term key string path :name target-value)
-		)
+		(key-with-value
+			:alias connection
+			:key-names "--conn" "-c"
+			:key-values (choice :classes string :values *)
+			:is-single t
+			:is-mandatory t)
+
+		(key-with-value
+			:alias provider
+			:key-names "--provider" "-p"
+			:key-values (choice :classes term :values "sqlserver" "postgresql")
+			:is-single t
+			:is-mandatory t)
+
+		(key
+			:alias verbose
+			:key-names "--verbose" "-v")
+
+		(key-with-value
+			:alias target-provider
+			:key-names "--to" "-t"
+			:key-values (choice :classes term :values "sqlite")
+			:is-single t
+			:is-mandatory t)
+
+		(key-with-value
+			:alias target-path
+			:key-names "--target-path" "-tp"
+			:key-values (choice :classes term key string path :values *)
+			:is-single t
+			:is-mandatory t)
 	)
 	(idle :links args next)
 	(end)

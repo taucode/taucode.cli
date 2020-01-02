@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.Lexing;
@@ -31,8 +31,7 @@ namespace TauCode.Cli
         {
             var tokens = _cliLexer.Lexize(commandText);
             var res = _parser.Parse(_root, tokens);
-
-            throw new NotImplementedException();
+            return (CliCommand)res.Single();
         }
     }
 }
