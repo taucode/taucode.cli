@@ -65,7 +65,7 @@ namespace TauCode.Cli.TokenExtractors
                 return CharChallengeResult.GiveUp; // 3 hyphens cannot be.
             }
 
-            if (LexingHelper.IsDigit(c) || LexingHelper.IsLatinLetter(c))
+            if (LexingHelper.IsDigit(c) || LexingHelper.IsLatinLetter(c) || c == '-')
             {
                 return CharChallengeResult.Continue;
             }
