@@ -1,6 +1,8 @@
-﻿using TauCode.Cli.Tokens;
+﻿using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
+using TauCode.Parsing.Tokens;
+using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.TokenExtractors
 {
@@ -15,11 +17,17 @@ namespace TauCode.Cli.TokenExtractors
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c);
 
+        protected override void ResetState()
+        {
+            // idle
+        }
+
 
         protected override IToken ProduceResult()
         {
             var str = this.ExtractResultString();
-            return new TermToken(str);
+            var token = new TextToken(TermTextClass.Instance, NoneTextDecoration.Instance, str);
+            return token;
         }
 
         protected override CharChallengeResult ChallengeCurrentChar()
