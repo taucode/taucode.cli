@@ -6,8 +6,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo with this 'Lab'
-    public static class CliHelperLab
+    public static class CliHelper
     {
         public static string GetTextTokenRepresentation(TextToken textToken)
         {

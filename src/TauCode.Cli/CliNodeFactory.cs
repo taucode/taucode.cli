@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using TauCode.Cli.Nodes;
+using TauCode.Cli.CliCommandEntries;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
@@ -12,7 +12,7 @@ using TauCode.Parsing.Tokens.TextClasses;
 
 namespace TauCode.Cli
 {
-    public class CliNodeFactory : NodeFactory
+    public class CliNodeFactory : NodeFactoryBase
     {
         #region Constructor
 
@@ -72,36 +72,43 @@ namespace TauCode.Cli
 
         private INode CreateKeyNode(PseudoList item)
         {
-            var todo = item.ToString();
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
 
             var keyNames = item
                 .GetAllKeywordArguments(":key-names")
                 .Select(x => ((StringAtom)x).Value)
                 .ToList(); // todo: may throw
 
-            var node = new MultiTextRepresentationNodeLab(
+            var node = new MultiTextRepresentationNode(
                 keyNames,
                 new ITextClass[] { KeyTextClass.Instance, },
+                CliHelper.GetTextTokenRepresentation,
                 this.ProcessKey,
                 this.NodeFamily,
                 item.GetItemName());
+            node.Properties["alias"] = alias;
 
             return node;
         }
 
         private INode CreateKeyWithValueNode(PseudoList item)
         {
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+
             var keyNames = item
                 .GetAllKeywordArguments(":key-names")
                 .Select(x => ((StringAtom)x).Value)
                 .ToList(); // todo: may throw
 
-            ActionNode keyNameNode = new MultiTextRepresentationNodeLab(
+            ActionNode keyNameNode = new MultiTextRepresentationNode(
                 keyNames,
                 new ITextClass[] { KeyTextClass.Instance },
+                CliHelper.GetTextTokenRepresentation,
                 this.ProcessKeyWithValue,
                 this.NodeFamily,
                 item.GetItemName());
+            keyNameNode.Properties["alias"] = alias;
+
             INode equalsNode = new ExactPunctuationNode('=', null, this.NodeFamily, null);
             INode choiceNode = this.CreateKeyChoiceNode(item);
 
@@ -136,9 +143,10 @@ namespace TauCode.Cli
 
             var classTypes = classes.Select(x => this.ParseTextClass(((Symbol)x).Name));
 
-            INode choiceNode = new MultiTextRepresentationNodeLab(
+            INode choiceNode = new MultiTextRepresentationNode(
                 textValues,
                 classTypes,
+                CliHelper.GetTextTokenRepresentation,
                 ProcessKeyChoice,
                 this.NodeFamily,
                 null);
@@ -150,7 +158,7 @@ namespace TauCode.Cli
 
         #region Node Actions
 
-        private void ProcessSubCommand(IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessSubCommand(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var cliCommand = new CliCommand();
             cliCommand.Name = ((TextToken)token).Text;
@@ -158,26 +166,32 @@ namespace TauCode.Cli
             resultAccumulator.AddResult(cliCommand);
         }
 
-        private void ProcessKey(IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var subCommand = resultAccumulator.GetLastResult<CliCommand>();
-            var entry = new CliCommandEntry();
-            entry.Key = ((TextToken)token).Text;
+            var entry = new KeyCliCommandEntry
+            {
+                Alias = actionNode.Properties["alias"],
+                Key = ((TextToken)token).Text,
+            };
             subCommand.Entries.Add(entry);
         }
 
-        private void ProcessKeyWithValue(IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessKeyWithValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var subCommand = resultAccumulator.GetLastResult<CliCommand>();
-            var entry = new CliCommandEntry();
-            entry.Key = ((TextToken)token).Text;
+            var entry = new KeyValueCliCommandEntry
+            {
+                Alias = actionNode.Properties["alias"],
+                Key = ((TextToken)token).Text,
+            };
             subCommand.Entries.Add(entry);
         }
 
-        private void ProcessKeyChoice(IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessKeyChoice(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var subCommand = resultAccumulator.GetLastResult<CliCommand>();
-            var entry = subCommand.Entries.Last();
+            var entry = (KeyValueCliCommandEntry)subCommand.Entries.Last();
             entry.Value = ((TextToken)token).Text;
         }
 

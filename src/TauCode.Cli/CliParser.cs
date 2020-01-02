@@ -1,7 +1,6 @@
 ﻿using System;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
-using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.TinyLisp;
 
@@ -20,7 +19,7 @@ namespace TauCode.Cli
 
             var reader = new TinyLispPseudoReader();
             var list = reader.Read(tokens);
-            IBuilder builder = new BuilderLab();
+            IBuilder builder = new Builder();
             INodeFactory cliNodeFactory = new CliNodeFactory("todo");
 
             _root = builder.Build(cliNodeFactory, list);
