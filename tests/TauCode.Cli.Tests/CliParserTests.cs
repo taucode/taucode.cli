@@ -20,7 +20,7 @@ namespace TauCode.Cli.Tests
             var command = parser.Parse(commandText);
 
             // Assert
-            Assert.That(command.Name, Is.EqualTo("mm"));
+            Assert.That(command.Alias, Is.EqualTo("mm"));
 
             Assert.That(command.Entries, Has.Count.EqualTo(5));
 

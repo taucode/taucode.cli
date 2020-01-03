@@ -17,7 +17,11 @@ namespace TauCode.Cli.TokenExtractors
         private static bool IsPathFirstChar(char c) =>
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c) ||
-            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+');
+            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+', '_');
+
+        private static bool IsPathSucceedingChar(char c) =>
+            IsPathFirstChar(c) ||
+            c.IsIn('=', ':', ';');
 
         protected override void ResetState()
         {
@@ -41,7 +45,7 @@ namespace TauCode.Cli.TokenExtractors
                 return CharChallengeResult.Continue; // 0th char MUST have been accepted.
             }
 
-            if (IsPathFirstChar(c) || c == ':')
+            if (IsPathSucceedingChar(c))
             {
                 return CharChallengeResult.Continue;
             }

@@ -37,7 +37,11 @@ namespace TauCode.Cli
                     break;
 
                 case "KEY-WITH-VALUE":
-                    node = this.CreateKeyWithValueNode(item);
+                    node = this.CreateKeyEqualsValueNode(item);
+                    break;
+
+                case "KEY-VALUE-PAIR":
+                    node = this.CreateKeyValuePairNode(item);
                     break;
 
                 case "KEY":
@@ -57,15 +61,21 @@ namespace TauCode.Cli
 
         private INode CreateSubCommandNode(PseudoList item)
         {
-            var value = item.GetSingleKeywordArgument<StringAtom>(":value");
-            var name = item.GetItemName();
+            var verbs = item
+                .GetAllKeywordArguments(":verbs")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: optimize, use IEnumerable.
 
-            INode node = new ExactTextNode(
-                value.Value,
-                TermTextClass.Instance,
+            INode node = new MultiTextRepresentationNode(
+                verbs,
+                new ITextClass[] { TermTextClass.Instance },
+                CliHelper.GetTextTokenRepresentation,
                 this.ProcessSubCommand,
                 this.NodeFamily,
-                name);
+                item.GetItemName());
+
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+            node.Properties["alias"] = alias;
 
             return node;
         }
@@ -91,7 +101,7 @@ namespace TauCode.Cli
             return node;
         }
 
-        private INode CreateKeyWithValueNode(PseudoList item)
+        private INode CreateKeyEqualsValueNode(PseudoList item)
         {
             var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
 
@@ -104,7 +114,7 @@ namespace TauCode.Cli
                 keyNames,
                 new ITextClass[] { KeyTextClass.Instance },
                 CliHelper.GetTextTokenRepresentation,
-                this.ProcessKeyWithValue,
+                this.ProcessKeySucceededByValue,
                 this.NodeFamily,
                 item.GetItemName());
             keyNameNode.Properties["alias"] = alias;
@@ -114,6 +124,31 @@ namespace TauCode.Cli
 
             keyNameNode.EstablishLink(equalsNode);
             equalsNode.EstablishLink(choiceNode);
+
+            return keyNameNode;
+        }
+
+        private INode CreateKeyValuePairNode(PseudoList item)
+        {
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+
+            var keyNames = item
+                .GetAllKeywordArguments(":key-names")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: may throw
+
+            ActionNode keyNameNode = new MultiTextRepresentationNode(
+                keyNames,
+                new ITextClass[] { KeyTextClass.Instance },
+                CliHelper.GetTextTokenRepresentation,
+                this.ProcessKeySucceededByValue,
+                this.NodeFamily,
+                item.GetItemName());
+            keyNameNode.Properties["alias"] = alias;
+
+            INode choiceNode = this.CreateKeyChoiceNode(item);
+
+            keyNameNode.EstablishLink(choiceNode);
 
             return keyNameNode;
         }
@@ -160,8 +195,10 @@ namespace TauCode.Cli
 
         private void ProcessSubCommand(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
-            var cliCommand = new CliCommand();
-            cliCommand.Name = ((TextToken)token).Text;
+            var cliCommand = new CliCommand
+            {
+                Alias = actionNode.Properties["alias"],
+            };
 
             resultAccumulator.AddResult(cliCommand);
         }
@@ -177,7 +214,7 @@ namespace TauCode.Cli
             subCommand.Entries.Add(entry);
         }
 
-        private void ProcessKeyWithValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessKeySucceededByValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var subCommand = resultAccumulator.GetLastResult<CliCommand>();
             var entry = new KeyValueCliCommandEntry
