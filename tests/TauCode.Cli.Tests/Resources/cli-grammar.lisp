@@ -1,38 +1,29 @@
-; Migrate metadata (mm)
-; e.g.: mm --conn="Server=.;Database=econera.diet.tracking;Trusted_Connection=True;" --provider=sqlserver --to=sqlite --target-path=c:/temp/mysqlite.json -v
-
-(defblock :name mm :is-top t
-	(sub-command :value "mm")
+(defblock :name serialize-data :is-top t
+	(sub-command
+		:command-name "Serialize SQL Database Data"
+		:alias serialize-data
+		:verbs "serialize-data" "sd"
+		:doc "Serializes all tables data into a JSON file."
+		:usage-sample "sd --conn=Server=.;Database=my_db;Trusted_Connection=True; --provider=sqlserver --file=c:/temp/db.json")
 	(idle :name args)
 	(alt
-		(key-with-value
+		(key-value-pair
 			:alias connection
 			:key-names "--conn" "-c"
-			:key-values (choice :classes string :values *)
+			:key-values (choice :classes string path :values *)
 			:is-single t
 			:is-mandatory t)
 
-		(key-with-value
+		(key-value-pair
 			:alias provider
 			:key-names "--provider" "-p"
 			:key-values (choice :classes term :values "sqlserver" "postgresql")
 			:is-single t
 			:is-mandatory t)
 
-		(key
-			:alias verbose
-			:key-names "--verbose" "-v")
-
-		(key-with-value
-			:alias target-provider
-			:key-names "--to" "-t"
-			:key-values (choice :classes term :values "sqlite")
-			:is-single t
-			:is-mandatory t)
-
-		(key-with-value
-			:alias target-path
-			:key-names "--target-path" "-tp"
+		(key-value-pair
+			:alias file
+			:key-names "--file" "-f"
 			:key-values (choice :classes term key string path :values *)
 			:is-single t
 			:is-mandatory t)
