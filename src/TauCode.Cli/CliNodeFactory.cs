@@ -19,7 +19,7 @@ namespace TauCode.Cli
 
         public CliNodeFactory(string nodeFamilyName)
             : base(nodeFamilyName)
-        {
+        {   
         }
 
         #endregion

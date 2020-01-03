@@ -4,9 +4,11 @@ namespace TauCode.Cli.Demo
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.Out.WriteLine("Hello World!");
+
+            return 1488;
         }
     }
 }
