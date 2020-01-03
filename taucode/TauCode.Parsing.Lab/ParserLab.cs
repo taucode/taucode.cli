@@ -48,7 +48,7 @@ namespace TauCode.Parsing.Lab
                         }
                         else
                         {
-                            throw new ParsingException("Unexpected end of stream.");
+                            throw new ParsingException("Unexpected end of stream."); // todo: protected virtual EndOfStreamParingException CreateEndOfStreamParingException();
                         }
                     }
 
