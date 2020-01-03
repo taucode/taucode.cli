@@ -2,34 +2,32 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TauCode.Cli.Data;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
-using TauCode.Parsing.Building;
 using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
-using TauCode.Parsing.TinyLisp;
 
 namespace TauCode.Cli
 {
+    // todo clean up
     public abstract class CliProgramBase : ICliProgram
     {
         private string[] _arguments;
         private readonly string _version;
-        private readonly ICliAddIn[] _addIns;
-        private readonly ILexer _tinyLispLexer;
+        //private readonly ICliAddIn[] _addIns;
+        
         private readonly IParser _parser;
         private readonly ILexer _inputLexer;
-        private readonly TinyLispPseudoReader _tinyLispPseudoReader;
-
+        
         private INode _root;
 
         protected CliProgramBase(
             string name,
             string description,
             bool supportsHelp,
-            string version,
-            ICliAddIn[] addIns)
+            string version)
         {
             _arguments = new string[] { };
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -38,14 +36,14 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(description)); // todo: need this at all? use <help>!
             this.SupportsHelp = supportsHelp;
             _version = version;
-            _addIns = addIns.ToArray(); // todo checks
+            //_addIns = addIns.ToArray(); // todo checks
             _parser = new ParserLab();
             _inputLexer = new CliLexer();
-            _tinyLispLexer = new TinyLispLexer();
-            _tinyLispPseudoReader = new TinyLispPseudoReader();
+            //_tinyLispLexer = new TinyLispLexer();
+            //_tinyLispPseudoReader = new TinyLispPseudoReader();
         }
 
-        protected IReadOnlyList<ICliAddIn> GetAddIns() => _addIns;
+        protected abstract IReadOnlyList<ICliAddIn> GetAddIns();
 
         public string Name { get; }
 
@@ -86,11 +84,22 @@ namespace TauCode.Cli
 
             var input = string.Join(" ", this.Arguments);
             var tokens = _inputLexer.Lexize(input);
-            var results = _parser.Parse(_root, tokens);
+            var command = (CliCommand)_parser.Parse(_root, tokens).Single();
 
-            throw new NotImplementedException();
+            // todo: lines below might throw (?)
+            var addIn = this.GetAddIns().Single(x => x.Name == command.AddInName);
+            var processor = addIn.GetProcessors().Single(x => x.Alias == command.ProcessorAlias);
 
-            //return 1488;
+            try
+            {
+                processor.Process(command.Entries);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                this.Output.WriteLine(e);
+                return -1;
+            }
         }
 
         private INode BuildRoot()
@@ -105,33 +114,50 @@ namespace TauCode.Cli
                 var addInNode = new ExactTextNode(
                     addIn.Name,
                     TermTextClass.Instance,
-                    null,
+                    this.ProcessAddInName,
                     nodeFamily,
                     null); // todo: give it a name
 
+                addInNode.Properties["add-in-name"] = addIn.Name;
                 root.EstablishLink(addInNode);
 
-                var processors = addIn.Processors;
+                var processors = addIn.GetProcessors();
                 foreach (var processor in processors)
                 {
                     //var processorNode = processor.BuildNode();
-                    var processorNode = this.BuildProcessorNode(processor.GetType().FullName, processor.GetGrammar());
-                    addInNode.EstablishLink(processorNode);
+                    //var processorNode = this.BuildProcessorNode(processor.GetType().FullName, processor.GetGrammar());
+
+
+                    //addInNode.EstablishLink(processor.BuildNode());
+
+                    //throw new NotImplementedException();
+
+                    addInNode.EstablishLink(processor.Node);
                 }
             }
 
             return root;
         }
 
-        private INode BuildProcessorNode(string processorTag, string grammar)
+        private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var lispTokens = _tinyLispLexer.Lexize(grammar);
-            var form = _tinyLispPseudoReader.Read(lispTokens);
-            INodeFactory nodeFactory = new CliNodeFactory(processorTag); // todo: multi-use of node factory. NodeFamily {get;set;}.
-            IBuilder builder = new Builder();
-            INode processorNode = builder.Build(nodeFactory, form);
-            return processorNode;
+            var command = new CliCommand
+            {
+                AddInName = node.Properties["add-in-name"],
+            };
+
+            resultAccumulator.AddResult(command);
         }
+
+        //private INode BuildProcessorNode(string processorTag, string grammar)
+        //{
+        //    var lispTokens = _tinyLispLexer.Lexize(grammar);
+        //    var form = _tinyLispPseudoReader.Read(lispTokens);
+        //    INodeFactory nodeFactory = new CliNodeFactory(processorTag); // todo: multi-use of node factory. NodeFamily {get;set;}.
+        //    IBuilder builder = new Builder();
+        //    INode processorNode = builder.Build(nodeFactory, form);
+        //    return processorNode;
+        //}
 
         public TextWriter Output { get; set; }
     }

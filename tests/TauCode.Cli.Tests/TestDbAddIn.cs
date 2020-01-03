@@ -1,15 +1,22 @@
-﻿namespace TauCode.Cli.Tests
+﻿using System.Collections.Generic;
+
+namespace TauCode.Cli.Tests
 {
-    public class TestDbAddIn : CliAddInImpl
+    public class TestDbAddIn : CliAddInBase
     {
-        public TestDbAddIn()
+        public TestDbAddIn(ICliProgram program)
             : base(
-                "db",
-                new ICliSubCommandProcessor[]
-                {
-                    new TestSdProcessor(),
-                })
+                program,
+                "db")
         {
+        }
+
+        public override IReadOnlyList<ICliProcessor> GetProcessors()
+        {
+            return new ICliProcessor[]
+            {
+                new TestSdProcessor(this), 
+            };
         }
     }
 }

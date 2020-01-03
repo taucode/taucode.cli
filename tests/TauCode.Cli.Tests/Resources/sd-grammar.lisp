@@ -1,6 +1,6 @@
 (defblock :name serialize-data :is-top t
-	(sub-command
-		:command-name "Serialize SQL Database Data"
+	(processor
+		:processor-name "Serialize SQL Database Data"
 		:alias serialize-data
 		:verbs "serialize-data" "sd"
 		:doc "Serializes all tables data into a JSON file."

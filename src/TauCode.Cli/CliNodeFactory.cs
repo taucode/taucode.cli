@@ -33,8 +33,8 @@ namespace TauCode.Cli
 
             switch (car)
             {
-                case "SUB-COMMAND":
-                    node = this.CreateSubCommandNode(item);
+                case "PROCESSOR":
+                    node = this.CreateAliasNode(item);
                     break;
 
                 case "KEY-WITH-VALUE":
@@ -60,7 +60,7 @@ namespace TauCode.Cli
 
         #region Node Creators
 
-        private INode CreateSubCommandNode(PseudoList item)
+        private INode CreateAliasNode(PseudoList item)
         {
             var verbs = item
                 .GetAllKeywordArguments(":verbs")
@@ -71,7 +71,7 @@ namespace TauCode.Cli
                 verbs,
                 new ITextClass[] { TermTextClass.Instance },
                 CliHelper.GetTextTokenRepresentation,
-                this.ProcessSubCommand,
+                this.ProcessAlias,
                 this.NodeFamily,
                 item.GetItemName());
 
@@ -194,14 +194,10 @@ namespace TauCode.Cli
 
         #region Node Actions
 
-        private void ProcessSubCommand(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessAlias(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
-            var cliCommand = new CliCommand
-            {
-                Alias = actionNode.Properties["alias"],
-            };
-
-            resultAccumulator.AddResult(cliCommand);
+            var command = resultAccumulator.GetLastResult<CliCommand>();
+            command.ProcessorAlias = actionNode.Properties["alias"];
         }
 
         private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)

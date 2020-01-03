@@ -4,7 +4,8 @@ namespace TauCode.Cli.Data
 {
     public class CliCommand
     {
-        public string Alias { get; set; }
+        public string AddInName { get; set; }
+        public string ProcessorAlias { get; set; }
         public IList<ICliCommandEntry> Entries { get; set; } = new List<ICliCommandEntry>();
     }
 }

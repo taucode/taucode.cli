@@ -4,6 +4,7 @@ namespace TauCode.Cli
 {
     public interface ICliAddIn
     {
+        ICliProgram Program { get; }
         string Name { get; }
         string Description { get; }
         bool SupportsHelp { get; }
@@ -11,6 +12,6 @@ namespace TauCode.Cli
         //INode BuildNode();
         string GetVersion();
         string GetHelp();
-        IReadOnlyList<ICliSubCommandProcessor> Processors { get; }
+        IReadOnlyList<ICliProcessor> GetProcessors();
     }
 }

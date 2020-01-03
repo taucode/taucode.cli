@@ -36,7 +36,8 @@ namespace TauCode.Cli.Tests
 @"Serialize Data
 Connection: Server=.;Database=econera.diet.tracking;Trusted_Connection=True;
 Provider: sqlserver
-File: c:/temp/mysqlite.json"));
+File: c:/temp/mysqlite.json
+"));
         }
     }
 }
