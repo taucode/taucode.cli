@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using TauCode.Cli.CliCommandEntries;
+using TauCode.Cli.Data;
+using TauCode.Cli.Data.Entries;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TauCode.Cli
+namespace TauCode.Cli.Data
 {
     public class CliCommand
     {

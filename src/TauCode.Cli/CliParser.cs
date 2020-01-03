@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using TauCode.Cli.Data;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.Lexing;
