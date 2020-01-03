@@ -8,7 +8,6 @@ namespace TauCode.Cli
         string[] Arguments { get; set; }
         string Description { get; }
         bool SupportsHelp { get; }
-        bool SupportsVersion { get; }
         string GetVersion();
         string GetHelp();
         int Run();

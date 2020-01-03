@@ -2,12 +2,13 @@
 
 namespace TauCode.Cli
 {
-    public interface ICliFunctionality
+    public interface ICliAddIn
     {
-        string Verb { get; }
+        string Name { get; }
         string Description { get; }
         bool SupportsHelp { get; }
         bool SupportsVersion { get; }
+        //INode BuildNode();
         string GetVersion();
         string GetHelp();
         IReadOnlyList<ICliSubCommandProcessor> Processors { get; }

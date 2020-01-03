@@ -16,4 +16,8 @@
     <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-02-17-42" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\taucode\TauCode.Parsing.Lab\TauCode.Parsing.Lab.csproj" />
+  </ItemGroup>
+
 </Project>
