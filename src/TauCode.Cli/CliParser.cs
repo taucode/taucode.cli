@@ -8,11 +8,12 @@ namespace TauCode.Cli
     {
         protected override object[] ProcessStopParsingExceptionLab(StopParsingExceptionLab ex)
         {
-            var version = (string)ex.Info;
+            var customHandlerName = (string)ex.Info;
 
             return new object[]{new CliCommand
             {
-                AddInName = "VersionGetter",
+                AddInName = "<CustomHandler>", // todo: hardcoded
+                ProcessorAlias = customHandlerName,
             }};
         }
     }

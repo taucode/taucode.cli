@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using TauCode.Cli.Demo.AddIns;
 using TauCode.Cli.Demo.Exceptions;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Lexing;
+using TauCode.Parsing.Tokens;
+using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.Demo
 {
@@ -14,6 +17,8 @@ namespace TauCode.Cli.Demo
             {
                 Output = Console.Out,
             };
+
+            program.AddCustomHandler(new TextToken(TermTextClass.Instance, NoneTextDecoration.Instance, "cls"), Console.Clear);
 
             while (true)
             {
@@ -33,7 +38,6 @@ namespace TauCode.Cli.Demo
                 {
                     Console.WriteLine(e);
                 }
-
             }
 
             return 0;

@@ -13,8 +13,7 @@ namespace TauCode.Cli
     // todo clean up
     public abstract class CliProcessorBase : ICliProcessor
     {
-        //private readonly string _grammar;
-        //private readonly INode _node;
+        
 
         protected CliProcessorBase(ICliAddIn addIn, string grammar)
         {
@@ -22,13 +21,9 @@ namespace TauCode.Cli
 
             this.AddIn = addIn;
             this.BuildNode(grammar, out var alias, out var node);
-            //this.Verb = verb;
-
             this.Alias = alias;
             this.Node = node;
         }
-
-        //public string GetGrammar() => _grammar;
 
         private void BuildNode(string grammar, out string alias, out INode node)
         {
@@ -65,22 +60,12 @@ namespace TauCode.Cli
         }
 
         public ICliAddIn AddIn { get; }
+
         public string Alias { get; }
+
         public INode Node { get; }
 
-        //public bool AcceptsCommand(CliCommand command)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-
-        //public void ProcessCommand(CliCommand command)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-
         public abstract void Process(IList<ICliCommandEntry> entries);
-        //{
-        //}
 
         public string GetHelp()
         {
