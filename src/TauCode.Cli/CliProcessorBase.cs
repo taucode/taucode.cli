@@ -13,8 +13,6 @@ namespace TauCode.Cli
     // todo clean up
     public abstract class CliProcessorBase : ICliProcessor
     {
-        
-
         protected CliProcessorBase(ICliAddIn addIn, string grammar)
         {
             // todo checks

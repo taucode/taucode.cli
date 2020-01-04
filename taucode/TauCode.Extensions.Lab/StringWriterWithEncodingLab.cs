@@ -18,4 +18,19 @@ namespace TauCode.Extensions.Lab
 
         public override Encoding Encoding { get; }
     }
+
+    public static class StringExceptions
+    {
+        public static string Repeat(this string s, int count)
+        {
+            // todo check args
+            var sb = new StringBuilder();
+            for (var i = 0; i < count; i++)
+            {
+                sb.Append(s);
+            }
+
+            return sb.ToString();
+        }
+    }
 }

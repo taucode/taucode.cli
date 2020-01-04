@@ -6,25 +6,26 @@ namespace TauCode.Cli
     // todo clean up
     public abstract class CliAddInBase : ICliAddIn
     {
+        private readonly string _version;
+
         protected CliAddInBase(
             ICliProgram program,
-            string name)
+            string name,
+            string version,
+            bool supportsHelp)
         {
             // todo checks
             this.Program = program;
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            //_processors = processors.ToArray(); // todo checks
+            this.SupportsHelp = supportsHelp;
+            _version = version;
         }
 
         public ICliProgram Program { get; }
         public string Name { get; }
         public string Description => throw new NotImplementedException();
-        public bool SupportsHelp => throw new NotImplementedException();
-        public bool SupportsVersion => throw new NotImplementedException();
-        public string GetVersion()
-        {
-            throw new NotImplementedException();
-        }
+        public bool SupportsHelp { get; }
+        public string GetVersion() => _version;
 
         public string GetHelp()
         {

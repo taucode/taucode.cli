@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Lab.Exceptions;
 using TauCode.Parsing.Nodes;
 
@@ -10,10 +9,6 @@ namespace TauCode.Parsing.Lab
     public class ParserLab : IParser
     {
         protected virtual bool WantsOnlyOneResult => false;
-        protected virtual object[] ProcessStopParsingExceptionLab(StopParsingExceptionLab ex)
-        {
-            throw ex;
-        }
 
         public object[] Parse(INode root, IEnumerable<IToken> tokens)
         {
@@ -34,128 +29,141 @@ namespace TauCode.Parsing.Lab
             context.SetNodes(initialNodes);
             var winners = new List<INode>();
 
-            try
+            while (true)
             {
-                while (true)
+                var nodes = context.GetNodes();
+                if (stream.IsEndOfStream())
                 {
-                    var nodes = context.GetNodes();
-                    if (stream.IsEndOfStream())
+                    if (nodes.Contains(EndNode.Instance))
                     {
-                        if (nodes.Contains(EndNode.Instance))
-                        {
-                            // met end of stream, but that is acceptable
-                            return context.ResultAccumulator.ToArray();
-                        }
-                        else
-                        {
-                            throw new ParsingException("Unexpected end of stream."); // todo: protected virtual EndOfStreamParingException CreateEndOfStreamParingException();
-                        }
+                        // met end of stream, but that is acceptable
+                        return context.ResultAccumulator.ToArray();
                     }
-
-                    var token = stream.CurrentToken;
-
-                    winners.Clear();
-                    var gotActor = false;
-                    var gotEnd = false;
-                    var gotSkippers = false;
-
-                    foreach (var node in nodes)
+                    else
                     {
-                        var inquireResult = node.Inquire(token, context.ResultAccumulator);
+                        throw new UnexpectedEndOfClauseException(context.ResultAccumulator.ToArray());
 
-                        switch (inquireResult)
-                        {
-                            case InquireResult.Reject:
-                                // bye baby
-                                break;
-
-                            case InquireResult.Skip:
-                                if (gotActor)
-                                {
-                                    throw new ParsingException("Nodes logic error. More than one node accepted the token.");
-                                }
-                                gotSkippers = true;
-                                winners.Add(node);
-                                break;
-
-                            case InquireResult.Act:
-                                if (gotActor)
-                                {
-                                    throw new ParsingException("Nodes logic error. More than one node accepted the token.");
-                                }
-                                gotActor = true;
-                                winners.Add(node);
-                                break;
-
-                            case InquireResult.End:
-                                gotEnd = true;
-                                // don't add to winners
-                                break;
-
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        //throw new Parsing-Exception("Unexpected end of stream."); // todo: protected virtual EndOfStreamParingException CreateEndOfStreamParingException();
                     }
+                }
 
-                    if (winners.Count == 0)
+                var token = stream.CurrentToken;
+
+                winners.Clear();
+                var gotActor = false;
+                var gotEnd = false;
+                var gotSkippers = false;
+
+                foreach (var node in nodes)
+                {
+                    var inquireResult = node.Inquire(token, context.ResultAccumulator);
+
+                    switch (inquireResult)
                     {
-                        if (gotEnd)
-                        {
-                            if (this.WantsOnlyOneResult)
+                        case InquireResult.Reject:
+                            // bye baby
+                            break;
+
+                        case InquireResult.Skip:
+                            if (gotActor)
                             {
-                                // error. stream has more tokens, but we won't want'em.
-                                throw new ParsingException("Unexpected token."); // todo: separate exception.
+                                //throw new Parsing-Exception("Nodes logic error. More than one node accepted the token.");
+                                throw new NodeConcurrencyException(
+                                    context.ResultAccumulator.ToArray(),
+                                    token,
+                                    BuildRivalNodes(winners, node));
                             }
+                            gotSkippers = true;
+                            winners.Add(node);
+                            break;
 
-                            // fine, got to end, start over.
-                            context.SetNodes(initialNodes);
-                        }
-                        else
+                        case InquireResult.Act:
+                            if (gotActor)
+                            {
+                                throw new NodeConcurrencyException(
+                                    context.ResultAccumulator.ToArray(),
+                                    token,
+                                    BuildRivalNodes(winners, node));
+                            }
+                            gotActor = true;
+                            winners.Add(node);
+                            break;
+
+                        case InquireResult.End:
+                            gotEnd = true;
+                            // don't add to winners
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                if (winners.Count == 0)
+                {
+                    if (gotEnd)
+                    {
+                        if (this.WantsOnlyOneResult)
                         {
-                            throw new ParsingException("Unexpected token."); // todo: separate exception.
+                            // error. stream has more tokens, but we won't want'em.
+                            //throw new Parsing-Exception("Unexpected token."); // todo: separate exception.
+                            throw new UnexpectedTokenException(token, context.ResultAccumulator.ToArray());
+                        }
+
+                        // fine, got to end, start over.
+                        context.SetNodes(initialNodes);
+                    }
+                    else
+                    {
+                        //throw new Parsing-Exception("Unexpected token."); // todo: separate exception.
+                        throw new UnexpectedTokenException(token, context.ResultAccumulator.ToArray());
+                    }
+                }
+                else
+                {
+                    if (gotActor)
+                    {
+                        if (winners.Count > 1)
+                        {
+                            //throw new Parsing-Exception("More than one winning node.");
+                            throw new NodeConcurrencyException(
+                                context.ResultAccumulator.ToArray(),
+                                token, 
+                                winners.ToArray());
+                        }
+
+                        var actor = winners.Single();
+                        var oldVersion = context.ResultAccumulator.Version;
+                        actor.Act(token, context.ResultAccumulator);
+                        if (oldVersion + 1 != context.ResultAccumulator.Version)
+                        {
+                            throw new InternalParsingLogicException("Internal error. Non sequential result accumulator versions.");
                         }
                     }
                     else
                     {
-                        if (gotActor)
+                        // 'gotSkippers' must be true
+                        if (!gotSkippers)
                         {
-                            if (winners.Count > 1)
-                            {
-                                throw new ParsingException("More than one winning node.");
-                            }
-
-                            var actor = winners.Single();
-                            var oldVersion = context.ResultAccumulator.Version;
-                            actor.Act(token, context.ResultAccumulator);
-                            if (oldVersion + 1 != context.ResultAccumulator.Version)
-                            {
-                                throw new ParsingException("Internal error. Non sequential result accumulator versions.");
-                            }
+                            throw new InternalParsingLogicException("Internal parser error.");
                         }
-                        else
-                        {
-                            // 'gotSkippers' must be true
-                            if (!gotSkippers)
-                            {
-                                throw new ParsingException("Internal parser error.");
-                            }
-                        }
-
-                        // skip
-                        context.TokenStream.AdvanceStreamPosition();
-                        var successors = winners.SelectMany(x => x.ResolveLinks()).ToList();
-
-                        var nonIdleSuccessors = ParsingHelper.GetNonIdleNodes(successors);
-
-                        // next nodes
-                        context.SetNodes(nonIdleSuccessors);
                     }
+
+                    // skip
+                    context.TokenStream.AdvanceStreamPosition();
+                    var successors = winners.SelectMany(x => x.ResolveLinks()).ToList();
+
+                    var nonIdleSuccessors = ParsingHelper.GetNonIdleNodes(successors);
+
+                    // next nodes
+                    context.SetNodes(nonIdleSuccessors);
                 }
             }
-            catch (StopParsingExceptionLab e)
-            {
-                return this.ProcessStopParsingExceptionLab(e);
-            }
+        }
+
+        private INode[] BuildRivalNodes(List<INode> rivalNodes, INode oneMoreRivalNode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using TauCode.Cli.Demo.AddIns;
-using TauCode.Cli.Demo.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Lexing;
-using TauCode.Parsing.Tokens;
-using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.Demo
 {
     public class Program : CliProgramBase
     {
+        private class ExitException : Exception { }
+
         private static int Main(string[] args)
         {
             var program = new Program
@@ -18,7 +17,22 @@ namespace TauCode.Cli.Demo
                 Output = Console.Out,
             };
 
-            program.AddCustomHandler(new TextToken(TermTextClass.Instance, NoneTextDecoration.Instance, "cls"), Console.Clear);
+
+            //var goOn = true;
+
+            program.AddCustomHandler(
+                null,
+                null,
+                "cls",
+                TermTextClass.Instance,
+                Console.Clear);
+
+            program.AddCustomHandler(
+                null,
+                null,
+                "exit",
+                TermTextClass.Instance,
+                () => throw new ExitException());
 
             while (true)
             {
@@ -30,13 +44,13 @@ namespace TauCode.Cli.Demo
                 {
                     program.Run();
                 }
-                catch (ExitProgramException)
+                catch (ExitException)
                 {
                     break;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(ex);
                 }
             }
 
@@ -44,7 +58,7 @@ namespace TauCode.Cli.Demo
         }
 
         public Program()
-            : base("demo", "Demo program", true, "1.0.2")
+            : base("demo", "Demo program", true, "demo-1.0.2")
         {
         }
 
