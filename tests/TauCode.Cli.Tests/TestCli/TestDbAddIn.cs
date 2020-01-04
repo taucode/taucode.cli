@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TauCode.Cli.Tests
+namespace TauCode.Cli.Tests.TestCli
 {
     public class TestDbAddIn : CliAddInBase
     {

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using TauCode.Cli.Tests.TestCli;
 using TauCode.Extensions.Lab;
 
 namespace TauCode.Cli.Tests

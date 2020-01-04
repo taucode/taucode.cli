@@ -11,16 +11,14 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliProgramBase : ICliProgram
     {
         private string[] _arguments;
         private readonly string _version;
-        //private readonly ICliAddIn[] _addIns;
-        
         private readonly IParser _parser;
         private readonly ILexer _inputLexer;
-        
+        private TextWriter _textWriter;
+
         private INode _root;
 
         protected CliProgramBase(
@@ -36,11 +34,9 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(description)); // todo: need this at all? use <help>!
             this.SupportsHelp = supportsHelp;
             _version = version;
-            //_addIns = addIns.ToArray(); // todo checks
             _parser = new ParserLab();
             _inputLexer = new CliLexer();
-            //_tinyLispLexer = new TinyLispLexer();
-            //_tinyLispPseudoReader = new TinyLispPseudoReader();
+            _textWriter = TextWriter.Null;
         }
 
         protected abstract IReadOnlyList<ICliAddIn> GetAddIns();
@@ -149,16 +145,10 @@ namespace TauCode.Cli
             resultAccumulator.AddResult(command);
         }
 
-        //private INode BuildProcessorNode(string processorTag, string grammar)
-        //{
-        //    var lispTokens = _tinyLispLexer.Lexize(grammar);
-        //    var form = _tinyLispPseudoReader.Read(lispTokens);
-        //    INodeFactory nodeFactory = new CliNodeFactory(processorTag); // todo: multi-use of node factory. NodeFamily {get;set;}.
-        //    IBuilder builder = new Builder();
-        //    INode processorNode = builder.Build(nodeFactory, form);
-        //    return processorNode;
-        //}
-
-        public TextWriter Output { get; set; }
+        public TextWriter Output
+        {
+            get => _textWriter;
+            set => _textWriter = value ?? TextWriter.Null;
+        }
     }
 }

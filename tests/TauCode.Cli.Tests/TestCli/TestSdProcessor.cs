@@ -4,7 +4,7 @@ using TauCode.Cli.Data;
 using TauCode.Cli.Data.Entries;
 using TauCode.Extensions;
 
-namespace TauCode.Cli.Tests
+namespace TauCode.Cli.Tests.TestCli
 {
     public class TestSdProcessor : CliProcessorBase
     {

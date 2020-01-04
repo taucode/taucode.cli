@@ -14,7 +14,7 @@ namespace TauCode.Cli
         //private readonly string _grammar;
         //private readonly INode _node;
 
-        public CliProcessorBase(ICliAddIn addIn, string grammar)
+        protected CliProcessorBase(ICliAddIn addIn, string grammar)
         {
             // todo checks
 
