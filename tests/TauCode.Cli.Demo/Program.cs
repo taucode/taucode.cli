@@ -1,14 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
+using TauCode.Cli.Demo.AddIns;
+using TauCode.Cli.Demo.Exceptions;
+using TauCode.Parsing.Lexing;
 
 namespace TauCode.Cli.Demo
 {
-    class Program
+    public class Program : CliProgramBase
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
-            Console.Out.WriteLine("Hello World!");
+            var program = new Program
+            {
+                Output = Console.Out,
+            };
 
-            return 1488;
+            while (true)
+            {
+                Console.Write("args >");
+                var line = Console.ReadLine();
+                program.Arguments = new[] { line };
+
+                try
+                {
+                    program.Run();
+                }
+                catch (ExitProgramException)
+                {
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+
+            return 0;
+        }
+
+        public Program()
+            : base("demo", "Demo program", true, "1.0.2")
+        {
+        }
+
+        protected override ILexer CreateLexer() => new DemoLexer();
+
+        protected override IReadOnlyList<ICliAddIn> GetAddIns()
+        {
+            return new ICliAddIn[]
+            {
+                new DbAddIn(this),
+            };
         }
     }
 }

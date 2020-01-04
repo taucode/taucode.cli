@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Data.Entries;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.TinyLisp;
@@ -53,13 +55,14 @@ namespace TauCode.Cli
 
         }
 
-        //public string Verb { get; }
-        //public INode Node { get; }
-
-        //public INode BuildNode()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
+        {
+            // todo: can throw
+            return entries
+                .Where(x => x is KeyValueCliCommandEntry)
+                .Cast<KeyValueCliCommandEntry>()
+                .Single(x => string.Equals(x.Alias, alias, StringComparison.InvariantCultureIgnoreCase)).Value;
+        }
 
         public ICliAddIn AddIn { get; }
         public string Alias { get; }

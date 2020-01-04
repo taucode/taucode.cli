@@ -5,7 +5,7 @@ using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
-using TauCode.Parsing.Lab;
+using TauCode.Parsing.Lab.Exceptions;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 
@@ -15,8 +15,9 @@ namespace TauCode.Cli
     {
         private string[] _arguments;
         private readonly string _version;
-        private readonly IParser _parser;
-        private readonly ILexer _inputLexer;
+
+        private IParser _parser;
+        private ILexer _inputLexer;
         private TextWriter _textWriter;
 
         private INode _root;
@@ -34,12 +35,19 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(description)); // todo: need this at all? use <help>!
             this.SupportsHelp = supportsHelp;
             _version = version;
-            _parser = new ParserLab();
-            _inputLexer = new CliLexer();
+            //_parser = new ParserLab();
+            //_inputLexer = new CliLexer();
             _textWriter = TextWriter.Null;
         }
 
         protected abstract IReadOnlyList<ICliAddIn> GetAddIns();
+
+        protected virtual IParser CreateParser() => new CliParser();
+
+        protected virtual ILexer CreateLexer() => new CliLexer();
+
+        protected ILexer Lexer => _inputLexer ?? (_inputLexer = this.CreateLexer());
+        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
 
         public string Name { get; }
 
@@ -79,8 +87,14 @@ namespace TauCode.Cli
             }
 
             var input = string.Join(" ", this.Arguments);
-            var tokens = _inputLexer.Lexize(input);
-            var command = (CliCommand)_parser.Parse(_root, tokens).Single();
+            var tokens = this.Lexer.Lexize(input);
+            var command = (CliCommand)this.Parser.Parse(_root, tokens).Single();
+
+            if (command.AddInName == "VersionGetter")
+            {
+                this.Output.WriteLine(this.GetVersion());
+                return 0;
+            }
 
             // todo: lines below might throw (?)
             var addIn = this.GetAddIns().Single(x => x.Name == command.AddInName);
@@ -105,6 +119,18 @@ namespace TauCode.Cli
             var nodeFamily = new NodeFamily("todo-program-family-name");
             var root = new IdleNode(nodeFamily, "<program root>");
 
+            if (this.GetVersion() != null)
+            {
+                var versionNode = new ExactTextNode(
+                    "--version",
+                    KeyTextClass.Instance,
+                    (node, token, resultAccumulator) => throw new StopParsingExceptionLab("Version requested", this.GetVersion()),
+                    nodeFamily,
+                    null);
+
+                root.EstablishLink(versionNode);
+            }
+
             foreach (var addIn in addIns)
             {
                 var addInNode = new ExactTextNode(
@@ -120,14 +146,6 @@ namespace TauCode.Cli
                 var processors = addIn.GetProcessors();
                 foreach (var processor in processors)
                 {
-                    //var processorNode = processor.BuildNode();
-                    //var processorNode = this.BuildProcessorNode(processor.GetType().FullName, processor.GetGrammar());
-
-
-                    //addInNode.EstablishLink(processor.BuildNode());
-
-                    //throw new NotImplementedException();
-
                     addInNode.EstablishLink(processor.Node);
                 }
             }
