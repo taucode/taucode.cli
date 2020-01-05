@@ -12,7 +12,7 @@ namespace TauCode.Cli.Tests
         {
             var writer = new StringWriterWithEncodingLab();
 
-            var host = new TestHost
+            var host = new Host
             {
                 Output = writer,
             };

@@ -6,13 +6,13 @@ using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.TestCli
 {
-    public class TestSdWorker : CliWorkerBase
+    public class SdWorker : CliWorkerBase
     {
-        public TestSdWorker(ICliAddIn addIn)
+        public SdWorker(ICliAddIn addIn)
             : base(
                 addIn,
-                typeof(TestSdWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
-                "sd-1599", 
+                typeof(SdWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
+                "sd-1.0", 
                 true)
         {
         }

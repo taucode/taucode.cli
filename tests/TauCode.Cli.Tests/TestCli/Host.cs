@@ -2,10 +2,10 @@
 
 namespace TauCode.Cli.Tests.TestCli
 {
-    public class TestHost : CliHostBase
+    public class Host : CliHostBase
     {
-        public TestHost()
-            : base("test", "test-1488", true)
+        public Host()
+            : base("host", "host-1.0", true)
         {   
         }
 
@@ -13,7 +13,7 @@ namespace TauCode.Cli.Tests.TestCli
         {
             return new ICliAddIn[]
             {
-                    new TestDbAddIn(this),
+                    new DbAddIn(this),
             };
         }
     }

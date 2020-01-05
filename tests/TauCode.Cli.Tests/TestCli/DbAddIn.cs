@@ -2,13 +2,13 @@
 
 namespace TauCode.Cli.Tests.TestCli
 {
-    public class TestDbAddIn : CliAddInBase
+    public class DbAddIn : CliAddInBase
     {
-        public TestDbAddIn(ICliHost host)
+        public DbAddIn(ICliHost host)
             : base(
                 host,
                 "db",
-                "db-1488",
+                "sd-1.0",
                 true)
         {
         }
@@ -17,7 +17,7 @@ namespace TauCode.Cli.Tests.TestCli
         {
             return new ICliWorker[]
             {
-                new TestSdWorker(this),
+                new SdWorker(this),
             };
         }
     }
