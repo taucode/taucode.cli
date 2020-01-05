@@ -11,12 +11,10 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliWorkerBase : ICliWorker
     {
         #region Fields
 
-        //private readonly string _grammar;
         private INode _node;
         private readonly PseudoList _form;
 
@@ -25,14 +23,10 @@ namespace TauCode.Cli
         #region Constructor
 
         protected CliWorkerBase(
-            ICliAddIn addIn,
             string grammar,
             string version,
             bool supportsHelp)
         {
-            this.AddIn = addIn ?? throw new ArgumentNullException(nameof(addIn));
-            //_grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
-
             if (grammar == null)
             {
                 throw new ArgumentNullException(nameof(grammar));
@@ -47,7 +41,6 @@ namespace TauCode.Cli
             this.Version = version;
             this.SupportsHelp = supportsHelp;
         }
-
 
         #endregion
 
@@ -66,11 +59,7 @@ namespace TauCode.Cli
             return name;
         }
 
-        #endregion
-
-        #region Protected
-
-        private INode BuildNode() // todo: need 'protected virtual'?
+        private INode BuildNode()
         {
             INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{this.Name}'");
             IBuilder builder = new Builder();
@@ -78,6 +67,10 @@ namespace TauCode.Cli
 
             return node;
         }
+
+        #endregion
+
+        #region Protected
 
         protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
         {
@@ -92,7 +85,7 @@ namespace TauCode.Cli
 
         #region ICliWorker Members
 
-        public ICliAddIn AddIn { get; }
+        public ICliAddIn AddIn { get; internal set; }
 
         public abstract void Process(IList<ICliCommandEntry> entries);
 
@@ -114,7 +107,6 @@ namespace TauCode.Cli
             set => throw new NotSupportedException(); // todo: message 'use writer of owner'
         }
 
-        //public INode Node => _node ?? (_node = this.BuildNode());
         public INode Node
         {
             get
@@ -146,55 +138,6 @@ namespace TauCode.Cli
         {
             return "todo: worker help.";
         }
-
-        #endregion
-
-        #region Todo Old Stuff
-
-        //protected CliWorkerBase(ICliAddIn addIn, string grammar)
-        //{
-        //    // todo checks
-
-        //    this.AddIn = addIn;
-        //    this.BuildNode(grammar, out var alias, out var node);
-        //    this.Alias = alias;
-        //    this.Node = node;
-        //}
-
-        //private void BuildNode(string grammar, out string alias, out INode node)
-        //{
-        //    var tinyLispLexer = new TinyLispLexer();
-        //    var tinyLispPseudoReader = new TinyLispPseudoReader();
-        //    var lispTokens = tinyLispLexer.Lexize(grammar);
-        //    var form = tinyLispPseudoReader.Read(lispTokens);
-
-        //    // todo: next lines can throw. use try/catch
-        //    var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
-        //    var supposedCommandForm = topDefblock.GetFreeArguments().First();
-        //    alias = null;
-        //    if (supposedCommandForm.GetCarSymbolName() == "WORKER")
-        //    {
-        //        alias = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":alias").Name;
-        //    }
-
-        //    INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{alias}'");
-        //    IBuilder builder = new Builder();
-        //    node = builder.Build(nodeFactory, form);
-        //}
-
-
-        //public ICliAddIn AddIn { get; }
-
-        //public string Alias { get; }
-
-        //public INode Node { get; }
-
-        //public abstract void Process(IList<ICliCommandEntry> entries);
-
-        //public string GetHelp()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
 
         #endregion
     }

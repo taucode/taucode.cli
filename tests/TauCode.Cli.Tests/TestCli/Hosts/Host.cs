@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Demo.AddIns;
+using TauCode.Cli.Tests.TestCli.AddIns;
 
-namespace TauCode.Cli.Demo
+namespace TauCode.Cli.Tests.TestCli.Hosts
 {
-    public class DemoHost : CliHostBase
+    public class Host : CliHostBase
     {
-        public DemoHost()
-            : base("demo", "demo-1.0", true)
-        {
-
+        public Host()
+            : base("host", "host-1.0", true)
+        {   
         }
 
         protected override IReadOnlyList<ICliAddIn> CreateAddIns()

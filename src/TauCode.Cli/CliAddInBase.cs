@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliAddInBase : ICliAddIn
     {
         #region Fields
@@ -22,15 +22,19 @@ namespace TauCode.Cli
 
         #region Constructor
 
-        protected CliAddInBase(ICliHost host, string name, string version, bool supportsHelp)
+        protected CliAddInBase(string name, string version, bool supportsHelp)
         {
-            // todo : check args? (can be null if the only add-in?)
-            this.Host = host ?? throw new ArgumentNullException(nameof(host));
-            this.Name = name;
+            this.Name = name ?? throw new ArgumentNullException(nameof(name), "Use parameterless constructor for nameless add-in creation.");
             this.Version = version;
             this.SupportsHelp = supportsHelp;
 
-            _nodeFamily = new NodeFamily($"todo-program-family-name-{this.Name}"); // todo: deal with Name == null.
+            _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}");
+            _workers = new List<ICliWorker>();
+        }
+
+        protected CliAddInBase()
+        {
+            _nodeFamily = new NodeFamily("Nameless add-in node family");
             _workers = new List<ICliWorker>();
         }
 
@@ -48,47 +52,75 @@ namespace TauCode.Cli
             resultAccumulator.AddResult(command);
         }
 
-        #endregion
-
-        #region Protected
-
-        protected abstract IEnumerable<ICliWorker> CreateWorkers();
-
-        private INode BuildNode() // todo: need 'protected virtual'?
+        private INode BuildNode()
         {
+            INode addInNode;
+
             if (this.Name == null)
             {
-                throw new NotImplementedException();
+                addInNode = new IdleNode(_nodeFamily, null); // todo give it a name
             }
             else
             {
-                var addInNode = new ExactTextNode(
+                addInNode = new ExactTextNode(
                     this.Name,
                     TermTextClass.Instance,
                     this.ProcessAddInName,
                     _nodeFamily,
                     null); // todo: give it a name
 
-                addInNode.Properties["add-in-name"] = this.Name; // todo: deal with Name == null
-                
-                var workers = this.CreateWorkers().ToList();
-
-                _workers.AddRange(workers);
-
-                foreach (var worker in workers)
-                {
-                    addInNode.EstablishLink(worker.Node);
-                }
-
-                return addInNode;
+                addInNode.Properties["add-in-name"] = this.Name;
             }
+
+            var workers = this.CreateWorkers();
+
+            if (workers == null)
+            {
+                throw new CliException($"'{nameof(CreateWorkers)}' must not return null.");
+            }
+
+            if (workers.Count == 0)
+            {
+                throw new CliException($"'{nameof(CreateWorkers)}' must not return empty collection.");
+            }
+
+            var validTypes = workers.All(x => x is CliWorkerBase);
+            if (!validTypes)
+            {
+                throw new CliException($"'{nameof(CreateWorkers)}' must return instances of type '{typeof(CliWorkerBase).FullName}'.");
+            }
+
+            if (workers.Any(x => x.Name == null) && workers.Count > 1)
+            {
+                throw new CliException($"'{nameof(CreateWorkers)}' must return either all workers having non-null name, or exactly one worker with null name.");
+            }
+
+            foreach (var worker in workers)
+            {
+                ((CliWorkerBase)worker).AddIn = this;
+            }
+
+            _workers.AddRange(workers);
+
+            foreach (var worker in workers)
+            {
+                addInNode.EstablishLink(worker.Node);
+            }
+
+            return addInNode;
         }
+
+        #endregion
+
+        #region Protected
+
+        protected abstract IReadOnlyList<ICliWorker> CreateWorkers();
 
         #endregion
 
         #region ICliAddIn Members
 
-        public ICliHost Host { get; }
+        public ICliHost Host { get; internal set; }
 
         public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
 
@@ -110,7 +142,6 @@ namespace TauCode.Cli
             set => throw new NotSupportedException(); // todo: message 'use writer of owner'
         }
 
-        //public INode Node => _node ?? (_node = this.BuildNode());
         public INode Node
         {
             get
@@ -142,51 +173,6 @@ namespace TauCode.Cli
         {
             return "todo: add-in help.";
         }
-
-        #endregion
-
-
-        #region Todo Old Stuff
-
-        //#region Fields
-
-        //private readonly string _version;
-
-        //#endregion
-
-        //#region Constructor
-
-        //protected CliAddInBase(
-        //    ICliProgram program,
-        //    string name,
-        //    string version,
-        //    bool supportsHelp)
-        //{
-        //    // todo checks
-        //    this.Program = program;
-        //    this.Name = name ?? throw new ArgumentNullException(nameof(name));
-        //    this.SupportsHelp = supportsHelp;
-        //    _version = version;
-        //}
-
-
-        //#endregion
-
-
-
-
-        //public ICliProgram Program { get; }
-        //public string Name { get; }
-        //public string Description => throw new NotImplementedException();
-        //public bool SupportsHelp { get; }
-        ////public string GetVersion() => _version;
-
-        ////public string GetHelp()
-        ////{
-        ////    throw new NotImplementedException();
-        ////}
-
-        //public abstract IReadOnlyList<ICliWorker> CreateWorkers();
 
         #endregion
     }

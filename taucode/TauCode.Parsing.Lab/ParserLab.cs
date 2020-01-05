@@ -42,8 +42,6 @@ namespace TauCode.Parsing.Lab
                     else
                     {
                         throw new UnexpectedEndOfClauseException(context.ResultAccumulator.ToArray());
-
-                        //throw new Parsing-Exception("Unexpected end of stream."); // todo: protected virtual EndOfStreamParingException CreateEndOfStreamParingException();
                     }
                 }
 
@@ -67,7 +65,6 @@ namespace TauCode.Parsing.Lab
                         case InquireResult.Skip:
                             if (gotActor)
                             {
-                                //throw new Parsing-Exception("Nodes logic error. More than one node accepted the token.");
                                 throw new NodeConcurrencyException(
                                     context.ResultAccumulator.ToArray(),
                                     token,
@@ -106,7 +103,6 @@ namespace TauCode.Parsing.Lab
                         if (this.WantsOnlyOneResult)
                         {
                             // error. stream has more tokens, but we won't want'em.
-                            //throw new Parsing-Exception("Unexpected token."); // todo: separate exception.
                             throw new UnexpectedTokenException(token, context.ResultAccumulator.ToArray());
                         }
 
@@ -115,7 +111,6 @@ namespace TauCode.Parsing.Lab
                     }
                     else
                     {
-                        //throw new Parsing-Exception("Unexpected token."); // todo: separate exception.
                         throw new UnexpectedTokenException(token, context.ResultAccumulator.ToArray());
                     }
                 }
@@ -125,7 +120,6 @@ namespace TauCode.Parsing.Lab
                     {
                         if (winners.Count > 1)
                         {
-                            //throw new Parsing-Exception("More than one winning node.");
                             throw new NodeConcurrencyException(
                                 context.ResultAccumulator.ToArray(),
                                 token, 

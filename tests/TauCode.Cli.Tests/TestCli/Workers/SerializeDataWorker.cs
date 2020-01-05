@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Data.Entries;
 using TauCode.Extensions;
 
-namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
+namespace TauCode.Cli.Tests.TestCli.Workers
 {
     public class SerializeDataWorker : CliWorkerBase
     {
         public SerializeDataWorker()
             : base(
-                typeof(Program).Assembly.GetResourceText("sd-grammar.lisp", true),
+                typeof(SerializeDataWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
                 "sd-1.0", 
                 true)
         {
@@ -16,9 +18,9 @@ namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
 
         public override void Process(IList<ICliCommandEntry> entries)
         {
-            var connection = this.GetSingleValue(entries, "connection");
-            var provider = this.GetSingleValue(entries, "provider");
-            var file = this.GetSingleValue(entries, "file");
+            var connection = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "CONNECTION")).Value;
+            var provider = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "PROVIDER")).Value;
+            var file = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "FILE")).Value;
 
             this.Output.WriteLine("Serialize Data");
             this.Output.WriteLine($"Connection: {connection}");

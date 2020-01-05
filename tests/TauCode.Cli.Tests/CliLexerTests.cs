@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using TauCode.Cli.TextClasses;
-using TauCode.Cli.TextDecorations;
 using TauCode.Parsing.Tokens;
 using TauCode.Parsing.Tokens.TextClasses;
 using TauCode.Parsing.Tokens.TextDecorations;
@@ -37,9 +36,8 @@ namespace TauCode.Cli.Tests
             // -t
             var keyToken = (TextToken)tokens[1];
             Assert.That(keyToken.Class, Is.SameAs(KeyTextClass.Instance));
-            var hyphenTextDecoration = (HyphenTextDecoration)keyToken.Decoration;
-            Assert.That(hyphenTextDecoration.HyphenCount, Is.EqualTo(1));
-            Assert.That(keyToken.Text, Is.EqualTo("t"));
+            Assert.That(keyToken.Decoration, Is.SameAs(NoneTextDecoration.Instance));
+            Assert.That(keyToken.Text, Is.EqualTo("-t"));
 
             // one
             termToken = (TextToken)tokens[2];
@@ -56,9 +54,8 @@ namespace TauCode.Cli.Tests
             // --repeat
             keyToken = (TextToken)tokens[4];
             Assert.That(keyToken.Class, Is.SameAs(KeyTextClass.Instance));
-            hyphenTextDecoration = (HyphenTextDecoration)keyToken.Decoration;
-            Assert.That(hyphenTextDecoration.HyphenCount, Is.EqualTo(2));
-            Assert.That(keyToken.Text, Is.EqualTo("repeat"));
+            Assert.That(keyToken.Decoration, Is.SameAs(NoneTextDecoration.Instance));
+            Assert.That(keyToken.Text, Is.EqualTo("--repeat"));
 
             // 88
             var intToken = (IntegerToken)tokens[5];
@@ -67,9 +64,8 @@ namespace TauCode.Cli.Tests
             // -log
             keyToken = (TextToken)tokens[6];
             Assert.That(keyToken.Class, Is.SameAs(KeyTextClass.Instance));
-            hyphenTextDecoration = (HyphenTextDecoration)keyToken.Decoration;
-            Assert.That(hyphenTextDecoration.HyphenCount, Is.EqualTo(1));
-            Assert.That(keyToken.Text, Is.EqualTo("log"));
+            Assert.That(keyToken.Decoration, Is.SameAs(NoneTextDecoration.Instance));
+            Assert.That(keyToken.Text, Is.EqualTo("-log"));
 
             // c:/temp/logs
             var pathToken = (TextToken)tokens[7];
@@ -80,9 +76,8 @@ namespace TauCode.Cli.Tests
             // --level
             keyToken = (TextToken)tokens[8];
             Assert.That(keyToken.Class, Is.SameAs(KeyTextClass.Instance));
-            hyphenTextDecoration = (HyphenTextDecoration)keyToken.Decoration;
-            Assert.That(hyphenTextDecoration.HyphenCount, Is.EqualTo(2));
-            Assert.That(keyToken.Text, Is.EqualTo("level"));
+            Assert.That(keyToken.Decoration, Is.SameAs(NoneTextDecoration.Instance));
+            Assert.That(keyToken.Text, Is.EqualTo("--level"));
 
             // 1a-c
             termToken = (TextToken)tokens[9];
