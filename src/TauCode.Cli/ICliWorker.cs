@@ -4,7 +4,10 @@ using TauCode.Parsing;
 
 namespace TauCode.Cli
 {
-    public interface ICliProcessor
+    /// <summary>
+    /// Provides a piece of functionality, e.g. serializes SQL data within "db" add-in.
+    /// </summary>
+    public interface ICliWorker
     {
         ICliAddIn AddIn { get; }
         string Alias { get; }

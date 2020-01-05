@@ -6,6 +6,7 @@ using System.Text;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
+using TauCode.Extensions;
 using TauCode.Extensions.Lab;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
@@ -17,6 +18,21 @@ namespace TauCode.Cli
     // todo clean up
     public abstract class CliProgramBase : ICliProgram
     {
+        private class AddInRecord
+        {
+            public AddInRecord(INode node, ICliAddIn addIn, IEnumerable<ICliWorker> workers)
+            {
+                this.Node = node;
+                this.AddIn = addIn;
+                this.Workers = workers
+                    .ToDictionary(x => x.Alias, x => x);
+            }
+
+            public INode Node { get; }
+            public ICliAddIn AddIn { get; }
+            public IDictionary<string, ICliWorker> Workers { get; }
+        }
+
         private string[] _arguments;
         private readonly string _version;
         private readonly INodeFamily _nodeFamily;
@@ -25,6 +41,7 @@ namespace TauCode.Cli
         private ILexer _inputLexer;
         private TextWriter _textWriter;
 
+        private readonly IDictionary<string, AddInRecord> _addIns;
         private readonly IDictionary<string, Action> _customHandlers;
 
         private INode _root;
@@ -45,6 +62,7 @@ namespace TauCode.Cli
             _textWriter = TextWriter.Null;
             _customHandlers = new Dictionary<string, Action>();
             _nodeFamily = new NodeFamily("todo-program-family-name");
+            _addIns = new Dictionary<string, AddInRecord>();
         }
 
         protected abstract IReadOnlyList<ICliAddIn> GetAddIns();
@@ -72,7 +90,7 @@ namespace TauCode.Cli
 
         protected void AddCustomHandler(
             string addInName,
-            string processorAlias,
+            string workerAlias,
             string tokenText,
             ITextClass textClass,
             Action action)
@@ -82,14 +100,9 @@ namespace TauCode.Cli
                 textClass,
                 (nodeArg, tokenArg, resultAccumulator) =>
                 {
-                    //throw new StopParsingExceptionLab("Custom Handler Requested", ((TextToken)tokenArg).Text);
-                    var command = new CliCommand
-                    {
-                        AddInName = addInName,
-                        ProcessorAlias = processorAlias,
-                    };
-
-                    throw new CliCustomHandlerException(command);
+                    var textToken = (TextToken)tokenArg;
+                    var actualTextToken = textToken.Text;
+                    throw new CliCustomHandlerException(addInName, workerAlias, actualTextToken);
                 },
                 _nodeFamily,
                 null);
@@ -102,7 +115,7 @@ namespace TauCode.Cli
             }
             else
             {
-                throw new NotImplementedException();
+                node = _addIns[addInName].Node;
             }
 
             node.EstablishLink(customHandlerNode);
@@ -140,10 +153,10 @@ namespace TauCode.Cli
 
             sb.AppendLine("Available add-ins:");
 
-            var addIns = this.GetAddIns();
-
-            foreach (var addIn in addIns)
+            foreach (var record in _addIns.Values)
             {
+                var addIn = record.AddIn;
+
                 var addInName = addIn.Name;
                 sb.AppendLine(addInName);
                 sb.AppendLine("-".Repeat(addInName.Length));
@@ -159,56 +172,49 @@ namespace TauCode.Cli
 
         public int Run()
         {
-            if (_root == null)
-            {
-                this.BuildRoot();
-            }
-
             var input = string.Join(" ", this.Arguments);
             var tokens = this.Lexer.Lexize(input);
 
             CliCommand command;
-            
 
             try
             {
-                command = (CliCommand)this.Parser.Parse(_root, tokens).Single();
+                command = (CliCommand)this.Parser.Parse(this.Root, tokens).Single();
             }
             catch (CliCustomHandlerException ex)
             {
-                throw new NotImplementedException();
+                if (ex.AddInName == null)
+                {
+                    if (ex.WorkerAlias == null)
+                    {
+                        var action = _customHandlers.GetOrDefault(ex.TokenText);
+                        if (action == null)
+                        {
+                            throw;
+                        }
 
-                //var action = _customHandlers.GetOrDefault(ex.HandlerTokenText);
-                //if (action == null)
-                //{
-                //    throw;
-                //}
+                        action();
+                        return 111; // todo
 
-                //action();
-                //return 111; // todo
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
 
-            //if (command.AddInName == "<CustomHandler>")
-            //{
-            //    var action = _customHandlers[command.ProcessorAlias];
-
-            //    try
-            //    {
-            //        action();
-            //        return 0;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        this.Output.WriteLine(e);
-            //        return -1;
-            //    }
-            //}
 
             // todo: lines below might throw (?)
-            var addIn = this.GetAddIns().Single(x => x.Name == command.AddInName);
-            var processor = addIn.GetProcessors().Single(x => x.Alias == command.ProcessorAlias);
 
-            processor.Process(command.Entries);
+            var record = _addIns[command.AddInName];
+            var worker = record.Workers[command.WorkerAlias];
+
+            worker.Process(command.Entries);
             return 222; // todo
         }
 
@@ -239,6 +245,23 @@ namespace TauCode.Cli
                         this.Output.WriteLine(this.GetHelp());
                     });
             }
+
+            foreach (var record in _addIns.Values)
+            {
+                var addIn = record.AddIn;
+                if (addIn.GetVersion() != null)
+                {
+                    this.AddCustomHandler(
+                        addIn.Name,
+                        null,
+                        "--version",
+                        KeyTextClass.Instance,
+                        () =>
+                        {
+                            this.Output.WriteLine(addIn.GetVersion());
+                        });
+                }
+            }
         }
 
         private INode BuildRoot()
@@ -258,11 +281,14 @@ namespace TauCode.Cli
                 addInNode.Properties["add-in-name"] = addIn.Name;
                 root.EstablishLink(addInNode);
 
-                var processors = addIn.GetProcessors();
-                foreach (var processor in processors)
+                var workers = addIn.GetWorkers();
+                foreach (var worker in workers)
                 {
-                    addInNode.EstablishLink(processor.Node);
+                    addInNode.EstablishLink(worker.Node);
                 }
+
+                var record = new AddInRecord(addInNode, addIn, workers);
+                _addIns.Add(addIn.Name, record);
             }
 
             return root;

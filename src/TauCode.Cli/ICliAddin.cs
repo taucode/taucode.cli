@@ -10,6 +10,6 @@ namespace TauCode.Cli
         bool SupportsHelp { get; }
         string GetVersion();
         string GetHelp();
-        IReadOnlyList<ICliProcessor> GetProcessors();
+        IReadOnlyList<ICliWorker> GetWorkers();
     }
 }

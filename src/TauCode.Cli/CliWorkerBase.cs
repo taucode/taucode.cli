@@ -11,9 +11,9 @@ using TauCode.Parsing.TinyLisp.Data;
 namespace TauCode.Cli
 {
     // todo clean up
-    public abstract class CliProcessorBase : ICliProcessor
+    public abstract class CliWorkerBase : ICliWorker
     {
-        protected CliProcessorBase(ICliAddIn addIn, string grammar)
+        protected CliWorkerBase(ICliAddIn addIn, string grammar)
         {
             // todo checks
 
@@ -34,18 +34,14 @@ namespace TauCode.Cli
             var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
             var supposedCommandForm = topDefblock.GetFreeArguments().First();
             alias = null;
-            if (supposedCommandForm.GetCarSymbolName() == "PROCESSOR")
+            if (supposedCommandForm.GetCarSymbolName() == "WORKER")
             {
                 alias = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":alias").Name;
             }
 
-            INodeFactory nodeFactory = new CliNodeFactory($"Todo: processor for alias '{alias}'");
+            INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{alias}'");
             IBuilder builder = new Builder();
             node = builder.Build(nodeFactory, form);
-
-
-            //return processorNode;
-
         }
 
         protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)

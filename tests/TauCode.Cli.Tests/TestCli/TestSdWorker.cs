@@ -6,10 +6,10 @@ using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.TestCli
 {
-    public class TestSdProcessor : CliProcessorBase
+    public class TestSdWorker : CliWorkerBase
     {
-        public TestSdProcessor(ICliAddIn addIn)
-            : base(addIn, typeof(TestSdProcessor).Assembly.GetResourceText("sd-grammar.lisp", true))
+        public TestSdWorker(ICliAddIn addIn)
+            : base(addIn, typeof(TestSdWorker).Assembly.GetResourceText("sd-grammar.lisp", true))
         {
         }
 

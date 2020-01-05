@@ -1,17 +1,25 @@
 ﻿using System;
-using TauCode.Cli.Data;
 
 namespace TauCode.Cli.Exceptions
 {
     [Serializable]
     public class CliCustomHandlerException : Exception
     {
-        public CliCustomHandlerException(string addInName, string processorAlias, string tokenText)
+        public CliCustomHandlerException(
+            string addInName,
+            string workerAlias,
+            string tokenText)
         {
             // todo checks
-            this.Command = command;
+            this.AddInName = addInName;
+            this.WorkerAlias = workerAlias;
+            this.TokenText = tokenText;
         }
 
-        public CliCommand Command { get; }
+        public string AddInName { get; }
+
+        public string WorkerAlias { get; }
+
+        public string TokenText { get; }
     }
 }

@@ -33,7 +33,7 @@ namespace TauCode.Cli
 
             switch (car)
             {
-                case "PROCESSOR":
+                case "WORKER":
                     node = this.CreateAliasNode(item);
                     break;
 
@@ -197,7 +197,7 @@ namespace TauCode.Cli
         private void ProcessAlias(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
-            command.ProcessorAlias = actionNode.Properties["alias"];
+            command.WorkerAlias = actionNode.Properties["alias"];
         }
 
         private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)

@@ -32,6 +32,6 @@ namespace TauCode.Cli
             throw new NotImplementedException();
         }
 
-        public abstract IReadOnlyList<ICliProcessor> GetProcessors();
+        public abstract IReadOnlyList<ICliWorker> GetWorkers();
     }
 }

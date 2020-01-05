@@ -7,15 +7,17 @@ namespace TauCode.Cli.Tests.TestCli
         public TestDbAddIn(ICliProgram program)
             : base(
                 program,
-                "db")
+                "db",
+                "db-1488",
+                true)
         {
         }
 
-        public override IReadOnlyList<ICliProcessor> GetProcessors()
+        public override IReadOnlyList<ICliWorker> GetWorkers()
         {
-            return new ICliProcessor[]
+            return new ICliWorker[]
             {
-                new TestSdProcessor(this), 
+                new TestSdWorker(this), 
             };
         }
     }

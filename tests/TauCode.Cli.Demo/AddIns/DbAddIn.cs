@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Demo.AddIns.DbAddInProcessors;
+using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
 
 namespace TauCode.Cli.Demo.AddIns
 {
@@ -10,11 +10,11 @@ namespace TauCode.Cli.Demo.AddIns
         {
         }
 
-        public override IReadOnlyList<ICliProcessor> GetProcessors()
+        public override IReadOnlyList<ICliWorker> GetWorkers()
         {
-            return new ICliProcessor[]
+            return new ICliWorker[]
             {
-                new SdProcessor(this),
+                new SerializeDataWorker(this),
             };
         }
     }
