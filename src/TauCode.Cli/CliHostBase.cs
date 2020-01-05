@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
@@ -9,23 +8,37 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
+    // todo: clean up.
     public abstract class CliHostBase : ICliHost
     {
+        #region Fields
+
+        private TextWriter _output;
+        private TextReader _input;
+
+        #endregion
+
         #region Nested
 
         private class AddInRecord
         {
-            public AddInRecord(INode node, ICliAddIn addIn/*, IEnumerable<ICliWorker> workers*/)
+            private readonly Dictionary<string, ICliWorker> _workers;
+
+            public AddInRecord(INode node, ICliAddIn addIn, IEnumerable<ICliWorker> workers)
             {
                 this.Node = node;
                 this.AddIn = addIn;
-                //this.Workers = workers
-                //    .ToDictionary(x => x.Name, x => x);
+                _workers = workers
+                    .ToDictionary(x => x.Name, x => x);
             }
 
             public INode Node { get; }
             public ICliAddIn AddIn { get; }
             //public IDictionary<string, ICliWorker> Workers { get; }
+            public ICliWorker GetWorker(string workerName)
+            {
+                return _workers[workerName];
+            }
         }
 
         #endregion
@@ -38,15 +51,24 @@ namespace TauCode.Cli
         private readonly INodeFamily _nodeFamily;
 
         private readonly IDictionary<string, AddInRecord> _addIns;
+        private List<ICliAddIn> _addInList;
 
         #endregion
 
         #region Constructor
 
-        protected CliHostBase()
+        protected CliHostBase(string name, string version, bool supportsHelp)
         {
+            this.Name = name;
+            this.Version = version;
+            this.SupportsHelp = supportsHelp;
+
             _nodeFamily = new NodeFamily("todo-program-family-name");
             _addIns = new Dictionary<string, AddInRecord>();
+
+            _output = TextWriter.Null;
+            _input = TextReader.Null;
+            
         }
 
         #endregion
@@ -74,10 +96,10 @@ namespace TauCode.Cli
 
         protected virtual IParser CreateParser() => new CliParser();
 
-        protected virtual INode BuildNode()
+        private INode BuildNode()  // todo: need 'protected virtual'?
         {
             var addIns = this.CreateAddIns();
-            var root = new IdleNode(_nodeFamily, "<program root>");
+            var root = new IdleNode(_nodeFamily, "<host root>");
 
             foreach (var addIn in addIns)
             {
@@ -98,19 +120,31 @@ namespace TauCode.Cli
                 //}
 
                 var node = addIn.Node;
+                root.EstablishLink(node);
 
-                var record = new AddInRecord(node, addIn);
+                var record = new AddInRecord(node, addIn, addIn.GetWorkers());
                 _addIns.Add(addIn.Name, record);
             }
 
+            _addInList = _addIns
+                .Values
+                .Select(x => x.AddIn)
+                .ToList();
+
             return root;
         }
+
+        protected abstract IEnumerable<ICliAddIn> CreateAddIns();
 
         #endregion
 
         #region ICliHost Members
 
-        public abstract ICliAddIn[] CreateAddIns();
+        public IReadOnlyList<ICliAddIn> GetAddIns()
+        {
+            var dummyNode = this.Node; // make node-build happen
+            return _addInList;
+        }
 
         public CliCommand ParseCommand(params string[] input)
         {
@@ -125,23 +159,63 @@ namespace TauCode.Cli
 
         public void DispatchCommand(CliCommand command)
         {
-            throw new NotImplementedException();
+            var addInRecord = _addIns[command.AddInName];
+            var worker = addInRecord.GetWorker(command.WorkerName);
+
+            worker.Process(command.Entries);
+
+            //var worker = addIn.AddIn.CreateWorkers()
+            //throw new NotImplementedException();
         }
 
         #endregion
 
         #region ICliFunctionalityProvider Members
 
-        public string Name => throw new NotImplementedException();
-        public TextWriter Output => throw new NotImplementedException();
-        public TextReader Input => throw new NotImplementedException();
-        public INode Node => _node ?? (_node = this.BuildNode());
-        public string Version => throw new NotImplementedException();
-        public bool SupportsHelp => throw new NotImplementedException();
+        public string Name { get; }
+
+        public TextWriter Output
+        {
+            get => _output;
+            set => _output = value ?? TextWriter.Null;
+        }
+
+        public TextReader Input
+        {
+            get => _input;
+            set => _input = value ?? TextReader.Null;
+        }
+
+        public INode Node
+        {
+            get
+            {
+                if (_node == null)
+                {
+                    _node = this.BuildNode();
+
+                    if (this.Version != null)
+                    {
+                        this.AddVersion();
+                    }
+
+                    if (this.SupportsHelp)
+                    {
+                        this.AddHelp();
+                    }
+                }
+
+                return _node;
+            }
+        }
+
+        public string Version { get; }
+
+        public bool SupportsHelp { get; }
 
         public string GetHelp()
         {
-            throw new NotImplementedException();
+            return "todo: help for host";
         }
         
         #endregion

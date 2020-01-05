@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Data.Entries;
 using TauCode.Parsing;
+using TauCode.Parsing.Building;
+using TauCode.Parsing.TinyLisp;
+using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli
 {
@@ -11,8 +16,9 @@ namespace TauCode.Cli
     {
         #region Fields
 
-        private readonly string _grammar;
+        //private readonly string _grammar;
         private INode _node;
+        private readonly PseudoList _form;
 
         #endregion
 
@@ -25,8 +31,19 @@ namespace TauCode.Cli
             bool supportsHelp)
         {
             this.AddIn = addIn ?? throw new ArgumentNullException(nameof(addIn));
-            _grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
-            this.Name = this.ExtractNameFromGrammar(grammar);
+            //_grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
+
+            if (grammar == null)
+            {
+                throw new ArgumentNullException(nameof(grammar));
+            }
+
+            var tinyLispLexer = new TinyLispLexer();
+            var tinyLispPseudoReader = new TinyLispPseudoReader();
+            var lispTokens = tinyLispLexer.Lexize(grammar);
+            _form = tinyLispPseudoReader.Read(lispTokens);
+
+            this.Name = this.ExtractName();
             this.Version = version;
             this.SupportsHelp = supportsHelp;
         }
@@ -36,18 +53,39 @@ namespace TauCode.Cli
 
         #region Private
 
-        private string ExtractNameFromGrammar(string grammar)
+        private string ExtractName()
         {
-            throw new NotImplementedException();
+            var topDefblock = _form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
+            var supposedCommandForm = topDefblock.GetFreeArguments().First();
+            string name = null;
+            if (supposedCommandForm.GetCarSymbolName() == "WORKER")
+            {
+                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+            }
+
+            return name;
         }
 
         #endregion
 
         #region Protected
 
-        protected virtual INode BuildNode()
+        private INode BuildNode() // todo: need 'protected virtual'?
         {
-            throw new NotImplementedException();
+            INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{this.Name}'");
+            IBuilder builder = new Builder();
+            var node = builder.Build(nodeFactory, _form);
+
+            return node;
+        }
+
+        protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
+        {
+            // todo: can throw
+            return entries
+                .Where(x => x is KeyValueCliCommandEntry)
+                .Cast<KeyValueCliCommandEntry>()
+                .Single(x => string.Equals(x.Alias, alias, StringComparison.InvariantCultureIgnoreCase)).Value;
         }
 
         #endregion
@@ -63,10 +101,23 @@ namespace TauCode.Cli
         #region ICliFunctionalityProvider Members
 
         public string Name { get; }
-        public TextWriter Output => this.AddIn.Output;
-        public TextReader Input => this.AddIn.Input;
+
+        public TextWriter Output
+        {
+            get => this.AddIn.Output;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        }
+
+        public TextReader Input
+        {
+            get => this.AddIn.Input;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        }
+
         public INode Node => _node ?? (_node = this.BuildNode());
+
         public string Version { get; }
+
         public bool SupportsHelp { get; }
 
         public string GetHelp()
@@ -109,14 +160,6 @@ namespace TauCode.Cli
         //    node = builder.Build(nodeFactory, form);
         //}
 
-        //protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
-        //{
-        //    // todo: can throw
-        //    return entries
-        //        .Where(x => x is KeyValueCliCommandEntry)
-        //        .Cast<KeyValueCliCommandEntry>()
-        //        .Single(x => string.Equals(x.Alias, alias, StringComparison.InvariantCultureIgnoreCase)).Value;
-        //}
 
         //public ICliAddIn AddIn { get; }
 

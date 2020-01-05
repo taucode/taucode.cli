@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using TauCode.Cli.Data;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
@@ -13,6 +16,7 @@ namespace TauCode.Cli
 
         private INode _node;
         private readonly INodeFamily _nodeFamily;
+        private readonly List<ICliWorker> _workers;
 
         #endregion
 
@@ -27,6 +31,7 @@ namespace TauCode.Cli
             this.SupportsHelp = supportsHelp;
 
             _nodeFamily = new NodeFamily($"todo-program-family-name-{this.Name}"); // todo: deal with Name == null.
+            _workers = new List<ICliWorker>();
         }
 
         #endregion
@@ -35,15 +40,21 @@ namespace TauCode.Cli
 
         private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            throw new NotImplementedException();
-        }
+            var command = new CliCommand
+            {
+                AddInName = node.Properties["add-in-name"],
+            };
 
+            resultAccumulator.AddResult(command);
+        }
 
         #endregion
 
         #region Protected
 
-        protected virtual INode BuildNode()
+        protected abstract IEnumerable<ICliWorker> CreateWorkers();
+
+        private INode BuildNode() // todo: need 'protected virtual'?
         {
             if (this.Name == null)
             {
@@ -60,7 +71,10 @@ namespace TauCode.Cli
 
                 addInNode.Properties["add-in-name"] = this.Name; // todo: deal with Name == null
                 
-                var workers = this.CreateWorkers();
+                var workers = this.CreateWorkers().ToList();
+
+                _workers.AddRange(workers);
+
                 foreach (var worker in workers)
                 {
                     addInNode.EstablishLink(worker.Node);
@@ -76,24 +90,36 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; }
 
-        public abstract ICliWorker[] CreateWorkers();
+        public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
 
         #endregion
 
         #region ICliFunctionalityProvider Members
 
         public string Name { get; }
-        public TextWriter Output => this.Host.Output;
-        public TextReader Input => this.Host.Input;
+
+        public TextWriter Output
+        {
+            get => this.Host.Output;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        }
+
+        public TextReader Input
+        {
+            get => this.Host.Input;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        }
+
         public INode Node => _node ?? (_node = this.BuildNode());
+
         public string Version { get; }
+
         public bool SupportsHelp { get; }
 
         public string GetHelp()
         {
             throw new NotImplementedException();
         }
-
 
         #endregion
 

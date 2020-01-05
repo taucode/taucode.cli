@@ -1,4 +1,6 @@
-﻿namespace TauCode.Cli.Tests.TestCli
+﻿using System.Collections.Generic;
+
+namespace TauCode.Cli.Tests.TestCli
 {
     public class TestDbAddIn : CliAddInBase
     {
@@ -18,7 +20,7 @@
         //        new TestSdWorker(this), 
         //    };
         //}
-        public override ICliWorker[] CreateWorkers()
+        protected override IEnumerable<ICliWorker> CreateWorkers()
         {
             throw new System.NotImplementedException();
         }

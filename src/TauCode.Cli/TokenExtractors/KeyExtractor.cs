@@ -1,16 +1,14 @@
 ﻿using TauCode.Cli.TextClasses;
-using TauCode.Cli.TextDecorations;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Tokens;
+using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.TokenExtractors
 {
+    // todo: clean up.
     public class KeyExtractor : TokenExtractorBase
     {
-        private ITextDecoration _textDecoration;
-        private int? _skip;
-
         public KeyExtractor(ILexingEnvironment environment)
             : base(environment, c => c == '-')
         {
@@ -18,14 +16,12 @@ namespace TauCode.Cli.TokenExtractors
 
         protected override void ResetState()
         {
-            _textDecoration = null;
-            _skip = null;
         }
 
         protected override IToken ProduceResult()
         {
-            var str = this.ExtractResultString().Substring(_skip.Value);
-            var token = new TextToken(KeyTextClass.Instance, _textDecoration, str);
+            var str = this.ExtractResultString();
+            var token = new TextToken(KeyTextClass.Instance, NoneTextDecoration.Instance, str);
             return token;
         }
 
@@ -36,9 +32,6 @@ namespace TauCode.Cli.TokenExtractors
 
             if (pos == 0)
             {
-                _skip = 1;
-                _textDecoration = HyphenTextDecoration.InstanceWithOneHyphen;
-
                 return CharChallengeResult.Continue; // 0th char MUST have been accepted.
             }
 
@@ -46,8 +39,8 @@ namespace TauCode.Cli.TokenExtractors
             {
                 if (c == '-')
                 {
-                    _skip = 2;
-                    _textDecoration = HyphenTextDecoration.InstanceWithTwoHyphens;
+                    //_skip = 2;
+                    //_textDecoration = HyphenTextDecoration.InstanceWithTwoHyphens;
                     return CharChallengeResult.Continue;
                 }
 

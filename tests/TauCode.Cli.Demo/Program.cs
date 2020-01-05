@@ -1,7 +1,9 @@
 ﻿using System;
+using TauCode.Cli.Exceptions;
 
 namespace TauCode.Cli.Demo
 {
+    // todo: clean up.
     public class Program
     {
         private class ExitException : Exception { }
@@ -10,6 +12,16 @@ namespace TauCode.Cli.Demo
         {
             ICliHost host = new DemoHost();
 
+            host.Output = Console.Out;
+            host.Input = Console.In;
+
+            host.AddCustomHandler(
+                () => throw new ExitException(),
+                "exit");
+
+            host.AddCustomHandler(
+                Console.Clear,
+                "cls");
 
             while (true)
             {
@@ -26,6 +38,10 @@ namespace TauCode.Cli.Demo
                 catch (ExitException)
                 {
                     break;
+                }
+                catch (CliCustomHandlerException)
+                {
+                    // ignore.
                 }
                 catch (Exception ex)
                 {

@@ -1,4 +1,5 @@
-﻿using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
+﻿using System.Collections.Generic;
+using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
 
 namespace TauCode.Cli.Demo.AddIns
 {
@@ -17,11 +18,11 @@ namespace TauCode.Cli.Demo.AddIns
         //    };
         //}
 
-        public override ICliWorker[] CreateWorkers()
+        protected override IEnumerable<ICliWorker> CreateWorkers()
         {
             return new ICliWorker[]
-            {
-                    new SerializeDataWorker(this),
+            {       
+                new SerializeDataWorker(this),
             };
         }
     }

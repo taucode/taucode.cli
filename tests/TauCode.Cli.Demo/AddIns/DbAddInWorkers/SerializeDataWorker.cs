@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TauCode.Cli.Data;
 using TauCode.Extensions;
 
@@ -19,16 +18,14 @@ namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
 
         public override void Process(IList<ICliCommandEntry> entries)
         {
-            throw new NotImplementedException();
-            //var writer = this.AddIn.Program.Output;
-            //var connection = this.GetSingleValue(entries, "connection");
-            //var provider = this.GetSingleValue(entries, "provider");
-            //var file = this.GetSingleValue(entries, "file");
+            var connection = this.GetSingleValue(entries, "connection");
+            var provider = this.GetSingleValue(entries, "provider");
+            var file = this.GetSingleValue(entries, "file");
 
-            //writer.WriteLine("Serialize Data");
-            //writer.WriteLine($"Connection: {connection}");
-            //writer.WriteLine($"Provider: {provider}");
-            //writer.WriteLine($"File: {file}");
+            this.Output.WriteLine("Serialize Data");
+            this.Output.WriteLine($"Connection: {connection}");
+            this.Output.WriteLine($"Provider: {provider}");
+            this.Output.WriteLine($"File: {file}");
         }
     }
 }

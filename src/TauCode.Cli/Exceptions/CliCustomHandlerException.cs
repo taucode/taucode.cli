@@ -6,20 +6,21 @@ namespace TauCode.Cli.Exceptions
     public class CliCustomHandlerException : Exception
     {
         public CliCustomHandlerException(
-            string addInName,
+            /*string addInName,
             string workerAlias,
-            string tokenText)
+            string tokenText*/)
         {
             // todo checks
-            this.AddInName = addInName;
-            this.WorkerAlias = workerAlias;
-            this.TokenText = tokenText;
+            //this.AddInName = addInName;
+            //this.WorkerAlias = workerAlias;
+            //this.TokenText = tokenText;
         }
 
-        public string AddInName { get; }
+        //public string AddInName { get; }
 
-        public string WorkerAlias { get; }
+        //public string WorkerAlias { get; }
 
-        public string TokenText { get; }
+        //public string TokenText { get; }
     }
 }
+// todo: clean up.

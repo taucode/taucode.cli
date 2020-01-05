@@ -34,7 +34,7 @@ namespace TauCode.Cli
             switch (car)
             {
                 case "WORKER":
-                    node = this.CreateAliasNode(item);
+                    node = this.CreateWorkerNode(item);
                     break;
 
                 case "KEY-WITH-VALUE":
@@ -60,7 +60,7 @@ namespace TauCode.Cli
 
         #region Node Creators
 
-        private INode CreateAliasNode(PseudoList item)
+        private INode CreateWorkerNode(PseudoList item)
         {
             var verbs = item
                 .GetAllKeywordArguments(":verbs")
@@ -75,8 +75,8 @@ namespace TauCode.Cli
                 this.NodeFamily,
                 item.GetItemName());
 
-            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
-            node.Properties["alias"] = alias;
+            var alias = item.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+            node.Properties["worker-name"] = alias;
 
             return node;
         }
@@ -197,7 +197,7 @@ namespace TauCode.Cli
         private void ProcessAlias(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
-            command.WorkerAlias = actionNode.Properties["alias"];
+            command.WorkerName = actionNode.Properties["worker-name"];
         }
 
         private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)

@@ -1,4 +1,6 @@
-﻿namespace TauCode.Cli
+﻿using System.Collections.Generic;
+
+namespace TauCode.Cli
 {
     // todo clean up
     public interface ICliAddIn : ICliFunctionalityProvider
@@ -9,6 +11,6 @@
         //bool SupportsHelp { get; }
         //string GetVersion();
         //string GetHelp();
-        ICliWorker[] CreateWorkers();
+        IReadOnlyList<ICliWorker> GetWorkers();
     }
 }

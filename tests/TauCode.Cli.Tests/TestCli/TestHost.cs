@@ -1,7 +1,14 @@
-﻿namespace TauCode.Cli.Tests.TestCli
+﻿using System.Collections.Generic;
+
+namespace TauCode.Cli.Tests.TestCli
 {
     public class TestHost : CliHostBase
     {
+        public TestHost()
+            : base("test", "test-1488", true)
+        {   
+        }
+
         //public TestHost()
         //    : base(
         //        "foo",
@@ -18,7 +25,7 @@
         //        new TestDbAddIn(this), 
         //    };
         //}
-        public override ICliAddIn[] CreateAddIns()
+        protected override IEnumerable<ICliAddIn> CreateAddIns()
         {
             throw new System.NotImplementedException();
         }
