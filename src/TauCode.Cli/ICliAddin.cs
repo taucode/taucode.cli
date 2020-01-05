@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace TauCode.Cli
+﻿namespace TauCode.Cli
 {
-    public interface ICliAddIn
+    // todo clean up
+    public interface ICliAddIn : ICliFunctionalityProvider
     {
-        ICliProgram Program { get; }
-        string Name { get; }
-        string Description { get; }
-        bool SupportsHelp { get; }
-        string GetVersion();
-        string GetHelp();
-        IReadOnlyList<ICliWorker> GetWorkers();
+        ICliHost Host { get; }
+        //string Name { get; }
+        //string Description { get; }
+        //bool SupportsHelp { get; }
+        //string GetVersion();
+        //string GetHelp();
+        ICliWorker[] CreateWorkers();
     }
 }

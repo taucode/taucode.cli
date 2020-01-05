@@ -1,24 +1,26 @@
-﻿using System.Collections.Generic;
-
-namespace TauCode.Cli.Tests.TestCli
+﻿namespace TauCode.Cli.Tests.TestCli
 {
     public class TestDbAddIn : CliAddInBase
     {
-        public TestDbAddIn(ICliProgram program)
+        public TestDbAddIn(ICliHost host)
             : base(
-                program,
+                host,
                 "db",
                 "db-1488",
                 true)
         {
         }
 
-        public override IReadOnlyList<ICliWorker> GetWorkers()
+        //public override IReadOnlyList<ICliWorker> CreateWorkers()
+        //{
+        //    return new ICliWorker[]
+        //    {
+        //        new TestSdWorker(this), 
+        //    };
+        //}
+        public override ICliWorker[] CreateWorkers()
         {
-            return new ICliWorker[]
-            {
-                new TestSdWorker(this), 
-            };
+            throw new System.NotImplementedException();
         }
     }
 }

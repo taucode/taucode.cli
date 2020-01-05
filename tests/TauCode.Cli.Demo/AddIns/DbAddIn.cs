@@ -1,20 +1,27 @@
-﻿using System.Collections.Generic;
-using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
+﻿using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
 
 namespace TauCode.Cli.Demo.AddIns
 {
     public class DbAddIn : CliAddInBase
     {
-        public DbAddIn(ICliProgram program)
-            : base(program, "db", "db-1488", true)
+        public DbAddIn(ICliHost host)
+            : base(host, "db", "db-1488", true)
         {
         }
 
-        public override IReadOnlyList<ICliWorker> GetWorkers()
+        //public override IReadOnlyList<ICliWorker> CreateWorkers()
+        //{
+        //    return new ICliWorker[]
+        //    {
+        //        new SerializeDataWorker(this),
+        //    };
+        //}
+
+        public override ICliWorker[] CreateWorkers()
         {
             return new ICliWorker[]
             {
-                new SerializeDataWorker(this),
+                    new SerializeDataWorker(this),
             };
         }
     }
