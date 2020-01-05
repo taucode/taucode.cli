@@ -114,7 +114,29 @@ namespace TauCode.Cli
             set => throw new NotSupportedException(); // todo: message 'use writer of owner'
         }
 
-        public INode Node => _node ?? (_node = this.BuildNode());
+        //public INode Node => _node ?? (_node = this.BuildNode());
+        public INode Node
+        {
+            get
+            {
+                if (_node == null)
+                {
+                    _node = this.BuildNode();
+
+                    if (this.Version != null)
+                    {
+                        this.AddVersion();
+                    }
+
+                    if (this.SupportsHelp)
+                    {
+                        this.AddHelp();
+                    }
+                }
+
+                return _node;
+            }
+        }
 
         public string Version { get; }
 
@@ -122,7 +144,7 @@ namespace TauCode.Cli
 
         public string GetHelp()
         {
-            throw new NotImplementedException();
+            return "todo: worker help.";
         }
 
         #endregion
