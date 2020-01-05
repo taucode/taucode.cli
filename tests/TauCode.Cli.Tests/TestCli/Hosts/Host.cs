@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using TauCode.Cli.Tests.TestCli.AddIns;
 
-namespace TauCode.Cli.Tests.TestCli
+namespace TauCode.Cli.Tests.TestCli.Hosts
 {
     public class Host : CliHostBase
     {

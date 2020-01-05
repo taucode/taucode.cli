@@ -9,7 +9,7 @@ namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
         public SerializeDataWorker()
             : base(
                 typeof(Program).Assembly.GetResourceText("sd-grammar.lisp", true),
-                "todo-sd", 
+                "sd-1.0", 
                 true)
         {
         }

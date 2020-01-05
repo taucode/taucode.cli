@@ -6,7 +6,7 @@ namespace TauCode.Cli.Demo
     public class DemoHost : CliHostBase
     {
         public DemoHost()
-            : base("demo", "demo-1488", true)
+            : base("demo", "demo-1.0", true)
         {
 
         }

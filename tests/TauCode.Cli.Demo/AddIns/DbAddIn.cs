@@ -6,7 +6,7 @@ namespace TauCode.Cli.Demo.AddIns
     public class DbAddIn : CliAddInBase
     {
         public DbAddIn()
-            : base("db", "db-1488", true)//todo
+            : base("db", "db-1.0", true)
         {
         }
 

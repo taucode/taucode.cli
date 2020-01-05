@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using TauCode.Cli.Tests.TestCli.Workers;
 
-namespace TauCode.Cli.Tests.TestCli
+namespace TauCode.Cli.Tests.TestCli.AddIns
 {
     public class DbAddIn : CliAddInBase
     {
         public DbAddIn()
             : base(
                 "db",
-                "sd-1.0",
+                "db-1.0",
                 true)
         {
         }
@@ -16,7 +17,7 @@ namespace TauCode.Cli.Tests.TestCli
         {
             return new ICliWorker[]
             {
-                new SdWorker(),
+                new SerializeDataWorker(),
             };
         }
     }

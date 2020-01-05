@@ -6,10 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\curl-grammar.lisp" />
     <None Remove="Resources\sd-grammar.lisp" />
+    <None Remove="Resources\sql-grammar-nameless.lisp" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\curl-grammar.lisp" />
+    <EmbeddedResource Include="Resources\sql-grammar-nameless.lisp" />
     <EmbeddedResource Include="Resources\sd-grammar.lisp" />
   </ItemGroup>
 

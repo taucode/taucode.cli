@@ -4,13 +4,13 @@ using TauCode.Cli.Data;
 using TauCode.Cli.Data.Entries;
 using TauCode.Extensions;
 
-namespace TauCode.Cli.Tests.TestCli
+namespace TauCode.Cli.Tests.TestCli.Workers
 {
-    public class SdWorker : CliWorkerBase
+    public class SerializeDataWorker : CliWorkerBase
     {
-        public SdWorker()
+        public SerializeDataWorker()
             : base(
-                typeof(SdWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
+                typeof(SerializeDataWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
                 "sd-1.0", 
                 true)
         {
