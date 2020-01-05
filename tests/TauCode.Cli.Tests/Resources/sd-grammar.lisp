@@ -1,7 +1,6 @@
 (defblock :name serialize-data :is-top t
 	(worker
-		:worker-name "Serialize SQL Database Data"
-		:alias serialize-data
+		:worker-name serialize-data
 		:verbs "serialize-data" "sd"
 		:doc "Serializes all tables data into a JSON file."
 		:usage-sample "sd --conn=Server=.;Database=my_db;Trusted_Connection=True; --provider=sqlserver --file=c:/temp/db.json")

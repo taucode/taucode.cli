@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TauCode.Cli.Demo.AddIns;
-using TauCode.Parsing.Lexing;
 
 namespace TauCode.Cli.Demo
 {
@@ -19,7 +18,5 @@ namespace TauCode.Cli.Demo
                 new DbAddIn(this),
             };
         }
-
-        protected override ILexer CreateLexer() => new DemoLexer();
     }
 }

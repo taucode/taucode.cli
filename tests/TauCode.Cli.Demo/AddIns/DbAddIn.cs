@@ -10,14 +10,6 @@ namespace TauCode.Cli.Demo.AddIns
         {
         }
 
-        //public override IReadOnlyList<ICliWorker> CreateWorkers()
-        //{
-        //    return new ICliWorker[]
-        //    {
-        //        new SerializeDataWorker(this),
-        //    };
-        //}
-
         protected override IEnumerable<ICliWorker> CreateWorkers()
         {
             return new ICliWorker[]

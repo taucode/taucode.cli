@@ -8,31 +8,34 @@ namespace TauCode.Cli.Tests
     public class CliProgramTests
     {
         [Test]
-        public void WatTodo()
+        public void Dispatch_ValidInput_ProducesExpectedResult()
         {
             var writer = new StringWriterWithEncodingLab();
 
-            var program = new TestHost
+            var host = new TestHost
             {
                 Output = writer,
-                Arguments = new []
-                {
-                    "db",
-                    "sd",
-                    "--conn",
-                    "\"Server=.;Database=econera.diet.tracking;Trusted_Connection=True;\"",
-                    "--provider",
-                    "sqlserver",
-                    " --file",
-                    "c:/temp/mysqlite.json",
-                },
             };
-            var exitCode = program.Run();
+
+            var input = new[]
+            {
+                "db",
+                "sd",
+                "--conn",
+                "\"Server=.;Database=econera.diet.tracking;Trusted_Connection=True;\"",
+                "--provider",
+                "sqlserver",
+                " --file",
+                "c:/temp/mysqlite.json",
+            };
+
+            var command = host.ParseCommand(input);
+            host.DispatchCommand(command);
+
             writer.Flush();
 
             var result = writer.GetStringBuilder().ToString();
 
-            Assert.That(exitCode, Is.EqualTo(0));
             Assert.That(result, Is.EqualTo(
 @"Serialize Data
 Connection: Server=.;Database=econera.diet.tracking;Trusted_Connection=True;

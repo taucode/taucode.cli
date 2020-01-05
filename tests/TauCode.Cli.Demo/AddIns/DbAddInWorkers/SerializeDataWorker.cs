@@ -7,7 +7,6 @@ namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
     public class SerializeDataWorker : CliWorkerBase
     {
         public SerializeDataWorker(ICliAddIn addIn)
-        //: base(addIn, typeof(Program).Assembly.GetResourceText("sd-grammar.lisp", true))
             : base(
                 addIn,
                 typeof(Program).Assembly.GetResourceText("sd-grammar.lisp", true),

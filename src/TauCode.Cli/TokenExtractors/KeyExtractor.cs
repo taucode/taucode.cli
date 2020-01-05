@@ -6,7 +6,6 @@ using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.TokenExtractors
 {
-    // todo: clean up.
     public class KeyExtractor : TokenExtractorBase
     {
         public KeyExtractor(ILexingEnvironment environment)
@@ -39,8 +38,6 @@ namespace TauCode.Cli.TokenExtractors
             {
                 if (c == '-')
                 {
-                    //_skip = 2;
-                    //_textDecoration = HyphenTextDecoration.InstanceWithTwoHyphens;
                     return CharChallengeResult.Continue;
                 }
 

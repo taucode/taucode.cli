@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Parsing;
+using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo: clean up.
     public abstract class CliHostBase : ICliHost
     {
         #region Fields
@@ -32,9 +32,9 @@ namespace TauCode.Cli
                     .ToDictionary(x => x.Name, x => x);
             }
 
-            public INode Node { get; }
+            public INode Node { get; } // todo: need this?
             public ICliAddIn AddIn { get; }
-            //public IDictionary<string, ICliWorker> Workers { get; }
+
             public ICliWorker GetWorker(string workerName)
             {
                 return _workers[workerName];
@@ -75,50 +75,13 @@ namespace TauCode.Cli
 
         #region Private
 
-        private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
-        {
-            var command = new CliCommand
-            {
-                AddInName = node.Properties["add-in-name"],
-            };
-
-            resultAccumulator.AddResult(command);
-        }
-
-        #endregion
-
-        #region Protected
-
-        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
-        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
-
-        protected virtual ILexer CreateLexer() => new CliLexer();
-
-        protected virtual IParser CreateParser() => new CliParser();
-
-        private INode BuildNode()  // todo: need 'protected virtual'?
+        private INode BuildNode()
         {
             var addIns = this.CreateAddIns();
             var root = new IdleNode(_nodeFamily, "<host root>");
 
             foreach (var addIn in addIns)
             {
-                //var addInNode = new ExactTextNode(
-                //    addIn.Name,
-                //    TermTextClass.Instance,
-                //    this.ProcessAddInName,
-                //    _nodeFamily,
-                //    null); // todo: give it a name
-
-                //addInNode.Properties["add-in-name"] = addIn.Name;
-                //root.EstablishLink(addInNode);
-
-                //var workers = addIn.CreateWorkers();
-                //foreach (var worker in workers)
-                //{
-                //    addInNode.EstablishLink(worker.Node);
-                //}
-
                 var node = addIn.Node;
                 root.EstablishLink(node);
 
@@ -133,6 +96,17 @@ namespace TauCode.Cli
 
             return root;
         }
+
+        #endregion
+
+        #region Protected
+
+        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
+        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
+
+        protected virtual ILexer CreateLexer() => new CliLexer();
+
+        protected virtual IParser CreateParser() => new ParserLab();
 
         protected abstract IEnumerable<ICliAddIn> CreateAddIns();
 
@@ -163,9 +137,6 @@ namespace TauCode.Cli
             var worker = addInRecord.GetWorker(command.WorkerName);
 
             worker.Process(command.Entries);
-
-            //var worker = addIn.AddIn.CreateWorkers()
-            //throw new NotImplementedException();
         }
 
         #endregion

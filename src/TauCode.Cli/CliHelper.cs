@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using TauCode.Cli.TextClasses;
-using TauCode.Cli.TextDecorations;
-using TauCode.Parsing.Tokens;
+﻿using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
@@ -10,25 +6,7 @@ namespace TauCode.Cli
     {
         public static string GetTextTokenRepresentation(TextToken textToken)
         {
-            return textToken.Text;
-            //if (/*textToken.Class == KeyTextClass.Instance*/ false)
-            //{
-            //    //HyphenTextDecoration hyphenTextDecoration = (HyphenTextDecoration)textToken.Decoration;
-            //    //var sb = new StringBuilder();
-            //    //for (var i = 0; i < hyphenTextDecoration.HyphenCount; i++)
-            //    //{
-            //    //    sb.Append("-");
-            //    //}
-
-            //    //sb.Append(textToken.Text);
-            //    //return sb.ToString();
-            //}
-            //else if (textToken.Class == TermTextClass.Instance)
-            //{
-            //    return textToken.Text;
-            //}
-
-            //throw new NotImplementedException();
+            return textToken.Text; // todo: need this at all?
         }
     }
 }

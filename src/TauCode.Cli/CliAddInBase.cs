@@ -9,7 +9,6 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliAddInBase : ICliAddIn
     {
         #region Fields
@@ -48,13 +47,7 @@ namespace TauCode.Cli
             resultAccumulator.AddResult(command);
         }
 
-        #endregion
-
-        #region Protected
-
-        protected abstract IEnumerable<ICliWorker> CreateWorkers();
-
-        private INode BuildNode() // todo: need 'protected virtual'?
+        private INode BuildNode()
         {
             if (this.Name == null)
             {
@@ -70,7 +63,7 @@ namespace TauCode.Cli
                     null); // todo: give it a name
 
                 addInNode.Properties["add-in-name"] = this.Name; // todo: deal with Name == null
-                
+
                 var workers = this.CreateWorkers().ToList();
 
                 _workers.AddRange(workers);
@@ -83,6 +76,12 @@ namespace TauCode.Cli
                 return addInNode;
             }
         }
+
+        #endregion
+
+        #region Protected
+
+        protected abstract IEnumerable<ICliWorker> CreateWorkers();
 
         #endregion
 
@@ -110,7 +109,6 @@ namespace TauCode.Cli
             set => throw new NotSupportedException(); // todo: message 'use writer of owner'
         }
 
-        //public INode Node => _node ?? (_node = this.BuildNode());
         public INode Node
         {
             get
@@ -142,51 +140,6 @@ namespace TauCode.Cli
         {
             return "todo: add-in help.";
         }
-
-        #endregion
-
-
-        #region Todo Old Stuff
-
-        //#region Fields
-
-        //private readonly string _version;
-
-        //#endregion
-
-        //#region Constructor
-
-        //protected CliAddInBase(
-        //    ICliProgram program,
-        //    string name,
-        //    string version,
-        //    bool supportsHelp)
-        //{
-        //    // todo checks
-        //    this.Program = program;
-        //    this.Name = name ?? throw new ArgumentNullException(nameof(name));
-        //    this.SupportsHelp = supportsHelp;
-        //    _version = version;
-        //}
-
-
-        //#endregion
-
-
-
-
-        //public ICliProgram Program { get; }
-        //public string Name { get; }
-        //public string Description => throw new NotImplementedException();
-        //public bool SupportsHelp { get; }
-        ////public string GetVersion() => _version;
-
-        ////public string GetHelp()
-        ////{
-        ////    throw new NotImplementedException();
-        ////}
-
-        //public abstract IReadOnlyList<ICliWorker> CreateWorkers();
 
         #endregion
     }

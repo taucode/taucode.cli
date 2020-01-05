@@ -13,16 +13,12 @@ namespace TauCode.Cli.Tests.TestCli
         {
         }
 
-        //public override IReadOnlyList<ICliWorker> CreateWorkers()
-        //{
-        //    return new ICliWorker[]
-        //    {
-        //        new TestSdWorker(this), 
-        //    };
-        //}
         protected override IEnumerable<ICliWorker> CreateWorkers()
         {
-            throw new System.NotImplementedException();
+            return new ICliWorker[]
+            {
+                new TestSdWorker(this),
+            };
         }
     }
 }

@@ -64,11 +64,6 @@ namespace TauCode.Cli.TokenExtractors
             return CharChallengeResult.Continue;
         }
 
-        //private char GetStartingDelimiter()
-        //{
-        //    return this.GetLocalChar(0);
-        //}
-
         protected override CharChallengeResult ChallengeEnd()
         {
             throw new NotImplementedException();
