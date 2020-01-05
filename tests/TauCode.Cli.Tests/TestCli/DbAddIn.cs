@@ -4,20 +4,19 @@ namespace TauCode.Cli.Tests.TestCli
 {
     public class DbAddIn : CliAddInBase
     {
-        public DbAddIn(ICliHost host)
+        public DbAddIn()
             : base(
-                host,
                 "db",
                 "sd-1.0",
                 true)
         {
         }
 
-        protected override IEnumerable<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
             return new ICliWorker[]
             {
-                new SdWorker(this),
+                new SdWorker(),
             };
         }
     }

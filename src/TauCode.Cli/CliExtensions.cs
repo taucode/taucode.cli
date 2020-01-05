@@ -22,6 +22,11 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(functionalityProvider));
             }
 
+            if (functionalityProvider.Name == null)
+            {
+                throw new CliException("Cannot add custom handler to a nameless functionality.");
+            }
+
             if (action == null)
             {
                 throw new ArgumentNullException(nameof(action));

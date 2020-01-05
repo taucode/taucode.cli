@@ -8,9 +8,8 @@ namespace TauCode.Cli.Tests.TestCli
 {
     public class SdWorker : CliWorkerBase
     {
-        public SdWorker(ICliAddIn addIn)
+        public SdWorker()
             : base(
-                addIn,
                 typeof(SdWorker).Assembly.GetResourceText("sd-grammar.lisp", true), 
                 "sd-1.0", 
                 true)

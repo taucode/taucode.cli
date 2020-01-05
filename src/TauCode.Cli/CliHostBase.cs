@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
@@ -68,7 +69,7 @@ namespace TauCode.Cli
 
             _output = TextWriter.Null;
             _input = TextReader.Null;
-            
+
         }
 
         #endregion
@@ -78,7 +79,33 @@ namespace TauCode.Cli
         private INode BuildNode()
         {
             var addIns = this.CreateAddIns();
-            var root = new IdleNode(_nodeFamily, "<host root>");
+            if (addIns == null)
+            {
+                throw new CliException($"'{nameof(CreateAddIns)}' must not return null.");
+            }
+
+            if (addIns.Count == 0)
+            {
+                throw new CliException($"'{nameof(CreateAddIns)}' must not return empty collection.");
+            }
+
+            var validTypes = addIns.All(x => x is CliAddInBase);
+            if (!validTypes)
+            {
+                throw new CliException($"'{nameof(CreateAddIns)}' must return instances of type '{typeof(CliAddInBase).FullName}'.");
+            }
+
+            if (addIns.Any(x => x.Name == null) && addIns.Count > 1)
+            {
+                throw new CliException($"'{nameof(CreateAddIns)}' must return either all add-ins having non-null name, or exactly one add-in with null name.");
+            }
+
+            foreach (var addIn in addIns)
+            {
+                ((CliAddInBase)addIn).Host = this;
+            }
+
+            var root = new IdleNode(_nodeFamily, "<host root>"); // todo name
 
             foreach (var addIn in addIns)
             {
@@ -108,7 +135,7 @@ namespace TauCode.Cli
 
         protected virtual IParser CreateParser() => new ParserLab();
 
-        protected abstract IEnumerable<ICliAddIn> CreateAddIns();
+        protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
 
         #endregion
 
@@ -188,7 +215,7 @@ namespace TauCode.Cli
         {
             return "todo: help for host";
         }
-        
+
         #endregion
     }
 }

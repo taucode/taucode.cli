@@ -9,11 +9,11 @@ namespace TauCode.Cli.Tests.TestCli
         {   
         }
 
-        protected override IEnumerable<ICliAddIn> CreateAddIns()
+        protected override IReadOnlyList<ICliAddIn> CreateAddIns()
         {
             return new ICliAddIn[]
             {
-                    new DbAddIn(this),
+                new DbAddIn(),
             };
         }
     }

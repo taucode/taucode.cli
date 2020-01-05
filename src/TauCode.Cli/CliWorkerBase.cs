@@ -23,13 +23,10 @@ namespace TauCode.Cli
         #region Constructor
 
         protected CliWorkerBase(
-            ICliAddIn addIn,
             string grammar,
             string version,
             bool supportsHelp)
         {
-            this.AddIn = addIn ?? throw new ArgumentNullException(nameof(addIn));
-
             if (grammar == null)
             {
                 throw new ArgumentNullException(nameof(grammar));
@@ -88,7 +85,7 @@ namespace TauCode.Cli
 
         #region ICliWorker Members
 
-        public ICliAddIn AddIn { get; }
+        public ICliAddIn AddIn { get; internal set; }
 
         public abstract void Process(IList<ICliCommandEntry> entries);
 

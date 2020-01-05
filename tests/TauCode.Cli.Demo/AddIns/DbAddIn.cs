@@ -5,16 +5,16 @@ namespace TauCode.Cli.Demo.AddIns
 {
     public class DbAddIn : CliAddInBase
     {
-        public DbAddIn(ICliHost host)
-            : base(host, "db", "db-1488", true)
+        public DbAddIn()
+            : base("db", "db-1488", true)//todo
         {
         }
 
-        protected override IEnumerable<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
             return new ICliWorker[]
             {       
-                new SerializeDataWorker(this),
+                new SerializeDataWorker(),
             };
         }
     }
