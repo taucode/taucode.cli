@@ -5,7 +5,7 @@ using TauCode.Extensions.Lab;
 namespace TauCode.Cli.Tests
 {
     [TestFixture]
-    public class CliProgramTests
+    public class CliHostTests
     {
         [Test]
         public void Dispatch_ValidInput_ProducesExpectedResult()
