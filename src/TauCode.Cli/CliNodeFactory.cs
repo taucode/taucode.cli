@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using TauCode.Cli.CliCommandEntries;
+using TauCode.Cli.Data;
+using TauCode.Cli.Data.Entries;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
@@ -18,7 +19,7 @@ namespace TauCode.Cli
 
         public CliNodeFactory(string nodeFamilyName)
             : base(nodeFamilyName)
-        {
+        {   
         }
 
         #endregion
@@ -32,12 +33,16 @@ namespace TauCode.Cli
 
             switch (car)
             {
-                case "SUB-COMMAND":
-                    node = this.CreateSubCommandNode(item);
+                case "WORKER":
+                    node = this.CreateWorkerNode(item);
                     break;
 
                 case "KEY-WITH-VALUE":
-                    node = this.CreateKeyWithValueNode(item);
+                    node = this.CreateKeyEqualsValueNode(item);
+                    break;
+
+                case "KEY-VALUE-PAIR":
+                    node = this.CreateKeyValuePairNode(item);
                     break;
 
                 case "KEY":
@@ -55,17 +60,23 @@ namespace TauCode.Cli
 
         #region Node Creators
 
-        private INode CreateSubCommandNode(PseudoList item)
+        private INode CreateWorkerNode(PseudoList item)
         {
-            var value = item.GetSingleKeywordArgument<StringAtom>(":value");
-            var name = item.GetItemName();
+            var verbs = item
+                .GetAllKeywordArguments(":verbs")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: optimize, use IEnumerable.
 
-            INode node = new ExactTextNode(
-                value.Value,
-                TermTextClass.Instance,
-                this.ProcessSubCommand,
+            INode node = new MultiTextRepresentationNode(
+                verbs,
+                new ITextClass[] { TermTextClass.Instance },
+                CliHelper.GetTextTokenRepresentation,
+                this.ProcessAlias,
                 this.NodeFamily,
-                name);
+                item.GetItemName());
+
+            var alias = item.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+            node.Properties["worker-name"] = alias;
 
             return node;
         }
@@ -91,7 +102,7 @@ namespace TauCode.Cli
             return node;
         }
 
-        private INode CreateKeyWithValueNode(PseudoList item)
+        private INode CreateKeyEqualsValueNode(PseudoList item)
         {
             var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
 
@@ -104,7 +115,7 @@ namespace TauCode.Cli
                 keyNames,
                 new ITextClass[] { KeyTextClass.Instance },
                 CliHelper.GetTextTokenRepresentation,
-                this.ProcessKeyWithValue,
+                this.ProcessKeySucceededByValue,
                 this.NodeFamily,
                 item.GetItemName());
             keyNameNode.Properties["alias"] = alias;
@@ -114,6 +125,31 @@ namespace TauCode.Cli
 
             keyNameNode.EstablishLink(equalsNode);
             equalsNode.EstablishLink(choiceNode);
+
+            return keyNameNode;
+        }
+
+        private INode CreateKeyValuePairNode(PseudoList item)
+        {
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+
+            var keyNames = item
+                .GetAllKeywordArguments(":key-names")
+                .Select(x => ((StringAtom)x).Value)
+                .ToList(); // todo: may throw
+
+            ActionNode keyNameNode = new MultiTextRepresentationNode(
+                keyNames,
+                new ITextClass[] { KeyTextClass.Instance },
+                CliHelper.GetTextTokenRepresentation,
+                this.ProcessKeySucceededByValue,
+                this.NodeFamily,
+                item.GetItemName());
+            keyNameNode.Properties["alias"] = alias;
+
+            INode choiceNode = this.CreateKeyChoiceNode(item);
+
+            keyNameNode.EstablishLink(choiceNode);
 
             return keyNameNode;
         }
@@ -158,12 +194,10 @@ namespace TauCode.Cli
 
         #region Node Actions
 
-        private void ProcessSubCommand(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessAlias(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
-            var cliCommand = new CliCommand();
-            cliCommand.Name = ((TextToken)token).Text;
-
-            resultAccumulator.AddResult(cliCommand);
+            var command = resultAccumulator.GetLastResult<CliCommand>();
+            command.WorkerName = actionNode.Properties["worker-name"];
         }
 
         private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
@@ -177,7 +211,7 @@ namespace TauCode.Cli
             subCommand.Entries.Add(entry);
         }
 
-        private void ProcessKeyWithValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessKeySucceededByValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
             var subCommand = resultAccumulator.GetLastResult<CliCommand>();
             var entry = new KeyValueCliCommandEntry

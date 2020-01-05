@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\cli-grammar.lisp" />
+    <None Remove="Resources\sd-grammar.lisp" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\cli-grammar.lisp" />
+    <EmbeddedResource Include="Resources\sd-grammar.lisp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+    <ProjectReference Include="..\..\taucode\TauCode.Extensions.Lab\TauCode.Extensions.Lab.csproj" />
   </ItemGroup>
 
 </Project>

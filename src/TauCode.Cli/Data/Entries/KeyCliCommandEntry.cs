@@ -1,4 +1,4 @@
-﻿namespace TauCode.Cli.CliCommandEntries
+﻿namespace TauCode.Cli.Data.Entries
 {
     public class KeyCliCommandEntry : ICliCommandEntry
     {
