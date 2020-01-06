@@ -40,6 +40,11 @@ namespace TauCode.Cli.Demo
                 {
                     // ignore.
                 }
+                catch (CliException ex)
+                {
+                    Console.Write("CLI Error: ");
+                    Console.WriteLine(ex.Message);
+                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);

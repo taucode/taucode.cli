@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Data.Entries;
+using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.TinyLisp;
@@ -74,11 +75,23 @@ namespace TauCode.Cli
 
         protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
         {
-            // todo: can throw
-            return entries
+            var wantedEntries = entries
                 .Where(x => x is KeyValueCliCommandEntry)
                 .Cast<KeyValueCliCommandEntry>()
-                .Single(x => string.Equals(x.Alias, alias, StringComparison.InvariantCultureIgnoreCase)).Value;
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                throw new CliException($"Entry with alias '{alias}' was not provided.");
+            }
+            else if (wantedEntries.Count == 1)
+            {
+                return wantedEntries.Single().Value;
+            }
+            else
+            {
+                throw new CliException($"Entry with alias '{alias}' was provided more than once.");
+            }
         }
 
         #endregion

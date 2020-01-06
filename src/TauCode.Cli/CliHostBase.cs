@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
@@ -64,7 +65,7 @@ namespace TauCode.Cli
             this.Version = version;
             this.SupportsHelp = supportsHelp;
 
-            _nodeFamily = new NodeFamily("todo-program-family-name");
+            _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addIns = new Dictionary<string, AddInRecord>();
 
             _output = TextWriter.Null;
@@ -105,7 +106,7 @@ namespace TauCode.Cli
                 ((CliAddInBase)addIn).Host = this;
             }
 
-            var root = new IdleNode(_nodeFamily, "<host root>"); // todo name
+            var root = new IdleNode(_nodeFamily, $"Root node of host '{this.Name}'");
 
             foreach (var addIn in addIns)
             {
@@ -149,7 +150,15 @@ namespace TauCode.Cli
 
         public CliCommand ParseCommand(params string[] input)
         {
-            // todo check args
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (input.Any(x => x == null))
+            {
+                throw new ArgumentException($"'{nameof(input)}' cannot contain nulls.", nameof(input));
+            }
 
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);

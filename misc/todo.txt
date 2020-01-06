@@ -1,1 +1,8 @@
-[todo] consider Sasa.Parsing https://sourceforge.net/projects/sasa/
+2020-01-01
+==========
+    1. [todo] consider Sasa.Parsing https://sourceforge.net/projects/sasa/
+
+2020-01-06
+==========
+    1. Lexing will fail on:
+db sd -c / - c .
