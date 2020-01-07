@@ -9,19 +9,15 @@ namespace TauCode.Cli.TokenExtractors
 {
     public class PathExtractor : TokenExtractorBase
     {
-        public PathExtractor(ILexingEnvironment environment)
-            : base(environment, IsPathFirstChar)
+        public PathExtractor()
+            : base(IsPathFirstChar)
         {
         }
 
         private static bool IsPathFirstChar(char c) =>
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c) ||
-            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+', '_');
-
-        private static bool IsPathSucceedingChar(char c) =>
-            IsPathFirstChar(c) ||
-            c.IsIn('=', ':', ';');
+            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+');
 
         protected override void ResetState()
         {
@@ -31,26 +27,36 @@ namespace TauCode.Cli.TokenExtractors
         protected override IToken ProduceResult()
         {
             var str = this.ExtractResultString();
-            var token = new TextToken(PathTextClass.Instance, NoneTextDecoration.Instance, str);
+
+            var position = new Position(this.StartingLine, this.StartingColumn);
+            var consumedLength = this.LocalCharIndex;
+
+            var token = new TextToken(
+                PathTextClass.Instance,
+                NoneTextDecoration.Instance,
+                str,
+                position,
+                consumedLength);
+
             return token;
         }
 
         protected override CharChallengeResult ChallengeCurrentChar()
         {
             var c = this.GetCurrentChar();
-            var pos = this.GetLocalPosition();
+            var index = this.LocalCharIndex;
 
-            if (pos == 0)
+            if (index == 0)
             {
                 return CharChallengeResult.Continue; // 0th char MUST have been accepted.
             }
 
-            if (IsPathSucceedingChar(c))
+            if (IsPathFirstChar(c) || c == ':')
             {
                 return CharChallengeResult.Continue;
             }
 
-            if (this.Environment.IsSpace(c))
+            if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
             {
                 return CharChallengeResult.Finish;
             }

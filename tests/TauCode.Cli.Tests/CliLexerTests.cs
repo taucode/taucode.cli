@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using System.IO;
-using System.Text;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Tokens;
 using TauCode.Parsing.Tokens.TextClasses;
@@ -11,11 +9,6 @@ namespace TauCode.Cli.Tests
     [TestFixture]
     public class CliLexerTests
     {
-        // todo: more tests. e.g. 
-        // "-" - path
-        // "." - path
-        // "--" - path
-        // etc.
         [Test]
         public void Lexize_ValidInput_ProducesValidTokens()
         {
@@ -86,14 +79,6 @@ namespace TauCode.Cli.Tests
             Assert.That(termToken.Class, Is.SameAs(TermTextClass.Instance));
             Assert.That(termToken.Decoration, Is.SameAs(NoneTextDecoration.Instance));
             Assert.That(termToken.Text, Is.EqualTo("1a-c"));
-        }
-
-        [Test]
-        public void TodoWat()
-        {
-            var txt =
-                "\tThis line ends with CRLF\n\r    This line\v ends with LF\nThis line ends with LF as well\nThis Line \a\b\f\vends with CR again\r";
-            File.WriteAllText("c:/temp/line-endings.txt", txt, Encoding.ASCII);
         }
     }
 }

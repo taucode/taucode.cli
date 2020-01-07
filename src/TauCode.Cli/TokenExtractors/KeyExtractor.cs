@@ -8,8 +8,8 @@ namespace TauCode.Cli.TokenExtractors
 {
     public class KeyExtractor : TokenExtractorBase
     {
-        public KeyExtractor(ILexingEnvironment environment)
-            : base(environment, c => c == '-')
+        public KeyExtractor()
+            : base(c => c == '-')
         {
         }
 
@@ -20,21 +20,23 @@ namespace TauCode.Cli.TokenExtractors
         protected override IToken ProduceResult()
         {
             var str = this.ExtractResultString();
-            var token = new TextToken(KeyTextClass.Instance, NoneTextDecoration.Instance, str);
+            var position = new Position(this.StartingLine, this.StartingColumn);
+            var consumedLength = this.LocalCharIndex;
+            var token = new TextToken(KeyTextClass.Instance, NoneTextDecoration.Instance, str, position, consumedLength);
             return token;
         }
 
         protected override CharChallengeResult ChallengeCurrentChar()
         {
             var c = this.GetCurrentChar();
-            var pos = this.GetLocalPosition();
+            var index = this.LocalCharIndex;
 
-            if (pos == 0)
+            if (index == 0)
             {
                 return CharChallengeResult.Continue; // 0th char MUST have been accepted.
             }
 
-            if (pos == 1)
+            if (index == 1)
             {
                 if (c == '-')
                 {
@@ -49,18 +51,23 @@ namespace TauCode.Cli.TokenExtractors
                 return CharChallengeResult.GiveUp;
             }
 
-            if (pos == 2 && c == '-')
+            if (index == 2 && c == '-')
             {
-                return CharChallengeResult.GiveUp; // 3 hyphens cannot be.
+                if (this.GetPreviousChar() == '-')
+                {
+                    return CharChallengeResult.GiveUp; // 3 hyphens cannot be.
+                }
+
+                return CharChallengeResult.Continue;
             }
 
-            if (LexingHelper.IsDigit(c) || LexingHelper.IsLatinLetter(c) || c == '-')
+            if (LexingHelper.IsDigit(c) || LexingHelper.IsLatinLetter(c))
             {
                 return CharChallengeResult.Continue;
             }
 
-            // todo: test keys "-", "--", "---", "--fo-", "-fo-", "---foo" etc.
-            if (this.Environment.IsSpace(c) || c == '=')
+            if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c) || c == '=')
+            
             {
                 return CharChallengeResult.Finish;
             }
@@ -70,13 +77,12 @@ namespace TauCode.Cli.TokenExtractors
 
         protected override CharChallengeResult ChallengeEnd()
         {
-            var str = this.ExtractResultString();
-            if (str != "-" && str != "--")
+            if (this.GetPreviousChar() == '-')
             {
-                return CharChallengeResult.Finish;
+                return CharChallengeResult.GiveUp;
             }
 
-            return CharChallengeResult.GiveUp;
+            return CharChallengeResult.Finish;
         }
     }
 }

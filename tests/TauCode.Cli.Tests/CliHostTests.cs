@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using TauCode.Cli.Tests.TestCli.Hosts;
-using TauCode.Extensions.Lab;
+using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests
 {
@@ -10,7 +10,7 @@ namespace TauCode.Cli.Tests
         [Test]
         public void Dispatch_ValidInput_ProducesExpectedResult()
         {
-            var writer = new StringWriterWithEncodingLab();
+            var writer = new StringWriterWithEncoding();
 
             var host = new Host
             {

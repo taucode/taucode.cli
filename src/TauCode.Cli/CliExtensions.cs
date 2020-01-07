@@ -90,10 +90,9 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            var node = new MultiTextRepresentationNode(
+            var node = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new ITextClass[] { textClass },
-                token => token.Text,
+                new[] { textClass },
                 (actionNode, token, resultAccumulator) =>
                 {
                     action();

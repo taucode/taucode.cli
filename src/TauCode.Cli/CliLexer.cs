@@ -6,37 +6,30 @@ namespace TauCode.Cli
 {
     public class CliLexer : LexerBase
     {
-        protected virtual TokenExtractorBase CreateIntegerExtractor() => new IntegerExtractor(this.Environment);
-        protected virtual TokenExtractorBase CreateTermExtractor() => new TermExtractor(this.Environment);
-        protected virtual TokenExtractorBase CreateKeyExtractor() => new KeyExtractor(this.Environment);
-        protected virtual TokenExtractorBase CreateStringExtractor() => new StringExtractor(this.Environment);
-        protected virtual TokenExtractorBase CreatePathExtractor() => new PathExtractor(this.Environment);
-        protected virtual TokenExtractorBase CreateEqualsExtractor() => new EqualsExtractor(this.Environment);
-
         protected override void InitTokenExtractors()
         {
             // integer
-            var integerExtractor = this.CreateIntegerExtractor();
+            var integerExtractor = new IntegerExtractor();
             this.AddTokenExtractor(integerExtractor);
 
             // term
-            var termExtractor = this.CreateTermExtractor();
+            var termExtractor = new TermExtractor();
             this.AddTokenExtractor(termExtractor);
 
             // key
-            var keyExtractor = this.CreateKeyExtractor();
+            var keyExtractor = new KeyExtractor();
             this.AddTokenExtractor(keyExtractor);
 
             // string
-            var stringExtractor = this.CreateStringExtractor();
+            var stringExtractor = new StringExtractor();
             this.AddTokenExtractor(stringExtractor);
 
             // path
-            var pathExtractor = this.CreatePathExtractor();
+            var pathExtractor = new PathExtractor();
             this.AddTokenExtractor(pathExtractor);
 
             // equals
-            var equalsExtractor = this.CreateEqualsExtractor();
+            var equalsExtractor = new EqualsExtractor();
             this.AddTokenExtractor(equalsExtractor);
 
             // *** Links ***
