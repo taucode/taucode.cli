@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Demo.AddIns.DbAddInWorkers;
+using TauCode.Cli.Demo.AddIns.TodoOldDbAddInWorkers;
 
 namespace TauCode.Cli.Demo.AddIns
 {
-    public class DbAddIn : CliAddInBase
+    public class TodoOldDbAddIn : CliAddInBase
     {
-        public DbAddIn()
+        public TodoOldDbAddIn()
             : base("db", "db-1.0", true)
         {
         }
@@ -14,7 +14,7 @@ namespace TauCode.Cli.Demo.AddIns
         {
             return new ICliWorker[]
             {       
-                new SerializeDataWorker(),
+                new TodoOldSerializeDataWorker(),
             };
         }
     }

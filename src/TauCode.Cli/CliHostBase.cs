@@ -10,6 +10,7 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
+    // todo clean up
     public abstract class CliHostBase : ICliHost
     {
         #region Fields
@@ -25,15 +26,15 @@ namespace TauCode.Cli
         {
             private readonly Dictionary<string, ICliWorker> _workers;
 
-            public AddInRecord(INode node, ICliAddIn addIn, IEnumerable<ICliWorker> workers)
+            public AddInRecord(/*INode node,*/ ICliAddIn addIn, IEnumerable<ICliWorker> workers)
             {
-                this.Node = node;
+                //this.Node = node;
                 this.AddIn = addIn;
                 _workers = workers
                     .ToDictionary(x => x.Name, x => x);
             }
 
-            public INode Node { get; } // todo: need this?
+            //public INode Node { get; } // todo: need this?
             public ICliAddIn AddIn { get; }
 
             public ICliWorker GetWorker(string workerName)
@@ -112,7 +113,10 @@ namespace TauCode.Cli
                 var node = addIn.Node;
                 root.EstablishLink(node);
 
-                var record = new AddInRecord(node, addIn, addIn.GetWorkers());
+                var record = new AddInRecord(
+                    //node,
+                    addIn,
+                    addIn.GetWorkers());
                 _addIns.Add(addIn.Name, record);
             }
 

@@ -15,7 +15,7 @@ namespace TauCode.Cli.Demo
         {
             return new ICliAddIn[]
             {
-                new DbAddIn(),
+                new TodoOldDbAddIn(),
             };
         }
     }
