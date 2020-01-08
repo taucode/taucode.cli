@@ -63,7 +63,7 @@ namespace TauCode.Cli
         private INode CreateWorkerNode(PseudoList item)
         {
             var verbs = item
-                .GetAllKeywordArguments(":verbs")
+                .GetAllKeywordArguments(":verbs", true)
                 .Select(x => ((StringAtom)x).Value)
                 .ToList();
 
@@ -74,8 +74,8 @@ namespace TauCode.Cli
                 this.NodeFamily,
                 item.GetItemName());
 
-            var alias = item.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
-            node.Properties["worker-name"] = alias;
+            var workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+            node.Properties["worker-name"] = workerName;
 
             return node;
         }

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Extensions;
 
 namespace TauCode.Cli.Demo.Hosts.Tau.Db.Workers
 {
     public class SerializeDataWorker : CliWorkerBase
     {
         public SerializeDataWorker()
-            : base("todo", "todo", true)
+            : base(
+                typeof(SerializeDataWorker).Assembly.GetResourceText(".Tau.Db.SerializeData.lisp", true),
+                "sd-1.0",
+                true)
         {
         }
 

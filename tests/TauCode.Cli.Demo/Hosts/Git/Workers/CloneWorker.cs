@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Extensions;
 
 namespace TauCode.Cli.Demo.Hosts.Git.Workers
 {
     public class CloneWorker : CliWorkerBase
     {
         public CloneWorker()
-            : base("todo", null, true)
+            : base(
+                typeof(CloneWorker).Assembly.GetResourceText(".Git.NoName.Clone.lisp", true),
+                null,
+                true)
         {
         }
 

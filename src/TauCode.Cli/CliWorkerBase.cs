@@ -54,7 +54,7 @@ namespace TauCode.Cli
             string name = null;
             if (supposedCommandForm.GetCarSymbolName() == "WORKER")
             {
-                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
             }
 
             return name;

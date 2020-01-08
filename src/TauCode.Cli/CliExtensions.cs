@@ -12,6 +12,125 @@ namespace TauCode.Cli
 {
     public static class CliExtensions
     {
+        private class CatchAllAndThrowNode : ActionNode
+        {
+            public CatchAllAndThrowNode(Action<IToken> handler, INodeFamily family, string name)
+                : base(BuildAction(handler), family, name)
+            {
+            }
+
+            private static Action<ActionNode, IToken, IResultAccumulator> BuildAction(Action<IToken> handler)
+            {
+                void Result(ActionNode dummyActionNode, IToken token, IResultAccumulator resultAccumulator)
+                {
+                    handler(token);
+
+                    throw new NotImplementedException("You wasn't expected to get here!");
+                }
+
+                return Result;
+            }
+
+            protected override InquireResult InquireImpl(IToken token, IResultAccumulator resultAccumulator) =>
+                InquireResult.Act;
+        }
+
+        public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
+            this ICliFunctionalityProvider functionalityProvider,
+            Action<IToken> handler,
+            params string[] texts)
+        {
+            // todo: a lot of copy/paste (see AddCustomHandler method)
+            if (functionalityProvider == null)
+            {
+                throw new ArgumentNullException(nameof(functionalityProvider));
+            }
+
+            if (functionalityProvider.Name == null)
+            {
+                throw new CliException("Cannot add custom handler to a nameless functionality.");
+            }
+
+            if (handler == null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            if (texts == null)
+            {
+                throw new ArgumentNullException(nameof(texts));
+            }
+
+            if (texts.Length == 0)
+            {
+                throw new ArgumentException($"'{nameof(texts)}' cannot be empty.");
+            }
+
+            var tokens = new List<TextToken>();
+            ITextClass textClass;
+
+            try
+            {
+                ILexer lexer = new CliLexer();
+
+                foreach (var text in texts)
+                {
+                    var singleTextTokens = lexer.Lexize(text);
+                    var isValid =
+                        singleTextTokens.Count == 1 &&
+                        singleTextTokens.Single() is TextToken;
+
+                    if (!isValid)
+                    {
+                        throw new NotImplementedException(); // error.
+                    }
+
+                    var token = (TextToken)singleTextTokens.Single();
+                    tokens.Add(token);
+                }
+
+                var classes = tokens.Select(x => x.Class).Distinct().ToList();
+                if (classes.Count > 1)
+                {
+                    throw new NotImplementedException(); // error.
+                }
+
+                textClass = classes.Single();
+
+                var decorations = tokens.Select(x => x.Decoration).Distinct().ToList();
+                if (decorations.Count != 1)
+                {
+                    throw new NotImplementedException(); // error.
+                }
+                if (decorations.Single() != NoneTextDecoration.Instance)
+                {
+                    throw new NotImplementedException(); // error.
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException("Bad texts. todo", ex);
+            }
+
+            INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
+
+            var commandNode = new MultiTextNode(
+                tokens.Select(x => x.Text),
+                new[] { textClass },
+                null,
+                nodeFamily,
+                null);
+
+            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+
+            functionalityProvider.Node.EstablishLink(commandNode);
+            commandNode.EstablishLink(argumentNode);
+
+            return functionalityProvider;
+
+
+        }
+
         public static ICliFunctionalityProvider AddCustomHandler(
             this ICliFunctionalityProvider functionalityProvider,
             Action action,
@@ -85,7 +204,7 @@ namespace TauCode.Cli
             }
             catch (Exception ex)
             {
-                throw new Exception("Bad texts. todo", ex);
+                throw new NotImplementedException("Bad texts. todo", ex);
             }
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo

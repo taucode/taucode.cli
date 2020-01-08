@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using TauCode.Cli.Demo.Hosts.Kubectl.Apply;
+using TauCode.Cli.Demo.Hosts.Kubectl.Rollout;
+using TauCode.Cli.Demo.Hosts.Kubectl.Scale;
 
 namespace TauCode.Cli.Demo.Hosts.Kubectl
 {
@@ -12,7 +14,12 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl
 
         protected override IReadOnlyList<ICliAddIn> CreateAddIns()
         {
-            throw new NotImplementedException();
+            return new ICliAddIn[]
+            {
+                new ApplyAddIn(),
+                new RolloutAddIn(),
+                new ScaleAddIn(),
+            };
         }
     }
 }
