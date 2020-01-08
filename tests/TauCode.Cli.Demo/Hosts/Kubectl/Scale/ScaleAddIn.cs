@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TauCode.Cli.Demo.Hosts.Kubectl.Scale
 {
     public class ScaleAddIn : CliAddInBase
     {
+        public ScaleAddIn()
+            : base("scale", null, true)
+        {
+        }
+
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
-            throw new NotImplementedException();
+            return new ICliWorker[]
+            {
+                new ScaleWorker(),
+            };
         }
     }
 }

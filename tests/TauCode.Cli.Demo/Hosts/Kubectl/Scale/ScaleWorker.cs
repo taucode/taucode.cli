@@ -6,7 +6,8 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Scale
 {
     public class ScaleWorker : CliWorkerBase
     {
-        public ScaleWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public ScaleWorker()
+            : base("todo", null, true)
         {
         }
 

@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TauCode.Cli.Demo.Hosts.Kubectl.Rollout
 {
     public class RolloutAddIn : CliAddInBase
     {
+        public RolloutAddIn()
+            : base("rollout", null, true)
+        {
+        }
+
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
-            throw new NotImplementedException();
+            return new ICliWorker[]
+            {
+                new RolloutWorker(),
+            };
         }
     }
 }

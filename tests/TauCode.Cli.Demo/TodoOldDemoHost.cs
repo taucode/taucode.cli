@@ -3,9 +3,9 @@ using TauCode.Cli.Demo.AddIns;
 
 namespace TauCode.Cli.Demo
 {
-    public class DemoHost : CliHostBase
+    public class TodoOldDemoHost : CliHostBase
     {
-        public DemoHost()
+        public TodoOldDemoHost()
             : base("demo", "demo-1.0", true)
         {
 

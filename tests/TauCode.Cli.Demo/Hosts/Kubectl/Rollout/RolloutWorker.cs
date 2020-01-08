@@ -6,7 +6,8 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Rollout
 {
     public class RolloutWorker : CliWorkerBase
     {
-        public RolloutWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public RolloutWorker()
+            : base("todo", null, true)
         {
         }
 

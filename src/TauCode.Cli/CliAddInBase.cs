@@ -169,7 +169,7 @@ namespace TauCode.Cli
 
         public bool SupportsHelp { get; }
 
-        public string GetHelp()
+        public virtual string GetHelp()
         {
             return "todo: add-in help.";
         }

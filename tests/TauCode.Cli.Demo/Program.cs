@@ -9,7 +9,7 @@ namespace TauCode.Cli.Demo
 
         private static void Main()
         {
-            ICliHost host = new DemoHost();
+            ICliHost host = new TodoOldDemoHost();
 
             host.Output = Console.Out;
             host.Input = Console.In;

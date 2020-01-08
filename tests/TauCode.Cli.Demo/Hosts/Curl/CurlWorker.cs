@@ -5,7 +5,8 @@ namespace TauCode.Cli.Demo.Hosts.Curl
 {
     public class CurlWorker : CliWorkerBase
     {
-        public CurlWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public CurlWorker()
+            : base("todo", null, true)
         {
         }
 

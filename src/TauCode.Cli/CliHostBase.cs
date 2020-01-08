@@ -13,13 +13,6 @@ namespace TauCode.Cli
     // todo clean up
     public abstract class CliHostBase : ICliHost
     {
-        #region Fields
-
-        private TextWriter _output;
-        private TextReader _input;
-
-        #endregion
-
         #region Nested
 
         private class AddInRecord
@@ -47,6 +40,9 @@ namespace TauCode.Cli
 
         #region Fields
 
+        private TextWriter _output;
+        private TextReader _input;
+
         private ILexer _lexer;
         private IParser _parser;
         private INode _node;
@@ -70,7 +66,6 @@ namespace TauCode.Cli
 
             _output = TextWriter.Null;
             _input = TextReader.Null;
-
         }
 
         #endregion
@@ -133,6 +128,7 @@ namespace TauCode.Cli
         #region Protected
 
         protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
+
         protected IParser Parser => _parser ?? (_parser = this.CreateParser());
 
         protected virtual ILexer CreateLexer() => new CliLexer();
@@ -223,7 +219,7 @@ namespace TauCode.Cli
 
         public bool SupportsHelp { get; }
 
-        public string GetHelp()
+        public virtual string GetHelp()
         {
             return "todo: help for host";
         }

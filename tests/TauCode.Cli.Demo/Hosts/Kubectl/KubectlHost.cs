@@ -5,7 +5,8 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl
 {
     public class KubectlHost : CliHostBase
     {
-        public KubectlHost(string name, string version, bool supportsHelp) : base(name, version, supportsHelp)
+        public KubectlHost()
+            : base("kubectl", "k8s-1.0", true)
         {
         }
 

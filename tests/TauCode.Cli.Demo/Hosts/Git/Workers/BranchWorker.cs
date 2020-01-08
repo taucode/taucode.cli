@@ -5,7 +5,8 @@ namespace TauCode.Cli.Demo.Hosts.Git.Workers
 {
     public class BranchWorker : CliWorkerBase
     {
-        public BranchWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public BranchWorker()
+            : base("todo", null, true)
         {
         }
 

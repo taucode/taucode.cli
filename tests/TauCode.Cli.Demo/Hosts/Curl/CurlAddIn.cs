@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TauCode.Cli.Demo.Hosts.Curl
 {
+    /// <summary>
+    /// Nameless add-in
+    /// </summary>
     public class CurlAddIn : CliAddInBase
     {
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
-            throw new NotImplementedException();
+            return new ICliWorker[]
+            {
+                new CurlWorker(),
+            };
         }
     }
 }

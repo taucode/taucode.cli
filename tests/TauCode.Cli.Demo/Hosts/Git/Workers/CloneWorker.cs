@@ -6,7 +6,8 @@ namespace TauCode.Cli.Demo.Hosts.Git.Workers
 {
     public class CloneWorker : CliWorkerBase
     {
-        public CloneWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public CloneWorker()
+            : base("todo", null, true)
         {
         }
 

@@ -6,7 +6,8 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Apply
 {
     public class ApplyWorker : CliWorkerBase
     {
-        public ApplyWorker(string grammar, string version, bool supportsHelp) : base(grammar, version, supportsHelp)
+        public ApplyWorker()
+            : base("todo", null, true)
         {
         }
 
