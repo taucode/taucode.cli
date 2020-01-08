@@ -11,7 +11,7 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Apply
             : base(
                 typeof(ApplyWorker).Assembly.GetResourceText(".Kubectl.Apply.NoName.lisp", true),
                 null,
-                true)
+                false)
         {
         }
 

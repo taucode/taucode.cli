@@ -1,11 +1,9 @@
 (defblock :name curl :is-top t
 	(worker
-		:verbs "curl" "dat"
 		:doc "Sends HTTP requests to hosts."
 		:usage-samples (
-			"drop-all-tables --conn Server=.;Database=my_db;Trusted_Connection=True; --provider sqlserver --exclude table_1 --exclude table_2"
-			"dat -c Server=some-host;Database=my_db; -p postgresql -e table_1 -e table_2"
-			))
+			"<todo>"
+			"<todo>"))
 	(idle :name args)
 	(alt
 		(key-value-pair

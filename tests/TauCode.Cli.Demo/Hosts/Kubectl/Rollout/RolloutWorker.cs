@@ -11,7 +11,7 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Rollout
             : base(
                 typeof(RolloutWorker).Assembly.GetResourceText(".Kubectl.Rollout.NoName.lisp", true),
                 null,
-                true)
+                false)
         {
         }
 

@@ -11,7 +11,7 @@ namespace TauCode.Cli.Demo.Hosts.Kubectl.Scale
             : base(
                 typeof(ScaleWorker).Assembly.GetResourceText(".Kubectl.Scale.NoName.lisp", true),
                 null,
-                true)
+                false)
         {
         }
 

@@ -122,7 +122,16 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; internal set; }
 
-        public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
+        //public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
+        public IReadOnlyList<ICliWorker> GetWorkers()
+        {
+            if (_workers.Count == 0)
+            {
+                var dummy = this.Node;
+            }
+
+            return _workers;
+        }
 
         #endregion
 

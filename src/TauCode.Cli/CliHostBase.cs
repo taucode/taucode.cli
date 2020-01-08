@@ -18,13 +18,36 @@ namespace TauCode.Cli
         private class AddInRecord
         {
             private readonly Dictionary<string, ICliWorker> _workers;
+            private readonly ICliWorker _singleUnnamedWorker;
 
-            public AddInRecord(/*INode node,*/ ICliAddIn addIn, IEnumerable<ICliWorker> workers)
+            public AddInRecord(/*INode node,*/ ICliAddIn addIn, IReadOnlyList<ICliWorker> workers)
             {
                 //this.Node = node;
                 this.AddIn = addIn;
-                _workers = workers
-                    .ToDictionary(x => x.Name, x => x);
+
+                if (workers.Count == 0)
+                {
+                    // todo error;
+                    // todo ut
+                    throw new NotImplementedException(workers.Count.ToString()); 
+                }
+
+                if (workers.Any(x => x.Name == null))
+                {
+                    if (workers.Count > 1)
+                    {
+                        // todo error
+                        // todo ut
+                        throw new NotImplementedException();
+                    }
+
+                    _singleUnnamedWorker = workers.Single();
+                }
+                else
+                {
+                    _workers = workers
+                        .ToDictionary(x => x.Name, x => x);
+                }
             }
 
             //public INode Node { get; } // todo: need this?
@@ -32,7 +55,19 @@ namespace TauCode.Cli
 
             public ICliWorker GetWorker(string workerName)
             {
-                return _workers[workerName];
+                if (workerName == null)
+                {
+                    if (_singleUnnamedWorker == null)
+                    {
+                        throw new NotImplementedException(); // todo: Internal error?
+                    }
+
+                    return _singleUnnamedWorker;
+                }
+                else
+                {
+                    return _workers[workerName];
+                }
             }
         }
 

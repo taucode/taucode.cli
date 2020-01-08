@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Data.Entries;
 using TauCode.Cli.Exceptions;
@@ -67,16 +68,32 @@ namespace TauCode.Cli
                 .Select(x => ((StringAtom)x).Value)
                 .ToList();
 
-            INode node = new MultiTextNode(
-                verbs,
-                new ITextClass[] { TermTextClass.Instance },
-                this.ProcessAlias,
-                this.NodeFamily,
-                item.GetItemName());
+            INode node;
+            string workerName;
 
-            var workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+            if (verbs.Any())
+            {
+                node = new MultiTextNode(
+                    verbs,
+                    new ITextClass[] { TermTextClass.Instance },
+                    this.ProcessAlias,
+                    this.NodeFamily,
+                    item.GetItemName());
+
+                workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+            }
+            else
+            {
+                node = new IdleNode(this.NodeFamily, item.GetItemName());
+                workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+
+                if (workerName != null)
+                {
+                    throw new NotImplementedException(); // error. if worker-name is present, there should be verbs, and vice versa
+                }
+            }
+
             node.Properties["worker-name"] = workerName;
-
             return node;
         }
 

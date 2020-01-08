@@ -41,6 +41,19 @@ namespace TauCode.Cli
             this.Name = this.ExtractName();
             this.Version = version;
             this.SupportsHelp = supportsHelp;
+
+            if (this.Name == null)
+            {
+                if (this.Version != null)
+                {
+                    throw new NotImplementedException(); // nameless worker cannot have version
+                }
+
+                if (this.SupportsHelp)
+                {
+                    throw new NotImplementedException(); // nameless worker cannot support help
+                }
+            }
         }
 
         #endregion

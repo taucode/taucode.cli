@@ -93,22 +93,22 @@ namespace TauCode.Cli.Demo
                 () => Console.WriteLine(this.GetAllHostsName()),
                 "--all-hosts");
 
-            idleHost.AddCustomHandlerWithParameter(
-                (token) =>
-                {
-                    if (token is TextToken textToken)
-                    {
-                        var name = textToken.Text;
-                        _currentHost = _hosts[name];
-                        throw new CliCustomHandlerException(); 
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                },
-                "--host"
-            );
+            //idleHost.AddCustomHandlerWithParameter(
+            //    (token) =>
+            //    {
+            //        if (token is TextToken textToken)
+            //        {
+            //            var name = textToken.Text;
+            //            _currentHost = _hosts[name];
+            //            throw new CliCustomHandlerException(); 
+            //        }
+            //        else
+            //        {
+            //            throw new NotImplementedException();
+            //        }
+            //    },
+            //    "--host"
+            //);
 
             _hosts = new ICliHost[]
                 {
