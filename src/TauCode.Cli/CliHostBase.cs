@@ -177,6 +177,25 @@ namespace TauCode.Cli
             return root;
         }
 
+        private AddInRecord GetAddInRecord(string addInName)
+        {
+            if (addInName == null)
+            {
+                if (_singleUnnamedAddInRecord == null)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    return _singleUnnamedAddInRecord;
+                }
+            }
+            else
+            {
+                return _addInRecords[addInName];
+            }
+        }
+
         #endregion
 
         #region Protected
@@ -222,7 +241,8 @@ namespace TauCode.Cli
 
         public void DispatchCommand(CliCommand command)
         {
-            var addInRecord = _addInRecords[command.AddInName];
+            //var addInRecord = _addInRecords[command.AddInName];
+            var addInRecord = this.GetAddInRecord(command.AddInName);
             var worker = addInRecord.GetWorker(command.WorkerName);
 
             worker.Process(command.Entries);

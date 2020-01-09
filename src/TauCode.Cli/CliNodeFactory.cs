@@ -50,6 +50,10 @@ namespace TauCode.Cli
                     node = this.CreateKeyNode(item);
                     break;
 
+                case "PATH":
+                    node = this.CreatePathNode(item);
+                    break;
+
                 default:
                     throw new CliException($"Unexpected symbol: '{car}'");
             }
@@ -76,7 +80,7 @@ namespace TauCode.Cli
                 node = new MultiTextNode(
                     verbs,
                     new ITextClass[] { TermTextClass.Instance },
-                    this.ProcessAlias,
+                    this.ProcessWorkerName,
                     this.NodeFamily,
                     item.GetItemName());
 
@@ -94,6 +98,20 @@ namespace TauCode.Cli
             }
 
             node.Properties["worker-name"] = workerName;
+            return node;
+        }
+
+        private INode CreatePathNode(PseudoList item)
+        {
+            var alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+
+            var node = new TextNode(
+                PathTextClass.Instance,
+                this.ProcessPath,
+                this.NodeFamily,
+                item.GetItemName());
+            node.Properties["alias"] = alias;
+
             return node;
         }
 
@@ -219,21 +237,59 @@ namespace TauCode.Cli
 
         #region Node Actions
 
-        private void ProcessAlias(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
+        private void ProcessWorkerName(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.GetLastResult<CliCommand>();
-            command.WorkerName = actionNode.Properties["worker-name"];
+            if (resultAccumulator.Count == 0)
+            {
+                // no command yet
+                var command = new CliCommand
+                {
+                    AddInName = null, // Add-in is obviously unnamed since there was no command pushed to result accumulator
+                    WorkerName = actionNode.Properties["worker-name"],
+                };
+                resultAccumulator.AddResult(command);
+            }
+            else
+            {
+                var command = resultAccumulator.GetLastResult<CliCommand>();
+                command.WorkerName = actionNode.Properties["worker-name"];
+            }
+        }
+
+        private void ProcessPath(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
+        {
+            CliCommand command;
+            if (resultAccumulator.Count == 0)
+            {
+                command = new CliCommand
+                {
+                    AddInName = null,
+                    WorkerName = null,
+                };
+            }
+            else
+            {
+                command = resultAccumulator.GetLastResult<CliCommand>();
+            }
+
+            var textToken = (TextToken)token;
+            var entry = new PathEntry
+            {
+                Alias = node.Properties["alias"],
+                Path = textToken.Text,
+            };
+            command.Entries.Add(entry);
         }
 
         private void ProcessKey(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)
         {
-            var subCommand = resultAccumulator.GetLastResult<CliCommand>();
+            var command = resultAccumulator.GetLastResult<CliCommand>();
             var entry = new KeyCliCommandEntry
             {
                 Alias = actionNode.Properties["alias"],
                 Key = ((TextToken)token).Text,
             };
-            subCommand.Entries.Add(entry);
+            command.Entries.Add(entry);
         }
 
         private void ProcessKeySucceededByValue(ActionNode actionNode, IToken token, IResultAccumulator resultAccumulator)

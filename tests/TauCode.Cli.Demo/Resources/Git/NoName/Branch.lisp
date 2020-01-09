@@ -7,12 +7,25 @@
 			"<todo>"
 			"<todo>"
 			))
+		:properties (
+			(doc "Branch management")
+			(usage-samples "usage1\r\nusage2")
+		)
 	(idle :name args)
 	(alt
 		(key-value-pair
 			:alias connection
 			:key-names "--conn" "-c"
-			:key-values (choice :classes string path :values *))
+			:key-values (choice :classes string path :values *)
+
+			; zeta below
+			:keys "--conn" "-c"
+			:value-classes path
+			:values *
+			:properties (
+				("alias" "connection")
+				("doc" "Connection string")
+			))
 
 		(key-value-pair
 			:alias provider

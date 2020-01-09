@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
@@ -85,7 +86,7 @@ namespace TauCode.Cli
                         throw new NotImplementedException(); // error.
                     }
 
-                    var token = (TextToken)singleTextTokens.Single();
+                    var token = (TextToken) singleTextTokens.Single();
                     tokens.Add(token);
                 }
 
@@ -102,6 +103,7 @@ namespace TauCode.Cli
                 {
                     throw new NotImplementedException(); // error.
                 }
+
                 if (decorations.Single() != NoneTextDecoration.Instance)
                 {
                     throw new NotImplementedException(); // error.
@@ -116,7 +118,7 @@ namespace TauCode.Cli
 
             var commandNode = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new[] { textClass },
+                new[] {textClass},
                 null,
                 nodeFamily,
                 null);
@@ -180,7 +182,7 @@ namespace TauCode.Cli
                         throw new NotImplementedException(); // error.
                     }
 
-                    var token = (TextToken)singleTextTokens.Single();
+                    var token = (TextToken) singleTextTokens.Single();
                     tokens.Add(token);
                 }
 
@@ -197,6 +199,7 @@ namespace TauCode.Cli
                 {
                     throw new NotImplementedException(); // error.
                 }
+
                 if (decorations.Single() != NoneTextDecoration.Instance)
                 {
                     throw new NotImplementedException(); // error.
@@ -211,7 +214,7 @@ namespace TauCode.Cli
 
             var node = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new[] { textClass },
+                new[] {textClass},
                 (actionNode, token, resultAccumulator) =>
                 {
                     action();
@@ -260,6 +263,14 @@ namespace TauCode.Cli
             return functionalityProvider.AddCustomHandler(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.GetHelp()),
                 "--help");
+        }
+
+        public static TEntry GetSingleEntryByAlias<TEntry>(this IEnumerable<ICliCommandEntry> entries, string alias)
+            where TEntry : ICliCommandEntry
+        {
+            // todo checks
+            // todo can throw
+            return (TEntry)entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
