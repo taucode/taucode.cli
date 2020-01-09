@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\taucode\TauCode.Parsing.Lab\TauCode.Parsing.Lab.csproj" />
+    <ProjectReference Include="..\..\taucode\TauCode.TextProcessing.Lab\TauCode.TextProcessing.Lab.csproj" />
   </ItemGroup>
 
 </Project>

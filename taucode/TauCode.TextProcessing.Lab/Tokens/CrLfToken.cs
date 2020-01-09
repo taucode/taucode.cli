@@ -5,7 +5,7 @@ namespace TauCode.TextProcessing.Lab.Tokens
 {
     public sealed class CrLfToken : TokenBase
     {
-        public static CrLfToken Instance = new CrLfToken();
+        public static CrLfToken Instance { get; } = new CrLfToken();
 
         private CrLfToken()
             : base(Position.Zero, 2)

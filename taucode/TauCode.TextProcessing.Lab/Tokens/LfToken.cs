@@ -5,7 +5,7 @@ namespace TauCode.TextProcessing.Lab.Tokens
 {
     public sealed class LfToken : TokenBase
     {
-        public static LfToken Instance = new LfToken();
+        public static LfToken Instance { get; } = new LfToken();
 
         private LfToken()
             : base(Position.Zero, 1)
