@@ -2,11 +2,11 @@
 using TauCode.Cli.Data;
 using TauCode.Extensions;
 
-namespace TauCode.Cli.Demo.AddIns.DbAddInWorkers
+namespace TauCode.Cli.Demo.AddIns.TodoOldDbAddInWorkers
 {
-    public class SerializeDataWorker : CliWorkerBase
+    public class TodoOldSerializeDataWorker : CliWorkerBase
     {
-        public SerializeDataWorker()
+        public TodoOldSerializeDataWorker()
             : base(
                 typeof(Program).Assembly.GetResourceText("sd-grammar.lisp", true),
                 "sd-1.0", 

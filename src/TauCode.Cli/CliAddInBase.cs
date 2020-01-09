@@ -122,7 +122,16 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; internal set; }
 
-        public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
+        //public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
+        public IReadOnlyList<ICliWorker> GetWorkers()
+        {
+            if (_workers.Count == 0)
+            {
+                var dummy = this.Node;
+            }
+
+            return _workers;
+        }
 
         #endregion
 
@@ -169,7 +178,7 @@ namespace TauCode.Cli
 
         public bool SupportsHelp { get; }
 
-        public string GetHelp()
+        public virtual string GetHelp()
         {
             return "todo: add-in help.";
         }

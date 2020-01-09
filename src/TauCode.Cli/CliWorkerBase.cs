@@ -41,6 +41,19 @@ namespace TauCode.Cli
             this.Name = this.ExtractName();
             this.Version = version;
             this.SupportsHelp = supportsHelp;
+
+            if (this.Name == null)
+            {
+                if (this.Version != null)
+                {
+                    throw new NotImplementedException(); // nameless worker cannot have version
+                }
+
+                if (this.SupportsHelp)
+                {
+                    throw new NotImplementedException(); // nameless worker cannot support help
+                }
+            }
         }
 
         #endregion
@@ -54,7 +67,7 @@ namespace TauCode.Cli
             string name = null;
             if (supposedCommandForm.GetCarSymbolName() == "WORKER")
             {
-                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name").Name;
+                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
             }
 
             return name;
@@ -147,7 +160,7 @@ namespace TauCode.Cli
 
         public bool SupportsHelp { get; }
 
-        public string GetHelp()
+        public virtual string GetHelp()
         {
             return "todo: worker help.";
         }
