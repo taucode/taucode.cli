@@ -4,7 +4,8 @@ namespace TauCode.TextProcessing.Lab
 {
     public struct TextProcessingResult
     {
-        public static TextProcessingResult Fail { get; } = new TextProcessingResult(TextProcessingSummary.Fail, 0, 0, null);
+        public static TextProcessingResult Fail { get; } =
+            new TextProcessingResult(TextProcessingSummary.Fail, 0, 0, null);
 
         public TextProcessingResult(TextProcessingSummary summary, int indexShift, int lineShift, int? currentColumn)
         {

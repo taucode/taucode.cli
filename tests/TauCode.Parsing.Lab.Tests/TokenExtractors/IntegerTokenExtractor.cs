@@ -5,28 +5,46 @@ using TauCode.TextProcessing.Lab;
 
 namespace TauCode.Parsing.Lab.Tests.TokenExtractors
 {
+    // todo clean up
     public class IntegerTokenExtractor : GammaTokenExtractorBase<IntegerToken>
     {
-        public override IntegerToken ProduceToken(string text, int startingIndex, int length)
+        public override IntegerToken ProduceToken(string text, int absoluteIndex, int consumedLength, Position position)
         {
-            throw new System.NotImplementedException();
+            var intString = text.Substring(absoluteIndex, consumedLength);
+            if (int.TryParse(intString, out var dummy))
+            {
+                return new IntegerToken(intString, position, consumedLength);
+            }
+
+            return null;
         }
 
-        protected override bool AcceptsPreviousCharImpl(char previousChar)
-        {
-            throw new System.NotImplementedException();
-        }
+        protected override bool AcceptsPreviousCharImpl(char previousChar) =>
+            LexingHelper.IsStandardPunctuationChar(previousChar) ||
+            LexingHelper.IsInlineWhiteSpaceOrCaretControl(previousChar);
 
-        protected override bool AcceptsCharImpl(char c, int localIndex)
+        protected override CharAcceptanceResult AcceptCharImpl(char c, int localIndex)
         {
             if (localIndex == 0)
             {
-                return
+                var ok =
                     c.IsIn('+', '-') ||
                     LexingHelper.IsDigit(c);
+
+                return ok ? CharAcceptanceResult.Continue : CharAcceptanceResult.Fail;
             }
 
-            return LexingHelper.IsDigit(c);
+            if (LexingHelper.IsDigit(c))
+            {
+                return CharAcceptanceResult.Continue;
+            }
+
+            if (LexingHelper.IsStandardPunctuationChar(c) || LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
+            {
+                return CharAcceptanceResult.Stop;
+            }
+
+            return CharAcceptanceResult.Fail;
         }
     }
 }

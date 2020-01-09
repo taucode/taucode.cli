@@ -28,14 +28,23 @@ namespace TauCode.TextProcessing.Lab
             public int CurrentColumn { get; private set; }
 
             public int GetAbsoluteIndex() => this.StartingIndex + this.LocalIndex;
-        }
 
+            public void Advance(int indexShift, int lineShift, int currentColumn)
+            {
+                this.LocalIndex += indexShift;
+                this.CurrentLine += lineShift;
+                this.CurrentColumn = currentColumn;
+
+                _holder._version++;
+            }
+        }
 
         #endregion
 
         #region Fields
 
         private readonly Stack<Generation> _generations;
+        private int _version;
 
         #endregion
 
@@ -47,6 +56,7 @@ namespace TauCode.TextProcessing.Lab
             _generations = new Stack<Generation>();
             var rootGeneration = new Generation(this);
             _generations.Push(rootGeneration);
+            _version = 1;
         }
 
         #endregion
@@ -77,29 +87,20 @@ namespace TauCode.TextProcessing.Lab
 
         public void ReleaseGeneration()
         {
-            throw new NotImplementedException();
+            // todo checks
+            _generations.Pop();
         }
 
         public int Depth => _generations.Count;
-
-        #endregion
-
-
-
+        public int Version => _version;
 
         public int GetCurrentLine() => this.GetLastGeneration()?.CurrentLine ?? 0;
 
-        private int GetAbsoluteIndex() => this.GetLastGeneration()?.GetAbsoluteIndex() ?? 0;
+        public int GetAbsoluteIndex() => this.GetLastGeneration()?.GetAbsoluteIndex() ?? 0;
 
-        public int GetCurrentColumn()
-        {
-            throw new NotImplementedException();
-        }
+        public int GetCurrentColumn() => this.GetLastGeneration()?.CurrentColumn ?? 0;
 
-        public int GetStartingIndex()
-        {
-            throw new NotImplementedException();
-        }
+        public int GetStartingIndex() => this.GetLastGeneration()?.StartingIndex ?? 0;
 
         public int GetLocalIndex()
         {
@@ -124,7 +125,13 @@ namespace TauCode.TextProcessing.Lab
 
         public void Advance(int indexShift, int lineShift, int currentColumn)
         {
-            throw new NotImplementedException();
+            // todo temp wtf
+            if (lineShift > 0)
+            {
+                throw new NotImplementedException();
+            }
+
+            this.GetLastGeneration().Advance(indexShift, lineShift, currentColumn);
         }
 
         public char GetCurrentChar()
@@ -136,10 +143,11 @@ namespace TauCode.TextProcessing.Lab
 
         public void AdvanceByChar()
         {
+            // todo checks
             this.Advance(1, 0, this.GetCurrentColumn() + 1);
         }
 
-        public char? GetPreviousChar()
+        public char? GetPreviousAbsoluteChar()
         {
             // todo: checks
             var absoluteIndex = this.GetAbsoluteIndex();
@@ -148,7 +156,33 @@ namespace TauCode.TextProcessing.Lab
                 return null;
             }
 
-            return this.Text[absoluteIndex];
+            return this.Text[absoluteIndex - 1];
+        }
+
+        #endregion
+    }
+
+    public static class TextProcessingContextExtensions
+    {
+        public static void ReleaseGenerationAndGetMetrics(
+            this TextProcessingContext context,
+            out int indexShift,
+            out int lineShift,
+            out int currentColumn)
+        {
+            // todo checks on context's generations.
+
+            var newIndex = context.GetAbsoluteIndex();
+            var newLine = context.GetCurrentLine();
+            currentColumn = context.GetCurrentColumn();
+
+            context.ReleaseGeneration();
+
+            var oldIndex = context.GetAbsoluteIndex();
+            var oldLine = context.GetCurrentLine();
+
+            indexShift = newIndex - oldIndex;
+            lineShift = newLine - oldLine;
         }
     }
 }

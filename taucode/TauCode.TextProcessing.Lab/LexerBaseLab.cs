@@ -2,24 +2,33 @@
 using System.Collections.Generic;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
+using TauCode.TextProcessing.Lab.TextProcessors;
 
 namespace TauCode.TextProcessing.Lab
 {
+    // todo clean up
     public abstract class LexerBaseLab : ILexer
     {
         private TextProcessingContext _context;
 
         private IList<IGammaTokenExtractor> _tokenExtractors;
-        private IList<ICharProcessor> _charSkippers;
+        private IList<ITextProcessor<string>> _skippers;
 
         protected IList<IGammaTokenExtractor> TokenExtractors =>
             _tokenExtractors ?? (_tokenExtractors = this.CreateTokenExtractors());
 
-        protected IList<ICharProcessor> CharSkippers =>
-            _charSkippers ?? (_charSkippers = this.CreateCharSkippers());
+        protected IList<ITextProcessor<string>> Skippers => _skippers ?? (_skippers = this.CreateSkippers());
+
+        protected virtual IList<ITextProcessor<string>> CreateSkippers()
+        {
+            return new ITextProcessor<string>[]
+            {
+                new SkipSpacesProcessor(),
+                new SkipLineBreaksProcessor(),
+            };
+        }
 
         protected abstract IList<IGammaTokenExtractor> CreateTokenExtractors();
-        protected abstract IList<ICharProcessor> CreateCharSkippers();
 
         public IList<IToken> Lexize(string input)
         {
@@ -29,13 +38,16 @@ namespace TauCode.TextProcessing.Lab
 
             while (true)
             {
+                // skippers begin to work
+                this.SkipWhilePossible();
+
                 if (_context.IsEnd())
                 {
                     break;
                 }
 
+                // token extractors begin to work
                 var gotSuccess = false;
-
                 foreach (var tokenExtractor in this.TokenExtractors)
                 {
                     if (gotSuccess)
@@ -43,10 +55,11 @@ namespace TauCode.TextProcessing.Lab
                         break;
                     }
 
+                    var previousColumn = _context.GetCurrentColumn();
                     var result = tokenExtractor.Process(_context);
                     if (_context.Depth != 1)
                     {
-                        throw new NotImplementedException();
+                        throw new NotImplementedException(); // todo error
                     }
 
                     switch (result.Summary)
@@ -57,10 +70,17 @@ namespace TauCode.TextProcessing.Lab
                             break;
 
                         case TextProcessingSummary.CanProduce:
+                            var absoluteIndex = _context.GetAbsoluteIndex();
+                            var consumedLength = result.IndexShift;
+
+                            var line = _context.GetCurrentLine() + result.LineShift;
+                            var position = new Position(line, previousColumn);
+
                             var token = tokenExtractor.Produce(
                                 _context.Text,
-                                _context.GetStartingIndex(),
-                                result.IndexShift);
+                                absoluteIndex,
+                                consumedLength,
+                                position);
 
                             if (token == null)
                             {
@@ -87,53 +107,53 @@ namespace TauCode.TextProcessing.Lab
                             throw new NotImplementedException();
                     }
                 }
-
-                if (!gotSuccess)
-                {
-                    var charRecognized = false;
-
-                    foreach (var charSkipper in this.CharSkippers)
-                    {
-                        if (charRecognized)
-                        {
-                            break;
-                        }
-
-                        var result = charSkipper.ProcessChar(_context.GetCurrentChar());
-
-                        switch (result)
-                        {
-                            case CharProcessingResult.Skip:
-                                //_context.Advance(1, 0, _context.GetCurrentColumn() + 1);
-                                _context.AdvanceByChar();
-                                charRecognized = true;
-                                break;
-
-                            case CharProcessingResult.Use:
-                                throw new NotImplementedException(); // should not happen for skipper.
-
-                            case CharProcessingResult.Fail:
-                                // try another
-                                break;
-
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                        if (result == CharProcessingResult.Skip)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (!charRecognized)
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
             }
 
             return tokens;
+        }
+
+        private void SkipWhilePossible()
+        {
+            while (true)
+            {
+                if (_context.IsEnd())
+                {
+                    break;
+                }
+
+                var skipped = false;
+
+                foreach (var skipper in this.Skippers)
+                {
+                    var c = _context.GetCurrentChar();
+                    if (!skipper.AcceptsFirstChar(c))
+                    {
+                        continue;
+                    }
+
+                    var skipResult = skipper.Process(_context);
+                    if (_context.Depth != 1)
+                    {
+                        throw new NotImplementedException(); // todo error
+                    }
+
+                    if (skipResult.Summary == TextProcessingSummary.Skip)
+                    {
+                        skipped = true;
+                        _context.Advance(skipResult.IndexShift, skipResult.LineShift, skipResult.GetCurrentColumn());
+                        break;
+                    }
+                    else if (skipResult.Summary == TextProcessingSummary.CanProduce)
+                    {
+                        throw new NotImplementedException(); // should never happen, skippers only 'skip' or 'fail'.
+                    }
+                }
+
+                if (!skipped)
+                {
+                    break;
+                }
+            }
         }
     }
 }

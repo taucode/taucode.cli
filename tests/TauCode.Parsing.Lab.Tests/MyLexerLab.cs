@@ -13,10 +13,5 @@ namespace TauCode.Parsing.Lab.Tests
                 new IntegerTokenExtractor(),
             };
         }
-
-        protected override IList<ICharProcessor> CreateCharSkippers()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
