@@ -1,4 +1,4 @@
-(defblock :name branch :is-top t
+﻿(defblock :name branch :is-top t
 	(worker
 		:worker-name branch
 		:verbs "branch"
@@ -6,11 +6,11 @@
 		:usage-samples (
 			"<todo>"
 			"<todo>"
-			))
+			)
 		:properties (
 			(doc "Branch management")
 			(usage-samples "usage1\r\nusage2")
-		)
+		))
 	(idle :name args)
 	(alt
 		(key-value-pair
