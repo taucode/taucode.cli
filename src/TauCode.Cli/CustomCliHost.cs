@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
-using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
@@ -76,11 +75,12 @@ namespace TauCode.Cli
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);
 
-            // it is expected that some node will throw CliCustomHandlerException or other custom exception.
-            this.Parser.Parse(this.Node, tokens);
+            throw new NotImplementedException();
+            //// it is expected that some node will throw CliCustomHandlerException or other custom exception.
+            //this.Parser.Parse(this.Node, tokens);
 
-            // should not get here
-            throw new CliException($"'{nameof(ParseCommand)}' is expected to throw an instance of '{typeof(CliCustomHandlerException).FullName}'.");
+            //// should not get here
+            //throw new CliException($"'{nameof(ParseCommand)}' is expected to throw an instance of '{typeof(CliCustomHandlerException).FullName}'.");
         }
 
         public void DispatchCommand(CliCommand command) => throw new NotSupportedException($"Use custom handlers, or override '{nameof(BuildNode)}'.");

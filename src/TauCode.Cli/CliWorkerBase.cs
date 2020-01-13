@@ -6,7 +6,6 @@ using TauCode.Cli.Data;
 using TauCode.Cli.Data.Entries;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
-using TauCode.Parsing.Building;
 using TauCode.Parsing.TinyLisp;
 using TauCode.Parsing.TinyLisp.Data;
 
@@ -75,11 +74,12 @@ namespace TauCode.Cli
 
         private INode BuildNode()
         {
-            INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{this.Name}'");
-            IBuilder builder = new Builder();
-            var node = builder.Build(nodeFactory, _form);
+            throw new NotImplementedException();
+            //INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{this.Name}'");
+            //IBuilder builder = new Builder();
+            //var node = builder.Build(nodeFactory, _form);
 
-            return node;
+            //return node;
         }
 
         #endregion

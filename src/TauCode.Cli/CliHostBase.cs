@@ -235,8 +235,10 @@ namespace TauCode.Cli
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);
 
-            var command = (CliCommand)this.Parser.Parse(this.Node, tokens).Single();
-            return command;
+            throw new NotImplementedException();
+
+            //var command = (CliCommand)this.Parser.Parse(this.Node, tokens).Single();
+            //return command;
         }
 
         public void DispatchCommand(CliCommand command)
