@@ -3,9 +3,9 @@ using TauCode.Parsing.TextDecorations;
 
 namespace TauCode.Cli.TokenExtractors
 {
-    public class StringExtractor : StringExtractorBase
+    public class DoubleQuoteStringExtractor : StringExtractorBase
     {
-        public StringExtractor() 
+        public DoubleQuoteStringExtractor() 
             : base(
                 '"',
                 '"',
