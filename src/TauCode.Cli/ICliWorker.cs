@@ -9,6 +9,6 @@ namespace TauCode.Cli
     public interface ICliWorker : ICliFunctionalityProvider
     {
         ICliAddIn AddIn { get; }
-        void Process(IList<ICliCommandEntry> entries);
+        void Process(IList<CliCommandEntry> entries);
     }
 }

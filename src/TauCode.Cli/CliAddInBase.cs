@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
 
@@ -61,15 +62,15 @@ namespace TauCode.Cli
             }
             else
             {
-                throw new NotImplementedException();
-                //addInNode = new ExactTextNode(
-                //    this.Name,
-                //    TermTextClass.Instance,
-                //    this.ProcessAddInName,
-                //    _nodeFamily,
-                //    null); // todo: give it a name
+                addInNode = new ExactTextNode(
+                    this.Name,
+                    TermTextClass.Instance,
+                    true,
+                    this.ProcessAddInName,
+                    _nodeFamily,
+                    null); // todo: give it a name
 
-                //addInNode.Properties["add-in-name"] = this.Name;
+                addInNode.Properties["add-in-name"] = this.Name;
             }
 
             var workers = this.CreateWorkers();

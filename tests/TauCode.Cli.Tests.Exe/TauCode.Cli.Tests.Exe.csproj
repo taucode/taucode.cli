@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+    <ProjectReference Include="..\TauCode.Cli.Tests.Common\TauCode.Cli.Tests.Common.csproj" />
+  </ItemGroup>
+
+</Project>

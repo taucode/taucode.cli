@@ -116,21 +116,20 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            throw new NotImplementedException();
+            var commandNode = new MultiTextNode(
+                tokens.Select(x => x.Text),
+                new[] {textClass},
+                true,
+                null,
+                nodeFamily,
+                null);
 
-            //var commandNode = new MultiTextNode(
-            //    tokens.Select(x => x.Text),
-            //    new[] {textClass},
-            //    null,
-            //    nodeFamily,
-            //    null);
+            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
 
-            //var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+            functionalityProvider.Node.EstablishLink(commandNode);
+            commandNode.EstablishLink(argumentNode);
 
-            //functionalityProvider.Node.EstablishLink(commandNode);
-            //commandNode.EstablishLink(argumentNode);
-
-            //return functionalityProvider;
+            return functionalityProvider;
         }
 
         public static ICliFunctionalityProvider AddCustomHandler(
@@ -212,20 +211,20 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            throw new NotImplementedException();
-            //var node = new MultiTextNode(
-            //    tokens.Select(x => x.Text),
-            //    new[] {textClass},
-            //    (actionNode, token, resultAccumulator) =>
-            //    {
-            //        action();
-            //        throw new CliCustomHandlerException();
-            //    },
-            //    nodeFamily,
-            //    null);
+            var node = new MultiTextNode(
+                tokens.Select(x => x.Text),
+                new[] {textClass},
+                true,
+                (actionNode, token, resultAccumulator) =>
+                {
+                    action();
+                    throw new CliCustomHandlerException();
+                },
+                nodeFamily,
+                null);
 
-            //functionalityProvider.Node.EstablishLink(node);
-            //return functionalityProvider;
+            functionalityProvider.Node.EstablishLink(node);
+            return functionalityProvider;
         }
 
         public static ICliFunctionalityProvider AddVersion(this ICliFunctionalityProvider functionalityProvider)
@@ -266,12 +265,20 @@ namespace TauCode.Cli
                 "--help");
         }
 
-        public static TEntry GetSingleEntryByAlias<TEntry>(this IEnumerable<ICliCommandEntry> entries, string alias)
-            where TEntry : ICliCommandEntry
+        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(this IEnumerable<CliCommandEntry> entries,
+            string alias)
         {
             // todo checks
             // todo can throw
-            return (TEntry)entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
+            return entries.SingleOrDefault(x =>
+                string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
+        {
+            // todo checks
+            // todo can throw
+            return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

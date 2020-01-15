@@ -206,7 +206,10 @@ namespace TauCode.Cli
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 
-        protected virtual IParser CreateParser() => new Parser();
+        protected virtual IParser CreateParser() => new Parser
+        {
+            Root = this.Node,
+        };
 
         protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
 
@@ -235,15 +238,13 @@ namespace TauCode.Cli
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);
 
-            throw new NotImplementedException();
 
-            //var command = (CliCommand)this.Parser.Parse(this.Node, tokens).Single();
-            //return command;
+            var command = (CliCommand)this.Parser.Parse(tokens).Single();
+            return command;
         }
 
         public void DispatchCommand(CliCommand command)
         {
-            //var addInRecord = _addInRecords[command.AddInName];
             var addInRecord = this.GetAddInRecord(command.AddInName);
             var worker = addInRecord.GetWorker(command.WorkerName);
 

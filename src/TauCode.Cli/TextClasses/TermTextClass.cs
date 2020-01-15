@@ -2,6 +2,7 @@
 
 namespace TauCode.Cli.TextClasses
 {
+    [TextClass("term")]
     public class TermTextClass : TextClassBase
     {
         public static readonly TermTextClass Instance = new TermTextClass();

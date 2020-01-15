@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Curl\NoName\NoName.lisp" />
+    <None Remove="Resources\Git\NoName\Branch.lisp" />
+    <None Remove="Resources\Git\NoName\Checkout.lisp" />
+    <None Remove="Resources\Git\NoName\Clone.lisp" />
+    <None Remove="Resources\Kubectl\Apply\NoName.lisp" />
+    <None Remove="Resources\Kubectl\Rollout\NoName.lisp" />
+    <None Remove="Resources\Kubectl\Scale\NoName.lisp" />
+    <None Remove="Resources\sd-grammar.lisp" />
+    <None Remove="Resources\Tau\Db\DropAllTables.lisp" />
+    <None Remove="Resources\Tau\Db\SerializeData.lisp" />
+    <None Remove="Resources\Tau\WebApi\Controller.lisp" />
+    <None Remove="Resources\Tau\WebApi\Cqrs.lisp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Curl\NoName\NoName.lisp" />
+    <EmbeddedResource Include="Resources\Git\NoName\Branch.lisp" />
+    <EmbeddedResource Include="Resources\Git\NoName\Checkout.lisp" />
+    <EmbeddedResource Include="Resources\Git\NoName\Clone.lisp" />
+    <EmbeddedResource Include="Resources\Kubectl\Apply\NoName.lisp" />
+    <EmbeddedResource Include="Resources\Kubectl\Rollout\NoName.lisp" />
+    <EmbeddedResource Include="Resources\Kubectl\Scale\NoName.lisp" />
+    <EmbeddedResource Include="Resources\sd-grammar.lisp" />
+    <EmbeddedResource Include="Resources\Tau\Db\DropAllTables.lisp" />
+    <EmbeddedResource Include="Resources\Tau\Db\SerializeData.lisp" />
+    <EmbeddedResource Include="Resources\Tau\WebApi\Controller.lisp" />
+    <EmbeddedResource Include="Resources\Tau\WebApi\Cqrs.lisp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+  </ItemGroup>
+
+</Project>
