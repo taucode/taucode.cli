@@ -15,7 +15,7 @@ namespace TauCode.Cli.Demo.Hosts.Tau.Db.Workers
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
             throw new NotImplementedException();
         }

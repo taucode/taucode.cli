@@ -14,7 +14,7 @@ namespace TauCode.Cli.Demo.AddIns.TodoOldDbAddInWorkers
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
             var connection = this.GetSingleValue(entries, "connection");
             var provider = this.GetSingleValue(entries, "provider");

@@ -11,7 +11,7 @@ namespace TauCode.Cli.Tests.TestCli.Workers
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
             throw new NotImplementedException();
         }

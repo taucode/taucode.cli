@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
-using TauCode.Cli.Data.Entries;
-using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
+using TauCode.Parsing.Building;
 using TauCode.Parsing.TinyLisp;
 using TauCode.Parsing.TinyLisp.Data;
 
@@ -74,37 +73,38 @@ namespace TauCode.Cli
 
         private INode BuildNode()
         {
-            throw new NotImplementedException();
-            //INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker for alias '{this.Name}'");
-            //IBuilder builder = new Builder();
-            //var node = builder.Build(nodeFactory, _form);
+            INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker node factory. Name:'{this.Name}'");
 
-            //return node;
+            ITreeBuilder builder = new TreeBuilder();
+            var node = builder.Build(nodeFactory, _form);
+
+            return node;
         }
 
         #endregion
 
         #region Protected
 
-        protected string GetSingleValue(IList<ICliCommandEntry> entries, string alias)
+        protected string GetSingleValue(IList<CliCommandEntry> entries, string alias)
         {
-            var wantedEntries = entries
-                .Where(x => x is KeyValueCliCommandEntry)
-                .Cast<KeyValueCliCommandEntry>()
-                .ToList();
+            throw new NotImplementedException();
+            //var wantedEntries = entries
+            //    .Where(x => x is KeyValueCliCommandEntry)
+            //    .Cast<KeyValueCliCommandEntry>()
+            //    .ToList();
 
-            if (wantedEntries.Count == 0)
-            {
-                throw new CliException($"Entry with alias '{alias}' was not provided.");
-            }
-            else if (wantedEntries.Count == 1)
-            {
-                return wantedEntries.Single().Value;
-            }
-            else
-            {
-                throw new CliException($"Entry with alias '{alias}' was provided more than once.");
-            }
+            //if (wantedEntries.Count == 0)
+            //{
+            //    throw new CliException($"Entry with alias '{alias}' was not provided.");
+            //}
+            //else if (wantedEntries.Count == 1)
+            //{
+            //    return wantedEntries.Single().Value;
+            //}
+            //else
+            //{
+            //    throw new CliException($"Entry with alias '{alias}' was provided more than once.");
+            //}
         }
 
         #endregion
@@ -113,7 +113,7 @@ namespace TauCode.Cli
 
         public ICliAddIn AddIn { get; internal set; }
 
-        public abstract void Process(IList<ICliCommandEntry> entries);
+        public abstract void Process(IList<CliCommandEntry> entries);
 
         #endregion
 

@@ -266,8 +266,8 @@ namespace TauCode.Cli
                 "--help");
         }
 
-        public static TEntry GetSingleEntryByAlias<TEntry>(this IEnumerable<ICliCommandEntry> entries, string alias)
-            where TEntry : ICliCommandEntry
+        public static TEntry GetSingleEntryByAlias<TEntry>(this IEnumerable<CliCommandEntry> entries, string alias)
+            where TEntry : CliCommandEntry
         {
             // todo checks
             // todo can throw

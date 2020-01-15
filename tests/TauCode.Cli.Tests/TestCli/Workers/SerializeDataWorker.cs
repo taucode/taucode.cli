@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using TauCode.Cli.Data;
-using TauCode.Cli.Data.Entries;
 using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.TestCli.Workers
@@ -16,16 +15,17 @@ namespace TauCode.Cli.Tests.TestCli.Workers
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
-            var connection = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "CONNECTION")).Value;
-            var provider = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "PROVIDER")).Value;
-            var file = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "FILE")).Value;
+            throw new NotImplementedException();
+            //var connection = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "CONNECTION")).Value;
+            //var provider = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "PROVIDER")).Value;
+            //var file = ((KeyValueCliCommandEntry)entries.Single(x => x.Alias == "FILE")).Value;
 
-            this.Output.WriteLine("Serialize Data");
-            this.Output.WriteLine($"Connection: {connection}");
-            this.Output.WriteLine($"Provider: {provider}");
-            this.Output.WriteLine($"File: {file}");
+            //this.Output.WriteLine("Serialize Data");
+            //this.Output.WriteLine($"Connection: {connection}");
+            //this.Output.WriteLine($"Provider: {provider}");
+            //this.Output.WriteLine($"File: {file}");
         }
     }
 }

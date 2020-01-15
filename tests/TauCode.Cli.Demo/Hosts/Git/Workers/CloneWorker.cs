@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TauCode.Cli.Data;
-using TauCode.Cli.Data.Entries;
 using TauCode.Extensions;
 
 namespace TauCode.Cli.Demo.Hosts.Git.Workers
@@ -15,14 +15,15 @@ namespace TauCode.Cli.Demo.Hosts.Git.Workers
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
-            this.Output.WriteLine("git clone");
-            var repoUrl = entries.GetSingleEntryByAlias<PathEntry>("repo-url").Path;
-            var repoPath = entries.GetSingleEntryByAlias<PathEntry>("repo-path").Path;
+            throw new NotImplementedException();
+            //this.Output.WriteLine("git clone");
+            //var repoUrl = entries.GetSingleEntryByAlias<PathEntry>("repo-url").Path;
+            //var repoPath = entries.GetSingleEntryByAlias<PathEntry>("repo-path").Path;
 
-            this.Output.WriteLine($"url  : {repoUrl}");
-            this.Output.WriteLine($"path : {repoPath}");
+            //this.Output.WriteLine($"url  : {repoUrl}");
+            //this.Output.WriteLine($"path : {repoPath}");
         }
     }
 }

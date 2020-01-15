@@ -2,6 +2,7 @@
 
 namespace TauCode.Cli.TextClasses
 {
+    [TextClass("url")]
     public class UrlTextClass : TextClassBase
     {
         public static readonly UrlTextClass Instance = new UrlTextClass();

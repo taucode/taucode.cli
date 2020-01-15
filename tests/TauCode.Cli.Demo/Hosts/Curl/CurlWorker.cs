@@ -14,7 +14,7 @@ namespace TauCode.Cli.Demo.Hosts.Curl
         {
         }
 
-        public override void Process(IList<ICliCommandEntry> entries)
+        public override void Process(IList<CliCommandEntry> entries)
         {
             throw new System.NotImplementedException();
         }

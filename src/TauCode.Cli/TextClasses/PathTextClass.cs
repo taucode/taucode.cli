@@ -2,6 +2,7 @@
 
 namespace TauCode.Cli.TextClasses
 {
+    [TextClass("path")]
     public class PathTextClass : TextClassBase
     {
         public static readonly PathTextClass Instance = new PathTextClass();
