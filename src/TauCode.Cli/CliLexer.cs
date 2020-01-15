@@ -1,46 +1,24 @@
-﻿using TauCode.Cli.TokenExtractors;
+﻿using System.Collections.Generic;
+using TauCode.Cli.TokenExtractors;
 using TauCode.Parsing.Lexing;
-using TauCode.Parsing.Lexing.StandardTokenExtractors;
+using TauCode.Parsing.Lexing.StandardExtractors;
 
 namespace TauCode.Cli
 {
     public class CliLexer : LexerBase
     {
-        protected override void InitTokenExtractors()
+        protected override IList<ITokenExtractor> CreateTokenExtractors()
         {
-            // integer
-            var integerExtractor = new IntegerExtractor();
-            this.AddTokenExtractor(integerExtractor);
-
-            // term
-            var termExtractor = new TermExtractor();
-            this.AddTokenExtractor(termExtractor);
-
-            // key
-            var keyExtractor = new KeyExtractor();
-            this.AddTokenExtractor(keyExtractor);
-
-            // string
-            var stringExtractor = new StringExtractor();
-            this.AddTokenExtractor(stringExtractor);
-
-            // path
-            var pathExtractor = new PathExtractor();
-            this.AddTokenExtractor(pathExtractor);
-
-            // equals
-            var equalsExtractor = new EqualsExtractor();
-            this.AddTokenExtractor(equalsExtractor);
-
-            // *** Links ***
-            keyExtractor.AddSuccessors(equalsExtractor);
-
-            equalsExtractor.AddSuccessors(
-                integerExtractor,
-                termExtractor,
-                keyExtractor,
-                stringExtractor,
-                pathExtractor);
+            return new List<ITokenExtractor>
+            {
+                new EqualsExtractor(),
+                new IntegerExtractor(null), // todo: why 'params'?
+                new TermExtractor(),
+                new KeyExtractor(),
+                new SingleQuoteStringExtractor(),
+                new DoubleQuoteStringExtractor(),
+                new PathExtractor(),
+            };
         }
     }
 }

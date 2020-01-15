@@ -1,72 +1,30 @@
-﻿using TauCode.Cli.TextClasses;
-using TauCode.Extensions;
+﻿using System;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Tokens;
-using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli.TokenExtractors
 {
-    public class PathExtractor : TokenExtractorBase
+    public class PathExtractor : TokenExtractorBase<TextToken>
     {
         public PathExtractor()
-            : base(IsPathFirstChar)
+            : base(null)
         {
         }
 
-        private static bool IsPathFirstChar(char c) =>
-            LexingHelper.IsDigit(c) ||
-            LexingHelper.IsLatinLetter(c) ||
-            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+');
-
-        protected override void ResetState()
+        protected override CharAcceptanceResult AcceptCharImpl(char c, int localIndex)
         {
-            // idle
+            throw new NotImplementedException();
         }
 
-        protected override IToken ProduceResult()
+        protected override void OnBeforeProcess()
         {
-            var str = this.ExtractResultString();
-
-            var position = new Position(this.StartingLine, this.StartingColumn);
-            var consumedLength = this.LocalCharIndex;
-
-            var token = new TextToken(
-                PathTextClass.Instance,
-                NoneTextDecoration.Instance,
-                str,
-                position,
-                consumedLength);
-
-            return token;
+            throw new NotImplementedException();
         }
 
-        protected override CharChallengeResult ChallengeCurrentChar()
+        protected override TextToken DeliverToken(string text, int absoluteIndex, Position position, int consumedLength)
         {
-            var c = this.GetCurrentChar();
-            var index = this.LocalCharIndex;
-
-            if (index == 0)
-            {
-                return CharChallengeResult.Continue; // 0th char MUST have been accepted.
-            }
-
-            if (IsPathFirstChar(c) || c == ':')
-            {
-                return CharChallengeResult.Continue;
-            }
-
-            if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
-            {
-                return CharChallengeResult.Finish;
-            }
-
-            return CharChallengeResult.GiveUp;
-        }
-
-        protected override CharChallengeResult ChallengeEnd()
-        {
-            return CharChallengeResult.Finish;
+            throw new NotImplementedException();
         }
     }
 }

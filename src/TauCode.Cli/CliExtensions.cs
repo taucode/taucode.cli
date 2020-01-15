@@ -6,8 +6,8 @@ using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
+using TauCode.Parsing.TextDecorations;
 using TauCode.Parsing.Tokens;
-using TauCode.Parsing.Tokens.TextDecorations;
 
 namespace TauCode.Cli
 {
@@ -116,21 +116,21 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            var commandNode = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] {textClass},
-                null,
-                nodeFamily,
-                null);
+            throw new NotImplementedException();
 
-            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+            //var commandNode = new MultiTextNode(
+            //    tokens.Select(x => x.Text),
+            //    new[] {textClass},
+            //    null,
+            //    nodeFamily,
+            //    null);
 
-            functionalityProvider.Node.EstablishLink(commandNode);
-            commandNode.EstablishLink(argumentNode);
+            //var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
 
-            return functionalityProvider;
+            //functionalityProvider.Node.EstablishLink(commandNode);
+            //commandNode.EstablishLink(argumentNode);
 
-
+            //return functionalityProvider;
         }
 
         public static ICliFunctionalityProvider AddCustomHandler(
@@ -212,19 +212,20 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            var node = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] {textClass},
-                (actionNode, token, resultAccumulator) =>
-                {
-                    action();
-                    throw new CliCustomHandlerException();
-                },
-                nodeFamily,
-                null);
+            throw new NotImplementedException();
+            //var node = new MultiTextNode(
+            //    tokens.Select(x => x.Text),
+            //    new[] {textClass},
+            //    (actionNode, token, resultAccumulator) =>
+            //    {
+            //        action();
+            //        throw new CliCustomHandlerException();
+            //    },
+            //    nodeFamily,
+            //    null);
 
-            functionalityProvider.Node.EstablishLink(node);
-            return functionalityProvider;
+            //functionalityProvider.Node.EstablishLink(node);
+            //return functionalityProvider;
         }
 
         public static ICliFunctionalityProvider AddVersion(this ICliFunctionalityProvider functionalityProvider)

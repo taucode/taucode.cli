@@ -5,12 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-07-17-53" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\taucode\TauCode.Extensions.Lab\TauCode.Extensions.Lab.csproj" />
-    <ProjectReference Include="..\..\taucode\TauCode.Parsing.Lab\TauCode.Parsing.Lab.csproj" />
+    <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-13-21-55" />
   </ItemGroup>
 
 </Project>

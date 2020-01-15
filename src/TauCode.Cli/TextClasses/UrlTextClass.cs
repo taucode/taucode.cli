@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.TextClasses
 {
-    public class KeyTextClass : TextClassBase
+    public class UrlTextClass : TextClassBase
     {
-        public static readonly KeyTextClass Instance = new KeyTextClass();
+        public static readonly UrlTextClass Instance = new UrlTextClass();
 
-        private KeyTextClass()
+        private UrlTextClass()
         {
         }
 
