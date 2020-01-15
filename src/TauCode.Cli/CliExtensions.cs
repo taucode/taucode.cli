@@ -280,5 +280,14 @@ namespace TauCode.Cli
             // todo can throw
             return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
+
+        public static IList<CliCommandEntry> GetEntriesByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
+        {
+            // todo checks
+            // todo can throw
+            return entries
+                .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+        }
     }
 }

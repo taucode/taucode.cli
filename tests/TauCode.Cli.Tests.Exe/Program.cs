@@ -25,48 +25,6 @@ namespace TauCode.Cli.Tests.Exe
         {
             var program = new Program();
             program.Run();
-
-            //ICliHost host = new TodoOldDemoHost();
-
-            //host.Output = Console.Out;
-            //host.Input = Console.In;
-
-            //host.AddCustomHandler(
-            //    () => throw new ExitException(),
-            //    "exit");
-
-            //host.AddCustomHandler(
-            //    Console.Clear,
-            //    "cls");
-
-            //while (true)
-            //{
-            //    Console.Write("args >");
-            //    var line = Console.ReadLine();
-
-            //    try
-            //    {
-            //        var command = host.ParseCommand(line);
-            //        host.DispatchCommand(command);
-            //    }
-            //    catch (ExitException)
-            //    {
-            //        break;
-            //    }
-            //    catch (CliCustomHandlerException)
-            //    {
-            //        // ignore.
-            //    }
-            //    catch (CliException ex)
-            //    {
-            //        Console.Write("CLI Error: ");
-            //        Console.WriteLine(ex.Message);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex);
-            //    }
-            //}
         }
 
         #endregion
@@ -90,24 +48,6 @@ namespace TauCode.Cli.Tests.Exe
             idleHost.AddCustomHandler(
                 () => Console.WriteLine(this.GetAllHostsName()),
                 "--all-hosts");
-
-            //idleHost.AddCustomHandlerWithParameter(
-            //    (token) =>
-            //    {
-            //        if (token is TextToken textToken)
-            //        {
-            //            var name = textToken.Text;
-            //            _currentHost = _hosts[name];
-            //            throw new CliCustomHandlerException(); 
-            //        }
-            //        else
-            //        {
-            //            throw new NotImplementedException();
-            //        }
-            //    },
-            //    "--host"
-            //);
-
             _hosts = new ICliHost[]
                 {
                     new TauHost(),
@@ -122,6 +62,14 @@ namespace TauCode.Cli.Tests.Exe
             {
                 x.Output = Console.Out;
                 x.Input = Console.In;
+
+                x.AddCustomHandler(
+                    Console.Clear, 
+                    "cls");
+
+                x.AddCustomHandler(
+                    () => throw new ExitException(),
+                    "exit");
 
                 x.AddCustomHandlerWithParameter(
                     (token) =>
