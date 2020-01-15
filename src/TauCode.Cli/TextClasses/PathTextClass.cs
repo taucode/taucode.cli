@@ -14,7 +14,10 @@ namespace TauCode.Cli.TextClasses
 
         protected override string TryConvertFromImpl(string text, ITextClass anotherClass)
         {
-            if (anotherClass is StringTextClass)
+            if (
+                anotherClass is StringTextClass ||
+                anotherClass is TermTextClass ||
+                anotherClass is KeyTextClass)
             {
                 return text;
             }

@@ -9,21 +9,37 @@
 			))
 	(idle :name args)
 	(alt
-		(key-value-pair
-			:alias connection
-			:key-names "--conn" "-c"
-			:key-values (choice :classes string path :values *))
-
-		(key-value-pair
-			:alias provider
-			:key-names "--provider" "-p"
-			:key-values (choice :classes term :values "sqlserver" "postgresql"))
-
-		(key-value-pair
-			:alias exclude
-			:key-names "--exclude" "-e"
-			:key-values (choice :classes string term :values *))
-
+		(seq
+			(multi-text
+				:classes key
+				:values "-c" "--connection"
+				:alias connection
+				:action key)
+			(some-text
+				:classes path
+				:action value)
+		)
+		(seq
+			(multi-text
+				:classes key
+				:values "-p" "--provider"
+				:alias provider
+				:action key)
+			(multi-text
+				:classes term
+				:values "sqlserver" "postgresql"
+				:action value)
+		)
+		(seq
+			(multi-text
+				:classes key
+				:values "-e" "--exclude"
+				:alias exclude
+				:action key)
+			(some-text
+				:classes string term				
+				:action value)
+		)
 	)
 	(idle :links args next)
 	(end)

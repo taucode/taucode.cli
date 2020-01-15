@@ -2,41 +2,19 @@
 	(worker
 		:worker-name branch
 		:verbs "branch"
-		:doc "Branch management."
-		:usage-samples (
-			"<todo>"
-			"<todo>"
-			)
-		:properties (
-			(doc "Branch management")
-			(usage-samples "usage1\r\nusage2")
-		))
+		:doc "Branch management.")
 	(idle :name args)
 	(alt
-		(key-value-pair
-			:alias connection
-			:key-names "--conn" "-c"
-			:key-values (choice :classes string path :values *)
-
-			; zeta below
-			:keys "--conn" "-c"
-			:value-classes path
-			:values *
-			:properties (
-				("alias" "connection")
-				("doc" "Connection string")
-			))
-
-		(key-value-pair
-			:alias provider
-			:key-names "--provider" "-p"
-			:key-values (choice :classes term :values "sqlserver" "postgresql"))
-
-		(key-value-pair
-			:alias exclude
-			:key-names "--exclude" "-e"
-			:key-values (choice :classes string term :values *))
-
+		(seq
+			(multi-text
+				:classes key
+				:values "-d" "--delete"
+				:alias delete-branch
+				:action key)
+			(some-text
+				:classes path
+				:action value)
+		)
 	)
 	(idle :links args next)
 	(end)

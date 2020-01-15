@@ -16,7 +16,15 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 
         public override void Process(IList<CliCommandEntry> entries)
         {
-            throw new System.NotImplementedException();
+            this.Output.WriteLine("Git Branch");
+
+            // delete?
+            var entry = entries.GetSingleOrDefaultEntryByAlias("delete-branch");
+            if (entry != null)
+            {
+                this.Output.WriteLine($"Delete branch: [{entry.Value}]");
+                return;
+            }
         }
     }
 }

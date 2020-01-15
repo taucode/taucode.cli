@@ -116,21 +116,20 @@ namespace TauCode.Cli
 
             INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
 
-            throw new NotImplementedException();
+            var commandNode = new MultiTextNode(
+                tokens.Select(x => x.Text),
+                new[] {textClass},
+                true,
+                null,
+                nodeFamily,
+                null);
 
-            //var commandNode = new MultiTextNode(
-            //    tokens.Select(x => x.Text),
-            //    new[] {textClass},
-            //    null,
-            //    nodeFamily,
-            //    null);
+            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
 
-            //var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+            functionalityProvider.Node.EstablishLink(commandNode);
+            commandNode.EstablishLink(argumentNode);
 
-            //functionalityProvider.Node.EstablishLink(commandNode);
-            //commandNode.EstablishLink(argumentNode);
-
-            //return functionalityProvider;
+            return functionalityProvider;
         }
 
         public static ICliFunctionalityProvider AddCustomHandler(
@@ -214,7 +213,7 @@ namespace TauCode.Cli
 
             var node = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new[] { textClass },
+                new[] {textClass},
                 true,
                 (actionNode, token, resultAccumulator) =>
                 {
@@ -264,6 +263,15 @@ namespace TauCode.Cli
             return functionalityProvider.AddCustomHandler(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.GetHelp()),
                 "--help");
+        }
+
+        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(this IEnumerable<CliCommandEntry> entries,
+            string alias)
+        {
+            // todo checks
+            // todo can throw
+            return entries.SingleOrDefault(x =>
+                string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)

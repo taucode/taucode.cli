@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
@@ -46,7 +47,10 @@ namespace TauCode.Cli
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 
-        protected virtual IParser CreateParser() => new Parser();
+        protected virtual IParser CreateParser() => new Parser
+        {
+            Root = this.Node,
+        };
 
         protected virtual INode BuildNode()
         {
@@ -75,15 +79,16 @@ namespace TauCode.Cli
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);
 
-            throw new NotImplementedException();
-            //// it is expected that some node will throw CliCustomHandlerException or other custom exception.
-            //this.Parser.Parse(this.Node, tokens);
+            // it is expected that some node will throw CliCustomHandlerException or other custom exception.
+            this.Parser.Parse(tokens);
 
-            //// should not get here
-            //throw new CliException($"'{nameof(ParseCommand)}' is expected to throw an instance of '{typeof(CliCustomHandlerException).FullName}'.");
+            // should not get here
+            throw new CliException(
+                $"'{nameof(ParseCommand)}' is expected to throw an instance of '{typeof(CliCustomHandlerException).FullName}'.");
         }
 
-        public void DispatchCommand(CliCommand command) => throw new NotSupportedException($"Use custom handlers, or override '{nameof(BuildNode)}'.");
+        public void DispatchCommand(CliCommand command) =>
+            throw new NotSupportedException($"Use custom handlers, or override '{nameof(BuildNode)}'.");
 
         #endregion
 

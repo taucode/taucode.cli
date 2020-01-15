@@ -15,7 +15,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
             return new ICliWorker[]
             {
                 new SerializeDataWorker(),
-                //new DropAllTablesWorker(),
+                new DropAllTablesWorker(),
             };
         }
     }

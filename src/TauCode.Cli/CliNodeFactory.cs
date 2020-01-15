@@ -104,7 +104,12 @@ namespace TauCode.Cli
         {
             if (resultAccumulator.Count == 0)
             {
-                throw new NotImplementedException();
+                var command = new CliCommand
+                {
+                    WorkerName = node.Properties["worker-name"],
+                };
+
+                resultAccumulator.AddResult(command);
             }
             else
             {
