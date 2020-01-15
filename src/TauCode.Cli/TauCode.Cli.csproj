@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-13-21-55" />
+    <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-15-16-52" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TokenProducers\" />
   </ItemGroup>
 
 </Project>

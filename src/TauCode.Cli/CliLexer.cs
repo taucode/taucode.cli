@@ -1,24 +1,29 @@
-﻿using System.Collections.Generic;
-using TauCode.Cli.TokenExtractors;
+﻿using TauCode.Cli.TokenProducers;
 using TauCode.Parsing.Lexing;
-using TauCode.Parsing.Lexing.StandardExtractors;
+using TauCode.Parsing.Lexing.StandardProducers;
 
 namespace TauCode.Cli
 {
     public class CliLexer : LexerBase
     {
-        protected override IList<ITokenExtractor> CreateTokenExtractors()
+        protected override ITokenProducer[] CreateProducers()
         {
-            return new List<ITokenExtractor>
+            return new ITokenProducer[]
             {
-                new EqualsExtractor(),
-                new IntegerExtractor(null), // todo: why 'params'?
-                new TermExtractor(),
-                new KeyExtractor(),
-                new SingleQuoteStringExtractor(),
-                new DoubleQuoteStringExtractor(),
-                new PathExtractor(),
+                new WhiteSpaceProducer(),
+                new IntegerProducer(IsAcceptableIntegerTerminator),
+                new TermProducer(),
+                new KeyProducer(),
+                new CliSingleQuoteStringProducer(),
+                new CliDoubleQuoteStringProducer(),
+                new PathProducer(),
+                new EqualsProducer(),
             };
+        }
+
+        private bool IsAcceptableIntegerTerminator(char c)
+        {
+            return LexingHelper.IsInlineWhiteSpaceOrCaretControl(c);
         }
     }
 }
