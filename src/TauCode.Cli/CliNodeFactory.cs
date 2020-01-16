@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
@@ -21,6 +22,7 @@ namespace TauCode.Cli
                 nodeFamilyName,
                 new List<ITextClass>
                 {
+                    IntegerTextClass.Instance,
                     KeyTextClass.Instance,
                     PathTextClass.Instance,
                     TermTextClass.Instance,
@@ -67,6 +69,12 @@ namespace TauCode.Cli
             }
 
             var baseResult = (ActionNode)base.CreateNode(item);
+
+            if (baseResult == null)
+            {
+                throw new CliException($"Could not build node for item '{car}'.");
+            }
+            
             var action = item.GetSingleKeywordArgument<Symbol>(":action", true)?.Name?.ToLowerInvariant();
             string alias;
 
@@ -78,23 +86,23 @@ namespace TauCode.Cli
                     baseResult.Properties["alias"] = alias;
                     break;
 
+                case "value":
+                    baseResult.Action = ValueAction;
+                    break;
+
+                case "option":
+                    baseResult.Action = OptionAction;
+                    break;
+
                 case "argument":
                     baseResult.Action = ArgumentAction;
                     alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
                     baseResult.Properties["alias"] = alias;
                     break;
 
-                case "value":
-                    baseResult.Action = ValueAction;
-                    break;
 
                 default:
-                    throw new NotImplementedException();
-            }
-
-            if (baseResult == null)
-            {
-                throw new NotImplementedException();
+                    throw new CliException($"Keyword ':action' is missing for item '{car}'.");
             }
 
             return baseResult;
@@ -134,6 +142,11 @@ namespace TauCode.Cli
             var entry = command.Entries.Last();
             var textToken = (TextToken)token;
             entry.Value = textToken.Text;
+        }
+
+        private void OptionAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
+        {
+            throw new NotImplementedException();
         }
 
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)

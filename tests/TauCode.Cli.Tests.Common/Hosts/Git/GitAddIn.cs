@@ -13,7 +13,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
             return new ICliWorker[]
             {
                 new BranchWorker(),
-                //new CheckoutWorker(),
+                new CheckoutWorker(),
                 //new CloneWorker(),
             };
         }

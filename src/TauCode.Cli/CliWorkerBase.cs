@@ -83,32 +83,6 @@ namespace TauCode.Cli
 
         #endregion
 
-        #region Protected
-
-        protected string GetSingleValue(IList<CliCommandEntry> entries, string alias)
-        {
-            throw new NotImplementedException();
-            //var wantedEntries = entries
-            //    .Where(x => x is KeyValueCliCommandEntry)
-            //    .Cast<KeyValueCliCommandEntry>()
-            //    .ToList();
-
-            //if (wantedEntries.Count == 0)
-            //{
-            //    throw new CliException($"Entry with alias '{alias}' was not provided.");
-            //}
-            //else if (wantedEntries.Count == 1)
-            //{
-            //    return wantedEntries.Single().Value;
-            //}
-            //else
-            //{
-            //    throw new CliException($"Entry with alias '{alias}' was provided more than once.");
-            //}
-        }
-
-        #endregion
-
         #region ICliWorker Members
 
         public ICliAddIn AddIn { get; internal set; }

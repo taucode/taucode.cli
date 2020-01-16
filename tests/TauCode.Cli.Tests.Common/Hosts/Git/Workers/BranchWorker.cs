@@ -23,7 +23,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
             if (entry != null)
             {
                 this.Output.WriteLine($"Delete branch: [{entry.Value}]");
-                return;
             }
         }
     }

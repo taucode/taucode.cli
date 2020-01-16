@@ -8,22 +8,31 @@
 			"<todo>"
 			))
 	(idle :name args)
-	(alt
-		(key-value-pair
-			:alias connection
-			:key-names "--conn" "-c"
-			:key-values (choice :classes string path :values *))
-
-		(key-value-pair
-			:alias provider
-			:key-names "--provider" "-p"
-			:key-values (choice :classes term :values "sqlserver" "postgresql"))
-
-		(key-value-pair
-			:alias exclude
-			:key-names "--exclude" "-e"
-			:key-values (choice :classes string term :values *))
-
+	(opt
+		(multi-text
+			:classes key
+			:values "-q" "--quiet"
+			:alias quiet
+			:action option)
+	)
+	(opt
+		(multi-text
+			:classes key integer-text
+			:values "-2" "--ours"
+			:alias ours
+			:action option)
+	)
+	(opt
+		(multi-text
+			:classes key integer-text
+			:values "-3" "--theirs"
+			:alias ours
+			:action option)
+	)
+	(some-text
+		:classes path
+		:alias branch
+		:action argument
 	)
 	(idle :links args next)
 	(end)
