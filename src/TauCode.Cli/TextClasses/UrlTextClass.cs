@@ -13,7 +13,7 @@ namespace TauCode.Cli.TextClasses
 
         protected override string TryConvertFromImpl(string text, ITextClass anotherClass)
         {
-            throw new System.NotImplementedException();
+            return "todo: wat";
         }
     }
 }

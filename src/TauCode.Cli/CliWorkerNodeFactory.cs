@@ -63,7 +63,7 @@ namespace TauCode.Cli
                 var workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
                 if (workerName == null)
                 {
-                    throw new NotImplementedException();
+                    workerNode = new IdleNode(this.NodeFamily, "todo: Unnamed worker node");
                 }
                 else
                 {
@@ -202,10 +202,6 @@ namespace TauCode.Cli
         private void OptionAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
-            //var entry = new CliCommandEntry
-            //{
-            //    Alias = node.Properties["alias"],
-            //};
 
             var alias = node.Properties["alias"];
             var key = TokenToKey(token);
@@ -216,7 +212,24 @@ namespace TauCode.Cli
 
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.GetLastResult<CliCommand>();
+            // todo: EnsureCommand (uses command from 'IResultAccumulator resultAccumulator', or adds new; everywhere!)
+            CliCommand command;
+            if (resultAccumulator.Count == 0)
+            {
+                command = new CliCommand
+                {
+                    WorkerName = node.Properties.GetOrDefault("worker-name"),
+                };
+
+                resultAccumulator.AddResult(command);
+            }
+            else
+            {
+                command = resultAccumulator.GetLastResult<CliCommand>();
+                command.WorkerName = node.Properties.GetOrDefault("worker-name");
+            }
+
+            //var command = resultAccumulator.GetLastResult<CliCommand>();
             var alias = node.Properties["alias"];
             var argument = TokenToArgument(token);
             var entry = CliCommandEntry.CreateArgument(alias, argument);

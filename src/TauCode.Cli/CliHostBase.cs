@@ -146,6 +146,7 @@ namespace TauCode.Cli
 
         protected virtual IParser CreateParser() => new Parser
         {
+            WantsOnlyOneResult = true,
             Root = this.Node,
         };
 

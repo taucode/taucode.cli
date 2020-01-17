@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,10 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="TauCode.Parsing" Version="1.0.0-dev-2020-01-16-23-53" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\taucode\TauCode.Parsing.Lab\TauCode.Parsing.Lab.csproj" />
   </ItemGroup>
 
 </Project>

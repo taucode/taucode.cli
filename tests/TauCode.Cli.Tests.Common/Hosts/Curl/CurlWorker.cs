@@ -16,7 +16,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
 
         public override void Process(IList<CliCommandEntry> entries)
         {
-            throw new System.NotImplementedException();
+            var url = entries.GetArgument("url");
+            this.Output.WriteLine("Curl");
+            this.Output.WriteLine($"Requested url: {url}");
         }
     }
 }

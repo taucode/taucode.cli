@@ -42,7 +42,7 @@
 				:name existing-branch-node
 				:classes path
 				:alias existing-branch
-				:action argument				
+				:action argument
 			)
 		)
 		
