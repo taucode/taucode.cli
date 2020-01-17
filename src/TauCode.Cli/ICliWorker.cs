@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Parsing.Exceptions;
 
 namespace TauCode.Cli
 {
@@ -9,6 +10,7 @@ namespace TauCode.Cli
     public interface ICliWorker : ICliFunctionalityProvider
     {
         ICliAddIn AddIn { get; }
+        void HandleFallback(FallbackNodeAcceptedTokenException ex);
         void Process(IList<CliCommandEntry> entries);
     }
 }

@@ -142,6 +142,10 @@ namespace TauCode.Cli.Tests.Exe
                 {
                     // ignore.
                 }
+                catch (FallbackInterceptedCliException)
+                {
+                    // ignore.
+                }
                 catch (CliException ex)
                 {
                     Console.Write("CLI Error: ");

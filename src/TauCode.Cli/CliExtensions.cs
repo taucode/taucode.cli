@@ -264,7 +264,8 @@ namespace TauCode.Cli
                 "--help");
         }
 
-        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(this IEnumerable<CliCommandEntry> entries,
+        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(
+            this IEnumerable<CliCommandEntry> entries,
             string alias)
         {
             // todo checks
@@ -287,6 +288,32 @@ namespace TauCode.Cli
             return entries
                 .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
+        }
+
+        public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
+        {
+            var option = entries.SingleOrDefault(x =>
+                x.Kind == CliCommandEntryKind.Option &&
+                string.Equals(x.Alias, optionAlias, StringComparison.InvariantCultureIgnoreCase));
+
+            return option != null;
+        }
+
+        public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
+        {
+            var entry = entries.Single(x =>
+                x.Kind == CliCommandEntryKind.Argument &&
+                string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase));
+
+            return entry.Value;
+        }
+
+        public static string[] GetAllOptionAliases(this IEnumerable<CliCommandEntry> entries)
+        {
+            return entries
+                .Where(x => x.Kind == CliCommandEntryKind.Option)
+                .Select(x => x.Alias)
+                .ToArray();
         }
     }
 }

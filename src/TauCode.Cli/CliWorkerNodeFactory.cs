@@ -4,6 +4,7 @@ using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
+using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.Nodes;
@@ -14,10 +15,15 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    public class CliNodeFactory : NodeFactoryBase
+    // todo: protected virtual CliNodeFactory CreateNodeFactory, for tunability.
+    // todo clean up
+    public class CliWorkerNodeFactory : NodeFactoryBase
     {
-        public CliNodeFactory(
-            string nodeFamilyName)
+        private readonly IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> _fallbackPredicates;
+
+        public CliWorkerNodeFactory(
+            string nodeFamilyName,
+            IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> fallbackPredicates = null)
             : base(
                 nodeFamilyName,
                 new List<ITextClass>
@@ -31,7 +37,21 @@ namespace TauCode.Cli
                 },
                 true)
         {
+            _fallbackPredicates = fallbackPredicates != null ?
+                fallbackPredicates.ToDictionary(x => x.Key.ToLowerInvariant(), x => x.Value) :
+                new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>();
         }
+
+        // todo
+        //protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
+        //{
+        //    if (nodeName.ToLowerInvariant() == "bad-key-fallback")
+        //    {
+        //        return BadKeyFallbackPredictate;
+        //    }
+
+        //    throw new ArgumentException($"Unknown fallback name: '{nodeName}'.", nameof(nodeName));
+        //}
 
         public override INode CreateNode(PseudoList item)
         {
@@ -68,13 +88,24 @@ namespace TauCode.Cli
                 return workerNode;
             }
 
-            var baseResult = (ActionNode)base.CreateNode(item);
+            var node = base.CreateNode(item);
+            if (node is FallbackNode)
+            {
+                return node;
+            }
+
+            if (!(node is ActionNode))
+            {
+                throw new NotImplementedException(); // todo
+            }
+
+            var baseResult = (ActionNode)node;
 
             if (baseResult == null)
             {
                 throw new CliException($"Could not build node for item '{car}'.");
             }
-            
+
             var action = item.GetSingleKeywordArgument<Symbol>(":action", true)?.Name?.ToLowerInvariant();
             string alias;
 
@@ -92,6 +123,8 @@ namespace TauCode.Cli
 
                 case "option":
                     baseResult.Action = OptionAction;
+                    alias = item.GetSingleKeywordArgument<Symbol>(":alias").Name;
+                    baseResult.Properties["alias"] = alias;
                     break;
 
                 case "argument":
@@ -106,6 +139,11 @@ namespace TauCode.Cli
             }
 
             return baseResult;
+        }
+
+        protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
+        {
+            return _fallbackPredicates.GetOrDefault(nodeName.ToLowerInvariant()) ?? throw new NotImplementedException(); // todo nu such predicate
         }
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
@@ -129,11 +167,27 @@ namespace TauCode.Cli
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
-            var entry = new CliCommandEntry
-            {
-                Alias = node.Properties["alias"],
-            };
+            //var entry = new CliCommandEntry
+            //{
+            //    Alias = node.Properties["alias"],
+            //};
+            var alias = node.Properties["alias"];
+            var key = TokenToKey(token);
+
+            var entry = CliCommandEntry.CreateKeyValuePair(alias, key);
             command.Entries.Add(entry);
+        }
+
+        private static string TokenToKey(IToken token)
+        {
+            // todo checks?
+            var textToken = (TextToken)token;
+            if (textToken.Class is KeyTextClass)
+            {
+                return textToken.Text;
+            }
+
+            throw new NotImplementedException(); // error
         }
 
         private void ValueAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
@@ -141,17 +195,39 @@ namespace TauCode.Cli
             var command = resultAccumulator.GetLastResult<CliCommand>();
             var entry = command.Entries.Last();
             var textToken = (TextToken)token;
-            entry.Value = textToken.Text;
+            //entry.Value = textToken.Text;
+            entry.SetKeyValue(textToken.Text);
         }
 
         private void OptionAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            throw new NotImplementedException();
+            var command = resultAccumulator.GetLastResult<CliCommand>();
+            //var entry = new CliCommandEntry
+            //{
+            //    Alias = node.Properties["alias"],
+            //};
+
+            var alias = node.Properties["alias"];
+            var key = TokenToKey(token);
+
+            var entry = CliCommandEntry.CreateOption(alias, key);
+            command.Entries.Add(entry);
         }
 
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            throw new NotImplementedException();
+            var command = resultAccumulator.GetLastResult<CliCommand>();
+            var alias = node.Properties["alias"];
+            var argument = TokenToArgument(token);
+            var entry = CliCommandEntry.CreateArgument(alias, argument);
+            command.Entries.Add(entry);
+        }
+
+        private string TokenToArgument(IToken token)
+        {
+            // todo checks?
+            var textToken = (TextToken)token;
+            return textToken.Text;
         }
     }
 }
