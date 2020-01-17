@@ -22,9 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli", "src\TauCode.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.Common", "tests\TauCode.Cli.Tests.Common\TauCode.Cli.Tests.Common.csproj", "{53D3BA22-F65C-42CA-8D59-4C65D2A7B57B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TauCode.Cli.Tests.Exe", "tests\TauCode.Cli.Tests.Exe\TauCode.Cli.Tests.Exe.csproj", "{6F5E7EA1-C377-4A8D-BC51-50F643DADA30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.Exe", "tests\TauCode.Cli.Tests.Exe\TauCode.Cli.Tests.Exe.csproj", "{6F5E7EA1-C377-4A8D-BC51-50F643DADA30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TauCode.Cli.Tests.UnitTests", "tests\TauCode.Cli.Tests.UnitTests\TauCode.Cli.Tests.UnitTests.csproj", "{152C360D-5B50-4A09-8BBE-D1DDA31FFC0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.UnitTests", "tests\TauCode.Cli.Tests.UnitTests\TauCode.Cli.Tests.UnitTests.csproj", "{152C360D-5B50-4A09-8BBE-D1DDA31FFC0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

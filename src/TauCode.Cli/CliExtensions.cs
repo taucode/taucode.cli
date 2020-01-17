@@ -32,8 +32,7 @@ namespace TauCode.Cli
                 return Result;
             }
 
-            protected override InquireResult InquireImpl(IToken token, IResultAccumulator resultAccumulator) =>
-                InquireResult.Act;
+            protected override bool AcceptsTokenImpl(IToken token, IResultAccumulator resultAccumulator) => true;
         }
 
         public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
