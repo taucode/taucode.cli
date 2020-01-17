@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.Tests.Common.Hosts.Curl;
 using TauCode.Cli.Tests.Common.Hosts.Git;
+using TauCode.Cli.Tests.Common.Hosts.Kubectl;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
@@ -52,8 +54,8 @@ namespace TauCode.Cli.Tests.Exe
                 {
                     new TauHost(),
                     new GitHost(),
-                    //new CurlHost(),
-                    //new KubectlHost(),
+                    new CurlHost(),
+                    new KubectlHost(),
                     idleHost,
                 }
                 .ToDictionary(x => x.Name, x => x);
@@ -90,7 +92,8 @@ namespace TauCode.Cli.Tests.Exe
 
             });
 
-            _currentHost = idleHost;
+            //_currentHost = idleHost;
+            _currentHost = _hosts.Values.Single(x => x is CurlHost);
         }
 
         private string GetAllHostsName()
@@ -126,7 +129,7 @@ namespace TauCode.Cli.Tests.Exe
 
                 try
                 {
-                    var command = _currentHost.ParseCommand(line);
+                    var command = _currentHost.ParseLine(line);
                     _currentHost.DispatchCommand(command);
                 }
                 catch (UnexpectedTokenException ex)
@@ -139,6 +142,10 @@ namespace TauCode.Cli.Tests.Exe
                     break;
                 }
                 catch (CliCustomHandlerException)
+                {
+                    // ignore.
+                }
+                catch (FallbackInterceptedCliException)
                 {
                     // ignore.
                 }

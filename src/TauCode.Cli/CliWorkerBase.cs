@@ -5,16 +5,18 @@ using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
+using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.TinyLisp;
 using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli
 {
-    public abstract class CliWorkerBase : ICliWorker
+    // todo clean up
+    public abstract class CliWorkerBase : CliFunctionalityProviderBase, ICliWorker
     {
         #region Fields
 
-        private INode _node;
+        //private INode _node;
         private readonly PseudoList _form;
 
         #endregion
@@ -25,6 +27,7 @@ namespace TauCode.Cli
             string grammar,
             string version,
             bool supportsHelp)
+            : base(ExtractName(grammar), version, supportsHelp)
         {
             if (grammar == null)
             {
@@ -36,9 +39,9 @@ namespace TauCode.Cli
             var lispTokens = tinyLispLexer.Lexize(grammar);
             _form = tinyLispPseudoReader.Read(lispTokens);
 
-            this.Name = this.ExtractName();
-            this.Version = version;
-            this.SupportsHelp = supportsHelp;
+            //this.Name = this.ExtractName();
+            //this.Version = version;
+            //this.SupportsHelp = supportsHelp;
 
             if (this.Name == null)
             {
@@ -56,24 +59,29 @@ namespace TauCode.Cli
 
         #endregion
 
-        #region Private
+        #region Overridden
 
-        private string ExtractName()
+        public override TextWriter Output
         {
-            var topDefblock = _form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
-            var supposedCommandForm = topDefblock.GetFreeArguments().First();
-            string name = null;
-            if (supposedCommandForm.GetCarSymbolName() == "WORKER")
-            {
-                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
-            }
-
-            return name;
+            get => this.AddIn.Output;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
         }
 
-        private INode BuildNode()
+        public override TextReader Input
         {
-            INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker node factory. Name:'{this.Name}'");
+            get => this.AddIn.Input;
+            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        }
+
+        protected override string GetHelpImpl()
+        {
+            return "todo: worker help.";
+        }
+
+        protected override INode CreateNodeTree()
+        {
+            //INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker node factory. Name:'{this.Name}'");
+            var nodeFactory = this.CreateNodeFactory();
 
             ITreeBuilder builder = new TreeBuilder();
             var node = builder.Build(nodeFactory, _form);
@@ -83,9 +91,52 @@ namespace TauCode.Cli
 
         #endregion
 
+        #region Protected
+
+        protected virtual string CreateNodeFactoryName()
+        {
+            return $"Todo: worker node factory. Name:'{this.Name}'";
+        }
+
+        protected virtual CliWorkerNodeFactory CreateNodeFactory()
+        {
+            return new CliWorkerNodeFactory(this.CreateNodeFactoryName());
+        }
+            
+
+        #endregion
+
+        #region Private
+
+        private static string ExtractName(string grammar)
+        {
+            var tinyLispLexer = new TinyLispLexer();
+            var tinyLispPseudoReader = new TinyLispPseudoReader();
+            var lispTokens = tinyLispLexer.Lexize(grammar);
+            var form = tinyLispPseudoReader.Read(lispTokens);
+
+            var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
+            var supposedCommandForm = topDefblock.GetFreeArguments().First();
+            string name = null;
+            if (supposedCommandForm.GetCarSymbolName() == "WORKER")
+            {
+                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+            }
+
+            return name;
+        }
+        
+
+        #endregion
+
         #region ICliWorker Members
 
         public ICliAddIn AddIn { get; internal set; }
+
+        public virtual void HandleFallback(FallbackNodeAcceptedTokenException ex)
+        {
+            throw new NotImplementedException(); // todo message: override to handle fallbacks.
+        }
 
         public abstract void Process(IList<CliCommandEntry> entries);
 
@@ -93,51 +144,51 @@ namespace TauCode.Cli
 
         #region ICliFunctionalityProvider Members
 
-        public string Name { get; }
+        //public string Name { get; }
 
-        public TextWriter Output
-        {
-            get => this.AddIn.Output;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        }
+        //public TextWriter Output
+        //{
+        //    get => this.AddIn.Output;
+        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        //}
 
-        public TextReader Input
-        {
-            get => this.AddIn.Input;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        }
+        //public TextReader Input
+        //{
+        //    get => this.AddIn.Input;
+        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+        //}
 
-        public INode Node
-        {
-            get
-            {
-                if (_node == null)
-                {
-                    _node = this.BuildNode();
+        //public INode Node
+        //{
+        //    get
+        //    {
+        //        if (_node == null)
+        //        {
+        //            _node = this.BuildNode();
 
-                    if (this.Version != null)
-                    {
-                        this.AddVersion();
-                    }
+        //            if (this.Version != null)
+        //            {
+        //                this.AddVersion();
+        //            }
 
-                    if (this.SupportsHelp)
-                    {
-                        this.AddHelp();
-                    }
-                }
+        //            if (this.SupportsHelp)
+        //            {
+        //                this.AddHelp();
+        //            }
+        //        }
 
-                return _node;
-            }
-        }
+        //        return _node;
+        //    }
+        //}
 
-        public string Version { get; }
+        //public string Version { get; }
 
-        public bool SupportsHelp { get; }
+        //public bool SupportsHelp { get; }
 
-        public virtual string GetHelp()
-        {
-            return "todo: worker help.";
-        }
+        //public virtual string GetHelp()
+        //{
+        //    return "todo: worker help.";
+        //}
 
         #endregion
     }

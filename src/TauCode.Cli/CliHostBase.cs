@@ -5,13 +5,15 @@ using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
+using TauCode.Parsing.Exceptions;
+using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
     // todo clean up
-    public abstract class CliHostBase : ICliHost
+    public abstract class CliHostBase : CliFunctionalityProviderBase, ICliHost
     {
         #region Nested
 
@@ -29,7 +31,7 @@ namespace TauCode.Cli
                 {
                     // todo error;
                     // todo ut
-                    throw new NotImplementedException(workers.Count.ToString()); 
+                    throw new NotImplementedException(workers.Count.ToString());
                 }
 
                 if (workers.Any(x => x.Name == null))
@@ -80,23 +82,28 @@ namespace TauCode.Cli
 
         private ILexer _lexer;
         private IParser _parser;
-        private INode _node;
+        //private INode _node;
         private readonly INodeFamily _nodeFamily;
 
         private readonly IDictionary<string, AddInRecord> _addInRecords;
         private AddInRecord _singleUnnamedAddInRecord;
 
         private List<ICliAddIn> _addInList;
+        private Dictionary<INode, ICliWorker> _nodesByWorkers;
 
         #endregion
 
         #region Constructor
 
-        protected CliHostBase(string name, string version, bool supportsHelp)
+        protected CliHostBase(
+            string name,
+            string version,
+            bool supportsHelp)
+            : base(name, version, supportsHelp)
         {
-            this.Name = name;
-            this.Version = version;
-            this.SupportsHelp = supportsHelp;
+            //this.Name = name;
+            //this.Version = version;
+            //this.SupportsHelp = supportsHelp;
 
             _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addInRecords = new Dictionary<string, AddInRecord>();
@@ -109,7 +116,73 @@ namespace TauCode.Cli
 
         #region Private
 
-        private INode BuildNode()
+        private AddInRecord GetAddInRecord(string addInName)
+        {
+            if (addInName == null)
+            {
+                if (_singleUnnamedAddInRecord == null)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    return _singleUnnamedAddInRecord;
+                }
+            }
+            else
+            {
+                return _addInRecords[addInName];
+            }
+        }
+
+        #endregion
+
+        #region Protected
+
+        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
+
+        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
+
+        protected virtual ILexer CreateLexer() => new CliLexer();
+
+        protected virtual IParser CreateParser() => new ParserLab
+        {
+            WantsOnlyOneResult = true,
+            Root = this.Node,
+        };
+
+        protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
+
+        protected IReadOnlyDictionary<INode, ICliWorker> NodesByWorkers => _nodesByWorkers ?? (_nodesByWorkers = CreateNodesByWorkers());
+
+        protected Dictionary<INode, ICliWorker> CreateNodesByWorkers()
+        {
+            var result = new Dictionary<INode, ICliWorker>();
+
+            var addIns = this.GetAddIns();
+            foreach (var addIn in addIns)
+            {
+                var workers = addIn.GetWorkers();
+                foreach (var worker in workers)
+                {
+                    var workerRoot = worker.Node;
+                    var workerTree = workerRoot.FetchTree().Where(x => !(x is EndNode || x is IdleNode));
+
+                    foreach (var node in workerTree)
+                    {
+                        result.Add(node, worker);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Overridden
+
+        protected override INode CreateNodeTree()
         {
             var addIns = this.CreateAddIns();
             if (addIns == null)
@@ -177,41 +250,22 @@ namespace TauCode.Cli
             return root;
         }
 
-        private AddInRecord GetAddInRecord(string addInName)
+        public sealed override TextWriter Output
         {
-            if (addInName == null)
-            {
-                if (_singleUnnamedAddInRecord == null)
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    return _singleUnnamedAddInRecord;
-                }
-            }
-            else
-            {
-                return _addInRecords[addInName];
-            }
+            get => _output;
+            set => _output = value ?? TextWriter.Null;
         }
 
-        #endregion
-
-        #region Protected
-
-        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
-
-        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
-
-        protected virtual ILexer CreateLexer() => new CliLexer();
-
-        protected virtual IParser CreateParser() => new Parser
+        public sealed override TextReader Input
         {
-            Root = this.Node,
-        };
+            get => _input;
+            set => _input = value ?? TextReader.Null;
+        }
 
-        protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
+        protected override string GetHelpImpl()
+        {
+            return "todo: help for host";
+        }
 
         #endregion
 
@@ -223,7 +277,7 @@ namespace TauCode.Cli
             return _addInList;
         }
 
-        public CliCommand ParseCommand(params string[] input)
+        public CliCommand ParseCommand(string[] input)
         {
             if (input == null)
             {
@@ -238,10 +292,25 @@ namespace TauCode.Cli
             var inputString = string.Join(" ", input);
             var tokens = this.Lexer.Lexize(inputString);
 
+            try
+            {
+                var command = (CliCommand)this.Parser.Parse(tokens).Single();
+                return command;
+            }
+            catch (FallbackNodeAcceptedTokenException ex)
+            {
+                //var worker = this.FindFallbackSource(ex);
+                var worker = this.NodesByWorkers[ex.FallbackNode];
+                worker.HandleFallback(ex);
 
-            var command = (CliCommand)this.Parser.Parse(tokens).Single();
-            return command;
+                throw new FallbackInterceptedCliException("todo");
+            }
         }
+
+        //private ICliWorker FindFallbackSource(FallbackNodeAcceptedTokenException ex)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public void DispatchCommand(CliCommand command)
         {
@@ -253,54 +322,66 @@ namespace TauCode.Cli
 
         #endregion
 
-        #region ICliFunctionalityProvider Members
+        //#region ICliFunctionalityProvider Members
 
-        public string Name { get; }
+        //public string Name { get; }
 
-        public TextWriter Output
+        //public TextWriter Output
+        //{
+        //    get => _output;
+        //    set => _output = value ?? TextWriter.Null;
+        //}
+
+        //public TextReader Input
+        //{
+        //    get => _input;
+        //    set => _input = value ?? TextReader.Null;
+        //}
+
+        //public INode Node
+        //{
+        //    get
+        //    {
+        //        if (_node == null)
+        //        {
+        //            _node = this.BuildNode();
+
+        //            if (this.Version != null)
+        //            {
+        //                this.AddVersion();
+        //            }
+
+        //            if (this.SupportsHelp)
+        //            {
+        //                this.AddHelp();
+        //            }
+        //        }
+
+        //        return _node;
+        //    }
+        //}
+
+        //public string Version { get; }
+
+        //public bool SupportsHelp { get; }
+
+        //public virtual string GetHelp()
+        //{
+        //    return "todo: help for host";
+        //}
+
+        //#endregion
+    }
+
+    // todo separated
+    public class FallbackInterceptedCliException : CliException
+    {
+        public FallbackInterceptedCliException(string message) : base(message)
         {
-            get => _output;
-            set => _output = value ?? TextWriter.Null;
         }
 
-        public TextReader Input
+        public FallbackInterceptedCliException(string message, Exception inner) : base(message, inner)
         {
-            get => _input;
-            set => _input = value ?? TextReader.Null;
         }
-
-        public INode Node
-        {
-            get
-            {
-                if (_node == null)
-                {
-                    _node = this.BuildNode();
-
-                    if (this.Version != null)
-                    {
-                        this.AddVersion();
-                    }
-
-                    if (this.SupportsHelp)
-                    {
-                        this.AddHelp();
-                    }
-                }
-
-                return _node;
-            }
-        }
-
-        public string Version { get; }
-
-        public bool SupportsHelp { get; }
-
-        public virtual string GetHelp()
-        {
-            return "todo: help for host";
-        }
-
-        #endregion
     }
 }

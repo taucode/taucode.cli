@@ -11,13 +11,14 @@ namespace TauCode.Cli
             return new ITokenProducer[]
             {
                 new WhiteSpaceProducer(),
+                new EqualsProducer(),
                 new IntegerProducer(IsAcceptableIntegerTerminator),
                 new TermProducer(),
                 new KeyProducer(),
                 new CliSingleQuoteStringProducer(),
                 new CliDoubleQuoteStringProducer(),
+                new UrlProducer(),
                 new PathProducer(),
-                new EqualsProducer(),
             };
         }
 
