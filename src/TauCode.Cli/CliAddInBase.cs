@@ -125,7 +125,9 @@ namespace TauCode.Cli
 
         private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            resultAccumulator.EnsureAddInCommand(node.Properties["add-in-name"]);
+            resultAccumulator.AddAddInCommand(node.Properties["add-in-name"]);
+
+            //resultAccumulator.EnsureAddInCommand(node.Properties["add-in-name"]);
 
             //resultAccumulator.EnsureCommand(node.Properties["add-in-name"]);
 

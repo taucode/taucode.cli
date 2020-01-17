@@ -18,17 +18,26 @@
 					:classes string
 					:alias header-value
 					:action value)
-				(idle :links pre-url-keys)
-				(idle)
 			)
 		)
 	)
+
+	(idle :name drago :links pre-url-keys next)
 
 	(some-text
 		:name url
 		:classes url
 		:alias url
 		:action argument
+	)
+
+	(opt
+		(exact-text
+			:classes key
+			:value "-v" "--verbose"
+			:alias verbose
+			:action option
+		)
 	)
 
 	(end)

@@ -16,8 +16,7 @@ namespace TauCode.Cli.TextClasses
         {
             if (
                 anotherClass is StringTextClass ||
-                anotherClass is TermTextClass ||
-                anotherClass is KeyTextClass)
+                anotherClass is TermTextClass)
             {
                 return text;
             }

@@ -20,8 +20,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             this.Output.WriteLine("Curl");
             this.Output.WriteLine($"Requested url: {url}");
 
-            var headers = entries.GetAllValuesOfKey("header");
+
+            var headers = entries.GetKeyValues("header");
+            var options = entries.GetAllOptionAliases();
+
             this.Output.WriteLine($"Headers: {string.Join(", ", headers)}");
+            this.Output.WriteLine($"Options: {string.Join(", ", options)}");
         }
     }
 }

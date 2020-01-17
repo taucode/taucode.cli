@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
-using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
@@ -12,6 +11,8 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
+    // todo clean up
+    // todo checks for all extensions when using LINQ.
     public static class CliExtensions
     {
         private class CatchAllAndThrowNode : ActionNode
@@ -86,7 +87,7 @@ namespace TauCode.Cli
                         throw new NotImplementedException(); // error.
                     }
 
-                    var token = (TextToken) singleTextTokens.Single();
+                    var token = (TextToken)singleTextTokens.Single();
                     tokens.Add(token);
                 }
 
@@ -118,7 +119,7 @@ namespace TauCode.Cli
 
             var commandNode = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new[] {textClass},
+                new[] { textClass },
                 true,
                 null,
                 nodeFamily,
@@ -181,7 +182,7 @@ namespace TauCode.Cli
                         throw new NotImplementedException(); // error.
                     }
 
-                    var token = (TextToken) singleTextTokens.Single();
+                    var token = (TextToken)singleTextTokens.Single();
                     tokens.Add(token);
                 }
 
@@ -213,7 +214,7 @@ namespace TauCode.Cli
 
             var node = new MultiTextNode(
                 tokens.Select(x => x.Text),
-                new[] {textClass},
+                new[] { textClass },
                 true,
                 (actionNode, token, resultAccumulator) =>
                 {
@@ -309,7 +310,16 @@ namespace TauCode.Cli
             return entry.Value;
         }
 
-        public static string[] GetAllValuesOfKey(this IEnumerable<CliCommandEntry> entries, string keyAlias)
+        public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
+        {
+            var entry = entries.Single(x =>
+                x.Kind == CliCommandEntryKind.KeyValuePair &&
+                string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase));
+
+            return entry.Value;
+        }
+
+        public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)
         {
             return entries
                 .Where(x =>
@@ -327,59 +337,118 @@ namespace TauCode.Cli
                 .ToArray();
         }
 
-        public static CliCommand EnsureAddInCommand(
-            this IResultAccumulator resultAccumulator,
-            string addInName)
+        public static CliCommand AddAddInCommand(this IResultAccumulator resultAccumulator, string addInName)
         {
-            CliCommand command;
-
-            if (resultAccumulator.Count == 0)
+            if (resultAccumulator.Count != 0)
             {
-                command = new CliCommand
-                {
-                    AddInName = addInName,
-                };
-                resultAccumulator.AddResult(command);
+                throw new NotImplementedException(); // internal error - accumulator should be empty.
             }
-            else
-            {
-                command = resultAccumulator.GetLastResult<CliCommand>();
 
-                if (command.AddInName != addInName)
-                {
-                    throw new NotImplementedException(); // todo wat?
-                }
-            }
+            var command = CliCommand.CreateAddInCommand(addInName);
+            resultAccumulator.AddResult(command);
 
             return command;
         }
 
-        public static CliCommand EnsureWorkerCommand(
-            this IResultAccumulator resultAccumulator,
-            INode workerNode)
+        public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator, string workerName)
         {
-            CliCommand command;
-            var workerName = workerNode.Properties.GetOrDefault("worker-name");
+            // todo check on resultAccumulator
 
             if (resultAccumulator.Count == 0)
             {
-                command = new CliCommand
-                {
-                    WorkerName = workerName,
-                };
-                resultAccumulator.AddResult(command);
+                throw new NotImplementedException();
             }
             else
             {
-                command = resultAccumulator.GetLastResult<CliCommand>();
+                var command = resultAccumulator.GetLastResult<CliCommand>();
+                //if (command.AddInName == null)
+                //{
+                //    throw new NotImplementedException(); // error - shouldn't be
+                //}
 
-                if (command.WorkerName != workerName)
-                {
-                    throw new NotImplementedException(); // todo wat?
-                }
+                command.SetWorkerName(workerName);
+                return command;
+            }
+        }
+
+        public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator)
+        {
+            if (resultAccumulator == null)
+            {
+                throw new ArgumentNullException(nameof(resultAccumulator));
             }
 
+            if (resultAccumulator.Count == 1)
+            {
+                return resultAccumulator.GetLastResult<CliCommand>();
+            }
+
+            var command = CliCommand.CreateNamelessWorkerCommand();
             return command;
+        }
+
+        //public static CliCommand EnsureAddInCommand(
+        //    this IResultAccumulator resultAccumulator,
+        //    string addInName)
+        //{
+        //    CliCommand command;
+
+        //    if (resultAccumulator.Count == 0)
+        //    {
+        //        command = new CliCommand
+        //        {
+        //            AddInName = addInName,
+        //        };
+        //        resultAccumulator.AddResult(command);
+        //    }
+        //    else
+        //    {
+        //        command = resultAccumulator.GetLastResult<CliCommand>();
+
+        //        if (command.AddInName != addInName)
+        //        {
+        //            throw new NotImplementedException(); // todo wat?
+        //        }
+        //    }
+
+        //    return command;
+        //}
+
+        //public static CliCommand EnsureWorkerCommand(
+        //    this IResultAccumulator resultAccumulator,
+        //    string workerName)
+        //{
+        //    CliCommand command;
+        //    //var workerName = workerNode.Properties.GetOrDefault("worker-name");
+
+        //    if (resultAccumulator.Count == 0)
+        //    {
+        //        command = new CliCommand
+        //        {
+        //            WorkerName = workerName,
+        //        };
+        //        resultAccumulator.AddResult(command);
+        //    }
+        //    else
+        //    {
+        //        command = resultAccumulator.GetLastResult<CliCommand>();
+        //        if (command.WorkerName == null)
+        //        {
+        //            command.WorkerName = workerName;
+        //        }
+        //        else if (command.WorkerName != workerName)
+        //        {
+        //            throw new NotImplementedException();
+        //        }
+        //    }
+
+        //    return command;
+        //}
+
+        public static CliCommand ParseLine(this ICliHost host, string line)
+        {
+            // todo checks
+            return host.ParseCommand(new[] { line });
         }
     }
 }

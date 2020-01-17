@@ -66,9 +66,9 @@ namespace TauCode.Cli.TokenProducers
             return null;
         }
 
-        private static bool IsPathFirstChar(char c) =>
+        public static bool IsPathFirstChar(char c) =>
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c) ||
-            c.IsIn('\\', '/', '.', '!', '~', '$', '%', '-', '+');
+            c.IsIn('\\', '/', '.', '!', '~', '$', '%', ';');
     }
 }

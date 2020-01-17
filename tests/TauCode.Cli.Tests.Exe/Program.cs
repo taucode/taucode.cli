@@ -92,7 +92,8 @@ namespace TauCode.Cli.Tests.Exe
 
             });
 
-            _currentHost = idleHost;
+            //_currentHost = idleHost;
+            _currentHost = _hosts.Values.Single(x => x is CurlHost);
         }
 
         private string GetAllHostsName()
@@ -128,7 +129,7 @@ namespace TauCode.Cli.Tests.Exe
 
                 try
                 {
-                    var command = _currentHost.ParseCommand(line);
+                    var command = _currentHost.ParseLine(line);
                     _currentHost.DispatchCommand(command);
                 }
                 catch (UnexpectedTokenException ex)

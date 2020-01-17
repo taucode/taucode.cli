@@ -1,24 +1,11 @@
 (defblock :name serialize-data :is-top t
 	(worker
 		:worker-name serialize-data
-		:verbs "serialize-data" "sd"
-		:doc "Serializes all tables' data."
-		:usage-samples (
-			"sd --conn Server=.;Database=my_db;Trusted_Connection=True; --provider sqlserver --file c:/temp/my.json"
-			"serialize-data -c Server=some-host;Database=my_db; -p postgresql -f c:/work/another.json"
-			))
-	(idle :name args)
+		:verbs "sd"
+	)
+
+	(idle :name keys)
 	(alt
-		(seq
-			(multi-text
-				:classes key
-				:values "-c" "--connection"
-				:alias connection
-				:action key)
-			(some-text
-				:classes path
-				:action value)
-		)
 		(seq
 			(multi-text
 				:classes key
@@ -33,14 +20,22 @@
 		(seq
 			(multi-text
 				:classes key
-				:values "-f" "--file"
-				:alias file
+				:values "-e" "--exclude"
+				:alias exclude-table
 				:action key)
 			(some-text
-				:classes path
+				:classes term string
 				:action value)
 		)
+		(fallback :name bad-option-or-key)
 	)
-	(idle :links args next)
+
+	(idle :links keys next)
+
+	(some-text
+		:classes path string
+		:alias connection-string
+		:action argument)
+
 	(end)
 )

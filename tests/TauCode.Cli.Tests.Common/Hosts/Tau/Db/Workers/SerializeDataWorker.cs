@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
+using TauCode.Parsing;
+using TauCode.Parsing.Nodes;
+using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
@@ -14,16 +19,34 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
         {
         }
 
+        protected override CliWorkerNodeFactory CreateNodeFactory()
+        {
+            return new CliWorkerNodeFactory(
+                this.CreateNodeFactoryName(),
+                new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>
+                {
+                    ["bad-option-or-key"] = BadOptionOrKey,
+                });
+        }
+
+        private bool BadOptionOrKey(FallbackNode node, IToken token, IResultAccumulator resultAccumulator)
+        {
+            if (token is TextToken textToken)
+            {
+                return textToken.Class is KeyTextClass;
+            }
+
+            return false;
+        }
+
         public override void Process(IList<CliCommandEntry> entries)
         {
             this.Output.WriteLine("Serialize Data");
-            var connection = entries.GetSingleEntryByAlias("connection").Value;
-            var provider = entries.GetSingleEntryByAlias("provider").Value;
-            var file = entries.GetSingleEntryByAlias("file").Value;
-
-            this.Output.WriteLine($"Connection: {connection}");
-            this.Output.WriteLine($"Provider: {provider}");
-            this.Output.WriteLine($"File: {file}");
+            var connection = entries.GetArgument("connection-string");
+            var provider = entries.GetSingleKeyValue("provider");
+            var excludedTables = entries.GetKeyValues("exclude-table");
+            
+            this.Output.WriteLine($"Provider: {provider}; Excluded Tables: {string.Join(", ", excludedTables)}; Connection String: {connection}");
         }
     }
 }

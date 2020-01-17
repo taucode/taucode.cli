@@ -148,7 +148,7 @@ namespace TauCode.Cli
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            resultAccumulator.EnsureWorkerCommand(node);
+            resultAccumulator.EnsureWorkerCommand(node.Properties["worker-name"]);
 
             //if (resultAccumulator.Count == 0)
             //{
@@ -168,7 +168,7 @@ namespace TauCode.Cli
 
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.EnsureWorkerCommand(node);
+            var command = resultAccumulator.EnsureWorkerCommand();
 
             //var command = resultAccumulator.GetLastResult<CliCommand>();
             //var entry = new CliCommandEntry
@@ -235,7 +235,7 @@ namespace TauCode.Cli
 
             //var command = resultAccumulator.GetLastResult<CliCommand>();
 
-            var command = resultAccumulator.EnsureWorkerCommand(node);
+            var command = resultAccumulator.EnsureWorkerCommand();
 
             var alias = node.Properties["alias"];
             var argument = TokenToArgument(token);
