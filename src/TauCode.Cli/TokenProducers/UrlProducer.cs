@@ -39,7 +39,7 @@ namespace TauCode.Cli.TokenProducers
             }
 
             var initialIndex = context.Index;
-            var startIndex = start.Length;
+            var startIndex = initialIndex + start.Length;
             var index = startIndex;
 
             while (true)

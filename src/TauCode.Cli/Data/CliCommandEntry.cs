@@ -16,7 +16,7 @@ namespace TauCode.Cli.Data
         public CliCommandEntryKind Kind { get; }
         public string Alias { get; }
         public string Key { get; }
-        public string Value { get; }
+        public string Value { get; private set; }
 
         public static CliCommandEntry CreateOption(string alias, string key)
         {
@@ -31,7 +31,12 @@ namespace TauCode.Cli.Data
 
         public static CliCommandEntry CreateKeyValuePair(string alias, string key)
         {
-            throw new NotImplementedException();
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            return new CliCommandEntry(CliCommandEntryKind.KeyValuePair, alias, key, null);
         }
 
         public static CliCommandEntry CreateArgument(string alias, string argument)
@@ -47,7 +52,7 @@ namespace TauCode.Cli.Data
 
         public void SetKeyValue(string value)
         {
-            throw new NotImplementedException();
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
         }
     }
 }

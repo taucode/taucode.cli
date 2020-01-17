@@ -148,25 +148,29 @@ namespace TauCode.Cli
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            if (resultAccumulator.Count == 0)
-            {
-                var command = new CliCommand
-                {
-                    WorkerName = node.Properties["worker-name"],
-                };
+            resultAccumulator.EnsureWorkerCommand(node);
 
-                resultAccumulator.AddResult(command);
-            }
-            else
-            {
-                var command = resultAccumulator.GetLastResult<CliCommand>();
-                command.WorkerName = node.Properties["worker-name"];
-            }
+            //if (resultAccumulator.Count == 0)
+            //{
+            //    var command = new CliCommand
+            //    {
+            //        WorkerName = node.Properties["worker-name"],
+            //    };
+
+            //    resultAccumulator.AddResult(command);
+            //}
+            //else
+            //{
+            //    var command = resultAccumulator.GetLastResult<CliCommand>();
+            //    command.WorkerName = node.Properties["worker-name"];
+            //}
         }
 
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.GetLastResult<CliCommand>();
+            var command = resultAccumulator.EnsureWorkerCommand(node);
+
+            //var command = resultAccumulator.GetLastResult<CliCommand>();
             //var entry = new CliCommandEntry
             //{
             //    Alias = node.Properties["alias"],
@@ -213,23 +217,26 @@ namespace TauCode.Cli
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             // todo: EnsureCommand (uses command from 'IResultAccumulator resultAccumulator', or adds new; everywhere!)
-            CliCommand command;
-            if (resultAccumulator.Count == 0)
-            {
-                command = new CliCommand
-                {
-                    WorkerName = node.Properties.GetOrDefault("worker-name"),
-                };
+            //CliCommand command;
+            //if (resultAccumulator.Count == 0)
+            //{
+            //    command = new CliCommand
+            //    {
+            //        WorkerName = node.Properties.GetOrDefault("worker-name"),
+            //    };
 
-                resultAccumulator.AddResult(command);
-            }
-            else
-            {
-                command = resultAccumulator.GetLastResult<CliCommand>();
-                command.WorkerName = node.Properties.GetOrDefault("worker-name");
-            }
+            //    resultAccumulator.AddResult(command);
+            //}
+            //else
+            //{
+            //    command = resultAccumulator.GetLastResult<CliCommand>();
+            //    command.WorkerName = node.Properties.GetOrDefault("worker-name");
+            //}
 
             //var command = resultAccumulator.GetLastResult<CliCommand>();
+
+            var command = resultAccumulator.EnsureWorkerCommand(node);
+
             var alias = node.Properties["alias"];
             var argument = TokenToArgument(token);
             var entry = CliCommandEntry.CreateArgument(alias, argument);

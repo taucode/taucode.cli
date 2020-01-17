@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
+using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
@@ -308,12 +309,77 @@ namespace TauCode.Cli
             return entry.Value;
         }
 
+        public static string[] GetAllValuesOfKey(this IEnumerable<CliCommandEntry> entries, string keyAlias)
+        {
+            return entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.KeyValuePair &&
+                    string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase))
+                .Select(x => x.Value)
+                .ToArray();
+        }
+
         public static string[] GetAllOptionAliases(this IEnumerable<CliCommandEntry> entries)
         {
             return entries
                 .Where(x => x.Kind == CliCommandEntryKind.Option)
                 .Select(x => x.Alias)
                 .ToArray();
+        }
+
+        public static CliCommand EnsureAddInCommand(
+            this IResultAccumulator resultAccumulator,
+            string addInName)
+        {
+            CliCommand command;
+
+            if (resultAccumulator.Count == 0)
+            {
+                command = new CliCommand
+                {
+                    AddInName = addInName,
+                };
+                resultAccumulator.AddResult(command);
+            }
+            else
+            {
+                command = resultAccumulator.GetLastResult<CliCommand>();
+
+                if (command.AddInName != addInName)
+                {
+                    throw new NotImplementedException(); // todo wat?
+                }
+            }
+
+            return command;
+        }
+
+        public static CliCommand EnsureWorkerCommand(
+            this IResultAccumulator resultAccumulator,
+            INode workerNode)
+        {
+            CliCommand command;
+            var workerName = workerNode.Properties.GetOrDefault("worker-name");
+
+            if (resultAccumulator.Count == 0)
+            {
+                command = new CliCommand
+                {
+                    WorkerName = workerName,
+                };
+                resultAccumulator.AddResult(command);
+            }
+            else
+            {
+                command = resultAccumulator.GetLastResult<CliCommand>();
+
+                if (command.WorkerName != workerName)
+                {
+                    throw new NotImplementedException(); // todo wat?
+                }
+            }
+
+            return command;
         }
     }
 }

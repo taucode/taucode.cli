@@ -19,6 +19,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             var url = entries.GetArgument("url");
             this.Output.WriteLine("Curl");
             this.Output.WriteLine($"Requested url: {url}");
+
+            var headers = entries.GetAllValuesOfKey("header");
+            this.Output.WriteLine($"Headers: {string.Join(", ", headers)}");
         }
     }
 }

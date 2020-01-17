@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
@@ -126,12 +125,16 @@ namespace TauCode.Cli
 
         private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = new CliCommand
-            {
-                AddInName = node.Properties["add-in-name"],
-            };
+            resultAccumulator.EnsureAddInCommand(node.Properties["add-in-name"]);
 
-            resultAccumulator.AddResult(command);
+            //resultAccumulator.EnsureCommand(node.Properties["add-in-name"]);
+
+            //var command = new CliCommand
+            //{
+            //    AddInName = node.Properties["add-in-name"],
+            //};
+
+            //resultAccumulator.AddResult(command);
         }
 
         #endregion

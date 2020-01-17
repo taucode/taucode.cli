@@ -1,4 +1,5 @@
 ﻿using TauCode.Parsing;
+using TauCode.Parsing.TextClasses;
 
 namespace TauCode.Cli.TextClasses
 {
@@ -13,7 +14,12 @@ namespace TauCode.Cli.TextClasses
 
         protected override string TryConvertFromImpl(string text, ITextClass anotherClass)
         {
-            return "todo: wat";
+            if (anotherClass is StringTextClass)
+            {
+                return text;
+            }
+
+            return null;
         }
     }
 }
