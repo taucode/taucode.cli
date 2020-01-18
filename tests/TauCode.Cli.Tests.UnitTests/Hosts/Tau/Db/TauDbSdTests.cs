@@ -73,8 +73,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
             var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
 
             // Assert
-            var output = this.GetOutput();
-            Assert.That(output.Trim(), Is.EqualTo("Bad option or key: '-bad-option'."));
+            Assert.That(ex.Message, Is.EqualTo("Bad option or key: '-bad-option'."));
         }
 
         [Test]
@@ -239,8 +238,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
             var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
 
             // Assert
-            var output = this.GetOutput();
-            Assert.That(output.Trim(), Is.EqualTo("Bad option or key: '--version'."));
+            Assert.That(ex.Message, Is.EqualTo("Bad option or key: '--version'."));
         }
     }
 }

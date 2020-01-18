@@ -26,8 +26,7 @@ namespace TauCode.Cli
                 void Result(ActionNode dummyActionNode, IToken token, IResultAccumulator resultAccumulator)
                 {
                     handler(token);
-
-                    throw new NotImplementedException("You wasn't expected to get here!");
+                    throw new CliException("Custom handler hasn't thrown an exception while it was expected to.");
                 }
 
                 return Result;
@@ -414,7 +413,6 @@ namespace TauCode.Cli
             {
                 throw new ArgumentNullException(nameof(resultAccumulator));
             }
-
 
             if (resultAccumulator.Count == 0)
             {

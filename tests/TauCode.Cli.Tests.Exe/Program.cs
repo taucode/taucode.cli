@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.Tests.Common.Hosts.Curl;
 using TauCode.Cli.Tests.Common.Hosts.Git;
@@ -83,7 +84,7 @@ namespace TauCode.Cli.Tests.Exe
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            throw new AbandonedMutexException(); // todo: proper exception & ut.
                         }
                     },
                     "--host"

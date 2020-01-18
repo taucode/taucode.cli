@@ -90,7 +90,7 @@ namespace TauCode.Cli
 
             if (!(node is ActionNode))
             {
-                throw new NotImplementedException(); // todo
+                throw new CliException($"'{typeof(ActionNode).Name}' instance was expected to be created."); // todo ut
             }
 
             var baseResult = (ActionNode)node;
@@ -132,8 +132,20 @@ namespace TauCode.Cli
 
         protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
         {
-            return _fallbackPredicates.GetOrDefault(nodeName.ToLowerInvariant()) ??
-                   throw new NotImplementedException(); // todo nu such predicate
+            if (nodeName == null)
+            {
+                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node."); // todo ut
+            }
+
+            var key = nodeName.ToLowerInvariant();
+
+            var predicate = _fallbackPredicates.GetOrDefault(key);
+            if (predicate == null)
+            {
+                throw new CliException($"Fallback predicate not found for node '{key}'."); // todo ut
+            }
+
+            return predicate;
         }
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
@@ -160,7 +172,7 @@ namespace TauCode.Cli
                 return textToken.Text;
             }
 
-            throw new NotImplementedException(); // error
+            throw new CliException($"Token '{token}' of type '{token.GetType().FullName}' cannot be converted to key.");
         }
 
         private void ValueAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
