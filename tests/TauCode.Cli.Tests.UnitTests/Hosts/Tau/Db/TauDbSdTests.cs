@@ -4,7 +4,7 @@ using TauCode.Cli.Exceptions;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
 using TauCode.Cli.Tests.Common.Hosts.Tau.Db;
 using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers;
-using TauCode.Parsing.Lab.Exceptions;
+using TauCode.Parsing.Exceptions;
 
 namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
 {
@@ -192,21 +192,21 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void TauVersion_VersionDoesNotExist_ThrowsUnexpectedTokenExceptionLab()
+        public void TauVersion_VersionDoesNotExist_ThrowsUnexpectedTokenException()
         {
             // Arrange
             this.Host = new TauHost(null, true);
             var input = "--version";
             
             // Act
-            var ex = Assert.Throws<UnexpectedTokenExceptionLab>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseLine(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));
         }
 
         [Test]
-        public void TauDbVersion_VersionDoesNotExist_UnexpectedTokenExceptionLab() // todo: get rid of ..Lab everywhere.
+        public void TauDbVersion_VersionDoesNotExist_UnexpectedTokenException()
         {
             // Arrange
             DbAddIn.CurrentVersion = null;
@@ -215,7 +215,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
             var input = "db --version";
 
             // Act
-            var ex = Assert.Throws<UnexpectedTokenExceptionLab>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseLine(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));

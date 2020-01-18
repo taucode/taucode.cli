@@ -5,7 +5,6 @@ using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
-using TauCode.Parsing.Lab.Nodes;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
@@ -78,7 +77,7 @@ namespace TauCode.Cli
 
         #region Custom Handlers Support
 
-        public static ICliFunctionalityProvider AddCustomHandlerWithParameterLab(
+        public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
             this ICliFunctionalityProvider functionalityProvider,
             Action<IToken> handler,
             string tokenText)
@@ -103,7 +102,7 @@ namespace TauCode.Cli
                 family,
                 $"Custom handler node for verb '{tokenText}'");
 
-            var argumentNode = new CustomActionNodeLab(
+            var argumentNode = new CustomActionNode(
                 (node, token, resultAccumulator) =>
                 {
                     handler(token);
@@ -119,7 +118,7 @@ namespace TauCode.Cli
             return functionalityProvider;
         }
 
-        public static ICliFunctionalityProvider AddCustomHandlerLab(
+        public static ICliFunctionalityProvider AddCustomHandler(
             this ICliFunctionalityProvider functionalityProvider,
             Action handler,
             string tokenText)
@@ -166,7 +165,7 @@ namespace TauCode.Cli
                     nameof(functionalityProvider));
             }
 
-            return functionalityProvider.AddCustomHandlerLab(
+            return functionalityProvider.AddCustomHandler(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.Version),
                 "--version");
         }
@@ -185,7 +184,7 @@ namespace TauCode.Cli
                     nameof(functionalityProvider));
             }
 
-            return functionalityProvider.AddCustomHandlerLab(
+            return functionalityProvider.AddCustomHandler(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.GetHelp()),
                 "--help");
         }

@@ -44,10 +44,10 @@ namespace TauCode.Cli.Tests.Exe
         {
             var idleHost = new IdleHost();
             idleHost
-                .AddCustomHandlerLab(
+                .AddCustomHandler(
                     () => Console.WriteLine(this.GetHelp()),
                     "--help")
-                .AddCustomHandlerLab(
+                .AddCustomHandler(
                     () => Console.WriteLine(this.GetAllHostsName()),
                     "--all-hosts");
 
@@ -67,13 +67,13 @@ namespace TauCode.Cli.Tests.Exe
                 x.Input = Console.In;
 
                 x
-                    .AddCustomHandlerLab(
+                    .AddCustomHandler(
                         Console.Clear,
                         "cls")
-                    .AddCustomHandlerLab(
+                    .AddCustomHandler(
                         () => throw new ExitException(),
                         "exit")
-                    .AddCustomHandlerWithParameterLab(
+                    .AddCustomHandlerWithParameter(
                         (token) =>
                         {
                             if (token is TextToken textToken && textToken.Class is TermTextClass)

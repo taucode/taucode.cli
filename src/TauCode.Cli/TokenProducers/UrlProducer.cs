@@ -1,6 +1,5 @@
 ﻿using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
-using TauCode.Parsing.Lab.Lexing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.TextDecorations;
 using TauCode.Parsing.Tokens;

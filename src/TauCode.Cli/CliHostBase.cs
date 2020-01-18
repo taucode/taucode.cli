@@ -7,7 +7,6 @@ using TauCode.Cli.Exceptions;
 using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Exceptions;
-using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 
@@ -141,7 +140,7 @@ namespace TauCode.Cli
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 
-        protected virtual IParser CreateParser() => new ParserLab
+        protected virtual IParser CreateParser() => new Parser
         {
             WantsOnlyOneResult = true,
             Root = this.Node,
