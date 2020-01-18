@@ -65,14 +65,17 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void SerializeData_BadKey_FallbackFires()
+        public void SerializeData_BadKey_ThrowsFallbackInterceptedCliException()
         {
             // Arrange
+            var input = "db sd -p sqlserver -bad-option badvalue 'my_conn' --verbose";
 
             // Act
+            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
 
             // Assert
-            throw new NotImplementedException();
+            var output = this.GetOutput();
+            Assert.That(output.Trim(), Is.EqualTo("Bad option or key: '-bad-option'."));
         }
 
         [Test]
@@ -193,7 +196,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void TauVersion_VersionDoesNotExist_ThrowsTodoException()
+        public void TauVersion_VersionDoesNotExist_ThrowsUnexpectedTokenExceptionLab()
         {
             // Arrange
             this.Host = new TauHost(null, true);
@@ -207,7 +210,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void TauDbVersion_VersionDoesNotExist_ThrowsTodoException()
+        public void TauDbVersion_VersionDoesNotExist_UnexpectedTokenExceptionLab() // todo: get rid of ..Lab everywhere.
         {
             // Arrange
             DbAddIn.CurrentVersion = null;
@@ -223,7 +226,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void TauDbSdVersion_VersionDoesNotExist_ThrowsTodoException()
+        public void TauDbSdVersion_VersionDoesNotExist_ThrowsFallbackInterceptedCliException()
         {
             // Arrange
             SerializeDataWorker.CurrentVersion = null;
