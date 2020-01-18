@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TauCode.Parsing.Exceptions;
+using TauCode.Parsing.Lab.Exceptions;
 using TauCode.Parsing.Nodes;
 
 namespace TauCode.Parsing.Lab
@@ -112,7 +113,7 @@ namespace TauCode.Parsing.Lab
                     }
                     else
                     {
-                        throw new UnexpectedTokenException(token, context.ResultAccumulator.ToArray());
+                        throw new UnexpectedTokenExceptionLab(token, context.ResultAccumulator.ToArray());
                     }
                 }
                 else
