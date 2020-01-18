@@ -3,133 +3,115 @@ using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
+using TauCode.Parsing.Lab.Nodes;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
-using TauCode.Parsing.TextDecorations;
 using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
     public static class CliExtensions
     {
-        #region Nested
+        #region Misc
 
-        private class CatchAllAndThrowNode : ActionNode
+        private static ITextClass GetVerbTextClass(string tokenText)
         {
-            public CatchAllAndThrowNode(Action<IToken> handler, INodeFamily family, string name)
-                : base(BuildAction(handler), family, name)
+            try
             {
-            }
+                ILexer lexer = new CliLexer();
+                var tokens = lexer.Lexize(tokenText);
 
-            private static Action<ActionNode, IToken, IResultAccumulator> BuildAction(Action<IToken> handler)
-            {
-                void Result(ActionNode dummyActionNode, IToken token, IResultAccumulator resultAccumulator)
+                do
                 {
-                    handler(token);
-                    throw new CliException("Custom handler hasn't thrown an exception while it was expected to.");
-                }
+                    if (tokens.Count != 1)
+                    {
+                        break;
+                    }
 
-                return Result;
+                    var token = tokens.Single();
+                    if (token is TextToken textToken)
+                    {
+                        var textClass = textToken.Class;
+                        if (textClass is TermTextClass || textClass is KeyTextClass)
+                        {
+                            return textClass;
+                        }
+                    }
+
+                } while (false);
+
+                throw new CliException("Verb for custom handler must be term or key.");
+
+            }
+            catch (Exception ex)
+            {
+                throw new CliException($"Invalid verb for custom handler: '{tokenText}'.", ex);
+            }
+        }
+        
+        private static INodeFamily CheckArgumentsAndGetOrCreateFamily(
+            this ICliFunctionalityProvider functionality)
+        {
+            if (functionality == null)
+            {
+                throw new ArgumentNullException(nameof(functionality));
             }
 
-            protected override bool AcceptsTokenImpl(IToken token, IResultAccumulator resultAccumulator) => true;
-        }
+            if (functionality.Name == null)
+            {
+                throw new CliException("Cannot add custom handler to a nameless functionality.");
+            }
 
+            var familyName = $"Family for custom handler nodes for functionality '{functionality.Name}' of type '{functionality.GetType().FullName}'.";
+
+            var links = functionality.Node.ResolveLinks()
+                .Where(x => x.Family?.Name == familyName)
+                .ToList();
+
+            var nodeFamily = links.Any() ? links.First().Family : new NodeFamily(familyName);
+            return nodeFamily;
+        }
 
         #endregion
 
         #region Custom Handlers Support
 
-        public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
+        public static ICliFunctionalityProvider AddCustomHandlerWithParameterLab(
             this ICliFunctionalityProvider functionalityProvider,
             Action<IToken> handler,
-            params string[] texts)
+            string tokenText)
         {
-            // todo: a lot of copy/paste (see AddCustomHandler method)
-            if (functionalityProvider == null)
-            {
-                throw new ArgumentNullException(nameof(functionalityProvider));
-            }
-
-            if (functionalityProvider.Name == null)
-            {
-                throw new CliException("Cannot add custom handler to a nameless functionality.");
-            }
-
             if (handler == null)
             {
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            if (texts == null)
+            if (tokenText == null)
             {
-                throw new ArgumentNullException(nameof(texts));
+                throw new ArgumentNullException(nameof(tokenText));
             }
 
-            if (texts.Length == 0)
-            {
-                throw new ArgumentException($"'{nameof(texts)}' cannot be empty.");
-            }
-
-            var tokens = new List<TextToken>();
-            ITextClass textClass;
-
-            try
-            {
-                ILexer lexer = new CliLexer();
-
-                foreach (var text in texts)
-                {
-                    var singleTextTokens = lexer.Lexize(text);
-                    var isValid =
-                        singleTextTokens.Count == 1 &&
-                        singleTextTokens.Single() is TextToken;
-
-                    if (!isValid)
-                    {
-                        throw new NotImplementedException(); // error.
-                    }
-
-                    var token = (TextToken)singleTextTokens.Single();
-                    tokens.Add(token);
-                }
-
-                var classes = tokens.Select(x => x.Class).Distinct().ToList();
-                if (classes.Count > 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                textClass = classes.Single();
-
-                var decorations = tokens.Select(x => x.Decoration).Distinct().ToList();
-                if (decorations.Count != 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                if (decorations.Single() != NoneTextDecoration.Instance)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException("Bad texts. todo", ex);
-            }
-
-            INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
-
-            var commandNode = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] { textClass },
+            var family = CheckArgumentsAndGetOrCreateFamily(functionalityProvider);
+            var verbClass = GetVerbTextClass(tokenText);
+            var commandNode = new ExactTextNode(
+                tokenText,
+                verbClass,
                 true,
                 null,
-                nodeFamily,
-                null);
+                family,
+                $"Custom handler node for verb '{tokenText}'");
 
-            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+            var argumentNode = new CustomActionNodeLab(
+                (node, token, resultAccumulator) =>
+                {
+                    handler(token);
+                    throw new CliCustomHandlerException();
+                },
+                (token, resultAccumulator) => true,
+                family,
+                $"Argument node for custom handler with verb '{tokenText}'.");
 
             functionalityProvider.Node.EstablishLink(commandNode);
             commandNode.EstablishLink(argumentNode);
@@ -137,98 +119,36 @@ namespace TauCode.Cli
             return functionalityProvider;
         }
 
-        public static ICliFunctionalityProvider AddCustomHandler(
+        public static ICliFunctionalityProvider AddCustomHandlerLab(
             this ICliFunctionalityProvider functionalityProvider,
-            Action action,
-            params string[] texts)
+            Action handler,
+            string tokenText)
         {
-            if (functionalityProvider == null)
+            if (handler == null)
             {
-                throw new ArgumentNullException(nameof(functionalityProvider));
+                throw new ArgumentNullException(nameof(handler));
             }
 
-            if (functionalityProvider.Name == null)
+            if (tokenText == null)
             {
-                throw new CliException("Cannot add custom handler to a nameless functionality.");
+                throw new ArgumentNullException(nameof(tokenText));
             }
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            if (texts == null)
-            {
-                throw new ArgumentNullException(nameof(texts));
-            }
-
-            if (texts.Length == 0)
-            {
-                throw new ArgumentException($"'{nameof(texts)}' cannot be empty.");
-            }
-
-            var tokens = new List<TextToken>();
-            ITextClass textClass;
-
-            try
-            {
-                ILexer lexer = new CliLexer();
-
-                foreach (var text in texts)
-                {
-                    var singleTextTokens = lexer.Lexize(text);
-                    var isValid =
-                        singleTextTokens.Count == 1 &&
-                        singleTextTokens.Single() is TextToken;
-
-                    if (!isValid)
-                    {
-                        throw new NotImplementedException(); // error.
-                    }
-
-                    var token = (TextToken)singleTextTokens.Single();
-                    tokens.Add(token);
-                }
-
-                var classes = tokens.Select(x => x.Class).Distinct().ToList();
-                if (classes.Count > 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                textClass = classes.Single();
-
-                var decorations = tokens.Select(x => x.Decoration).Distinct().ToList();
-                if (decorations.Count != 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                if (decorations.Single() != NoneTextDecoration.Instance)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException("Bad texts. todo", ex);
-            }
-
-            INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
-
-            var node = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] { textClass },
+            var family = CheckArgumentsAndGetOrCreateFamily(functionalityProvider);
+            var verbClass = GetVerbTextClass(tokenText);
+            var commandNode = new ExactTextNode(
+                tokenText,
+                verbClass,
                 true,
-                (actionNode, token, resultAccumulator) =>
+                (node, token, resultAccumulator) =>
                 {
-                    action();
+                    handler();
                     throw new CliCustomHandlerException();
                 },
-                nodeFamily,
-                null);
+                family,
+                $"Custom handler node for verb '{tokenText}'");
 
-            functionalityProvider.Node.EstablishLink(node);
+            functionalityProvider.Node.EstablishLink(commandNode);
             return functionalityProvider;
         }
 
@@ -246,7 +166,7 @@ namespace TauCode.Cli
                     nameof(functionalityProvider));
             }
 
-            return functionalityProvider.AddCustomHandler(
+            return functionalityProvider.AddCustomHandlerLab(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.Version),
                 "--version");
         }
@@ -265,7 +185,7 @@ namespace TauCode.Cli
                     nameof(functionalityProvider));
             }
 
-            return functionalityProvider.AddCustomHandler(
+            return functionalityProvider.AddCustomHandlerLab(
                 () => functionalityProvider.Output.WriteLine(functionalityProvider.GetHelp()),
                 "--help");
         }

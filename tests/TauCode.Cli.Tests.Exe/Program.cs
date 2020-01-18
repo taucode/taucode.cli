@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.Tests.Common.Hosts.Curl;
 using TauCode.Cli.Tests.Common.Hosts.Git;
 using TauCode.Cli.Tests.Common.Hosts.Kubectl;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
 
@@ -43,13 +43,14 @@ namespace TauCode.Cli.Tests.Exe
         private Program()
         {
             var idleHost = new IdleHost();
-            idleHost.AddCustomHandler(
-                () => Console.WriteLine(this.GetHelp()),
-                "--help");
+            idleHost
+                .AddCustomHandlerLab(
+                    () => Console.WriteLine(this.GetHelp()),
+                    "--help")
+                .AddCustomHandlerLab(
+                    () => Console.WriteLine(this.GetAllHostsName()),
+                    "--all-hosts");
 
-            idleHost.AddCustomHandler(
-                () => Console.WriteLine(this.GetAllHostsName()),
-                "--all-hosts");
             _hosts = new ICliHost[]
                 {
                     new TauHost(),
@@ -65,30 +66,27 @@ namespace TauCode.Cli.Tests.Exe
                 x.Output = Console.Out;
                 x.Input = Console.In;
 
-                x.AddCustomHandler(
-                    Console.Clear, 
-                    "cls");
-
-                x.AddCustomHandler(
-                    () => throw new ExitException(),
-                    "exit");
-
-                x.AddCustomHandlerWithParameter(
-                    (token) =>
-                    {
-                        if (token is TextToken textToken)
+                x
+                    .AddCustomHandlerLab(
+                        Console.Clear,
+                        "cls")
+                    .AddCustomHandlerLab(
+                        () => throw new ExitException(),
+                        "exit")
+                    .AddCustomHandlerWithParameterLab(
+                        (token) =>
                         {
-                            var name = textToken.Text;
-                            _currentHost = _hosts[name];
-                            throw new CliCustomHandlerException();
-                        }
-                        else
-                        {
-                            throw new AbandonedMutexException(); // todo: proper exception & ut.
-                        }
-                    },
-                    "--host"
-                );
+                            if (token is TextToken textToken && textToken.Class is TermTextClass)
+                            {
+                                var name = textToken.Text;
+                                _currentHost = _hosts[name];
+                            }
+                            else
+                            {
+                                throw new CliException("Host ID expected.");
+                            }
+                        },
+                        "--host");
 
             });
 
