@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using TauCode.Cli.Data;
 using TauCode.Extensions;
 
@@ -17,13 +17,14 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 
         public override void Process(IList<CliCommandEntry> entries)
         {
-            var connection = entries.GetSingleEntryByAlias("connection").Value;
-            var provider = entries.GetSingleEntryByAlias("provider").Value;
-            var exclude = entries.GetEntriesByAlias("exclude").Select(x => x.Value).ToList();
+            throw new NotImplementedException();
+            //var connection = entries.GetSingleEntryByAlias("connection").Value;
+            //var provider = entries.GetSingleEntryByAlias("provider").Value;
+            //var exclude = entries.GetEntriesByAlias("exclude").Select(x => x.Value).ToList();
 
-            this.Output.WriteLine($"Connection: [{connection}]");
-            this.Output.WriteLine($"Provider: [{provider}]");
-            this.Output.WriteLine($"Exclude: [{string.Join(", ", exclude)}]");
+            //this.Output.WriteLine($"Connection: [{connection}]");
+            //this.Output.WriteLine($"Provider: [{provider}]");
+            //this.Output.WriteLine($"Exclude: [{string.Join(", ", exclude)}]");
         }
     }
 }

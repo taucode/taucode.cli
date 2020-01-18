@@ -276,29 +276,51 @@ namespace TauCode.Cli
                 string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
-        }
+        //public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
+        //{
+        //    // todo checks
+        //    // todo can throw
+        //    return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
+        //}
 
-        public static IList<CliCommandEntry> GetEntriesByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries
-                .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
-        }
+        //public static IList<CliCommandEntry> GetEntriesByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
+        //{
+        //    // todo checks
+        //    // todo can throw
+        //    return entries
+        //        .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
+        //        .ToList();
+        //}
 
         public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
         {
-            var option = entries.SingleOrDefault(x =>
-                x.Kind == CliCommandEntryKind.Option &&
-                string.Equals(x.Alias, optionAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return option != null;
+            if (optionAlias == null)
+            {
+                throw new ArgumentNullException(nameof(optionAlias));
+            }
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.Option &&
+                    string.Equals(x.Alias, optionAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                return false;
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Multiple option. Alias: '{optionAlias.ToLowerInvariant()}'.");
+            }
+
+            return true;
         }
 
         public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
@@ -312,11 +334,33 @@ namespace TauCode.Cli
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
         {
-            var entry = entries.Single(x =>
-                x.Kind == CliCommandEntryKind.KeyValuePair &&
-                string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return entry.Value;
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.KeyValuePair &&
+                    string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                throw new CliException($"Key is missing. Alias: '{keyAlias.ToLowerInvariant()}'.");
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Multiple keys. Alias: '{keyAlias.ToLowerInvariant()}'.");
+            }
+
+            return wantedEntries.Single().Value;
         }
 
         public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)

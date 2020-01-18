@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Linq;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
@@ -79,47 +78,45 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         }
 
         [Test]
-        public void SerializeData_OrphanValue_ThrowsTodoException()
+        public void SerializeData_MissingKey_ThrowsCliException()
         {
             // Arrange
+            var input = "db sd -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'";
 
             // Act
+            var command = this.Host.ParseLine(input);
+            var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(ex.Message, Is.EqualTo("Key is missing. Alias: 'provider'."));
         }
 
         [Test]
-        public void SerializeData_MissingKey_ThrowsTodoException()
+        public void SerializeData_MultipleKey_ThrowsCliException()
         {
             // Arrange
+            var input = "db sd -p sqlserver -p postgresql -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'";
 
             // Act
+            var command = this.Host.ParseLine(input);
+            var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(ex.Message, Is.EqualTo("Multiple keys. Alias: 'provider'."));
         }
 
         [Test]
-        public void SerializeData_MultipleKey_ThrowsTodoException()
+        public void SerializeData_MultipleOption_ThrowsCliException()
         {
             // Arrange
+            var input = "db sd -p sqlserver 'my_conn' --verbose -v";
 
             // Act
+            var command = this.Host.ParseLine(input);
+            var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
-            throw new NotImplementedException();
-        }
-
-        [Test]
-        public void SerializeData_MultipleOption_ThrowsTodoException()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            throw new NotImplementedException();
+            Assert.That(ex.Message, Is.EqualTo("Multiple option. Alias: 'verbose'."));
         }
 
         [Test]
