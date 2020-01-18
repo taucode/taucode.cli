@@ -36,7 +36,7 @@ namespace TauCode.Cli
                 {
                     if (workers.Count > 1)
                     {
-                        // todo ut
+                        // actually, won't ever get here, since this thing is checked by CliAddInBase.
                         throw new CliException("Add-in can have either exactly one nameless worker, or more than one workers all named.");
                     }
 

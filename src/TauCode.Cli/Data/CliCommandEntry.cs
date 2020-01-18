@@ -2,9 +2,10 @@
 
 namespace TauCode.Cli.Data
 {
-    // todo arrange + regions
     public class CliCommandEntry
     {
+        #region Constructor
+
         private CliCommandEntry(CliCommandEntryKind kind, string alias, string key, string value)
         {
             this.Kind = kind;
@@ -13,10 +14,23 @@ namespace TauCode.Cli.Data
             this.Value = value;
         }
 
+        #endregion
+
+        #region Public
+
         public CliCommandEntryKind Kind { get; }
         public string Alias { get; }
         public string Key { get; }
         public string Value { get; private set; }
+
+        public void SetKeyValue(string value)
+        {
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        #endregion
+
+        #region Static
 
         public static CliCommandEntry CreateOption(string alias, string key)
         {
@@ -50,9 +64,7 @@ namespace TauCode.Cli.Data
             return entry;
         }
 
-        public void SetKeyValue(string value)
-        {
-            this.Value = value ?? throw new ArgumentNullException(nameof(value));
-        }
+
+        #endregion
     }
 }

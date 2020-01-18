@@ -3,7 +3,6 @@ using TauCode.Cli.Data;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {
-    // todo finish this job
     public class HostWithUnnamedAndNamedAddIns : CliHostBase
     {
         private class WorkerOne : CliWorkerBase
