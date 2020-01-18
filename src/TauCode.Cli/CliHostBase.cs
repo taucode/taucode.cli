@@ -12,7 +12,6 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliHostBase : CliFunctionalityProviderBase, ICliHost
     {
         #region Nested
@@ -22,9 +21,8 @@ namespace TauCode.Cli
             private readonly Dictionary<string, ICliWorker> _workers;
             private readonly ICliWorker _singleUnnamedWorker;
 
-            public AddInRecord(/*INode node,*/ ICliAddIn addIn, IReadOnlyList<ICliWorker> workers)
+            public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliWorker> workers)
             {
-                //this.Node = node;
                 this.AddIn = addIn;
 
                 if (workers.Count == 0)
@@ -52,7 +50,6 @@ namespace TauCode.Cli
                 }
             }
 
-            //public INode Node { get; } // todo: need this?
             public ICliAddIn AddIn { get; }
 
             public ICliWorker GetWorker(string workerName)
@@ -82,7 +79,6 @@ namespace TauCode.Cli
 
         private ILexer _lexer;
         private IParser _parser;
-        //private INode _node;
         private readonly INodeFamily _nodeFamily;
 
         private readonly IDictionary<string, AddInRecord> _addInRecords;
@@ -101,9 +97,7 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(name, version, supportsHelp)
         {
-            //this.Name = name;
-            //this.Version = version;
-            //this.SupportsHelp = supportsHelp;
+            // todo: can host's name be null? I suppose not.
 
             _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addInRecords = new Dictionary<string, AddInRecord>();
@@ -181,6 +175,19 @@ namespace TauCode.Cli
         #endregion
 
         #region Overridden
+
+        protected override void OnNodeCreated()
+        {
+            if (this.Version != null)
+            {
+                this.AddVersion();
+            }
+
+            if (this.SupportsHelp)
+            {
+                this.AddHelp();
+            }
+        }
 
         protected override INode CreateNodeTree()
         {
@@ -299,18 +306,12 @@ namespace TauCode.Cli
             }
             catch (FallbackNodeAcceptedTokenException ex)
             {
-                //var worker = this.FindFallbackSource(ex);
                 var worker = this.NodesByWorkers[ex.FallbackNode];
                 worker.HandleFallback(ex);
 
                 throw new FallbackInterceptedCliException("todo");
             }
         }
-
-        //private ICliWorker FindFallbackSource(FallbackNodeAcceptedTokenException ex)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public void DispatchCommand(CliCommand command)
         {
@@ -321,67 +322,5 @@ namespace TauCode.Cli
         }
 
         #endregion
-
-        //#region ICliFunctionalityProvider Members
-
-        //public string Name { get; }
-
-        //public TextWriter Output
-        //{
-        //    get => _output;
-        //    set => _output = value ?? TextWriter.Null;
-        //}
-
-        //public TextReader Input
-        //{
-        //    get => _input;
-        //    set => _input = value ?? TextReader.Null;
-        //}
-
-        //public INode Node
-        //{
-        //    get
-        //    {
-        //        if (_node == null)
-        //        {
-        //            _node = this.BuildNode();
-
-        //            if (this.Version != null)
-        //            {
-        //                this.AddVersion();
-        //            }
-
-        //            if (this.SupportsHelp)
-        //            {
-        //                this.AddHelp();
-        //            }
-        //        }
-
-        //        return _node;
-        //    }
-        //}
-
-        //public string Version { get; }
-
-        //public bool SupportsHelp { get; }
-
-        //public virtual string GetHelp()
-        //{
-        //    return "todo: help for host";
-        //}
-
-        //#endregion
-    }
-
-    // todo separated
-    public class FallbackInterceptedCliException : CliException
-    {
-        public FallbackInterceptedCliException(string message) : base(message)
-        {
-        }
-
-        public FallbackInterceptedCliException(string message, Exception inner) : base(message, inner)
-        {
-        }
     }
 }

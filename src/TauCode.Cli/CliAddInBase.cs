@@ -9,12 +9,10 @@ using TauCode.Parsing.Nodes;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliAddInBase : CliFunctionalityProviderBase, ICliAddIn
     {
         #region Fields
 
-        //private INode _node;
         private readonly INodeFamily _nodeFamily;
         private readonly List<ICliWorker> _workers;
 
@@ -23,11 +21,9 @@ namespace TauCode.Cli
         #region Constructor
 
         protected CliAddInBase(string name, string version, bool supportsHelp)
-        : base(name, version, supportsHelp)
+            : base(name, version, supportsHelp)
         {
-            //this.Name = name ?? throw new ArgumentNullException(nameof(name), "Use parameterless constructor for nameless add-in creation.");
-            //this.Version = version;
-            //this.SupportsHelp = supportsHelp;
+            // todo: nameless add-in cannot support version & help
 
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}");
             _workers = new List<ICliWorker>();
@@ -36,8 +32,6 @@ namespace TauCode.Cli
         protected CliAddInBase()
             : this(null, null, false)
         {
-            //_nodeFamily = new NodeFamily("Nameless add-in node family");
-            //_workers = new List<ICliWorker>();
         }
 
         #endregion
@@ -119,6 +113,20 @@ namespace TauCode.Cli
 
             return addInNode;
         }
+
+        protected override void OnNodeCreated()
+        {
+            if (this.Version != null)
+            {
+                this.AddVersion();
+            }
+
+            if (this.SupportsHelp)
+            {
+                this.AddHelp();
+            }
+        }
+
         #endregion
 
         #region Private
@@ -126,17 +134,6 @@ namespace TauCode.Cli
         private void ProcessAddInName(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             resultAccumulator.AddAddInCommand(node.Properties["add-in-name"]);
-
-            //resultAccumulator.EnsureAddInCommand(node.Properties["add-in-name"]);
-
-            //resultAccumulator.EnsureCommand(node.Properties["add-in-name"]);
-
-            //var command = new CliCommand
-            //{
-            //    AddInName = node.Properties["add-in-name"],
-            //};
-
-            //resultAccumulator.AddResult(command);
         }
 
         #endregion
@@ -151,7 +148,6 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; internal set; }
 
-        //public IReadOnlyList<ICliWorker> GetWorkers() => _workers;
         public IReadOnlyList<ICliWorker> GetWorkers()
         {
             if (_workers.Count == 0)
@@ -161,56 +157,6 @@ namespace TauCode.Cli
 
             return _workers;
         }
-
-        #endregion
-
-        #region ICliFunctionalityProvider Members
-
-        //public string Name { get; }
-
-        //public TextWriter Output
-        //{
-        //    get => this.Host.Output;
-        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        //}
-
-        //public TextReader Input
-        //{
-        //    get => this.Host.Input;
-        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        //}
-
-        //public INode Node
-        //{
-        //    get
-        //    {
-        //        if (_node == null)
-        //        {
-        //            _node = this.BuildNode();
-
-        //            if (this.Version != null)
-        //            {
-        //                this.AddVersion();
-        //            }
-
-        //            if (this.SupportsHelp)
-        //            {
-        //                this.AddHelp();
-        //            }
-        //        }
-
-        //        return _node;
-        //    }
-        //}
-
-        //public string Version { get; }
-
-        //public bool SupportsHelp { get; }
-
-        //public virtual string GetHelp()
-        //{
-        //    return "todo: add-in help.";
-        //}
 
         #endregion
     }

@@ -11,7 +11,6 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     // todo checks for all extensions when using LINQ.
     public static class CliExtensions
     {
@@ -276,33 +275,40 @@ namespace TauCode.Cli
                 string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        public static IList<CliCommandEntry> GetEntriesByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries
-                .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
-        }
-
         public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
         {
-            var option = entries.SingleOrDefault(x =>
-                x.Kind == CliCommandEntryKind.Option &&
-                string.Equals(x.Alias, optionAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return option != null;
+            if (optionAlias == null)
+            {
+                throw new ArgumentNullException(nameof(optionAlias));
+            }
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.Option &&
+                    string.Equals(x.Alias, optionAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                return false;
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Multiple option. Alias: '{optionAlias.ToLowerInvariant()}'.");
+            }
+
+            return true;
         }
 
         public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
+            // todo can throw
             var entry = entries.Single(x =>
                 x.Kind == CliCommandEntryKind.Argument &&
                 string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase));
@@ -312,15 +318,42 @@ namespace TauCode.Cli
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
         {
-            var entry = entries.Single(x =>
-                x.Kind == CliCommandEntryKind.KeyValuePair &&
-                string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return entry.Value;
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.KeyValuePair &&
+                    string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                throw new CliException($"Key is missing. Alias: '{keyAlias.ToLowerInvariant()}'.");
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Multiple keys. Alias: '{keyAlias.ToLowerInvariant()}'.");
+            }
+
+            return wantedEntries.Single().Value;
         }
 
         public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)
         {
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
             return entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.KeyValuePair &&
@@ -331,9 +364,34 @@ namespace TauCode.Cli
 
         public static string[] GetAllOptionAliases(this IEnumerable<CliCommandEntry> entries)
         {
-            return entries
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
+            var groups = entries
                 .Where(x => x.Kind == CliCommandEntryKind.Option)
-                .Select(x => x.Alias)
+                .Select(x => x.Alias.ToLowerInvariant())
+                .GroupBy(x => x)
+                .ToList();
+
+            var badGroup = groups.FirstOrDefault(x => x.Count() > 1);
+            if (badGroup != null)
+            {
+                throw new CliException($"Multiple option. Alias: '{badGroup.Key}'.");
+            }
+
+            return groups
+                .Select(x => x.Key)
+                .ToArray();
+        }
+
+        public static Tuple<string, string>[] GetAllArguments(this IEnumerable<CliCommandEntry> entries)
+        {
+            // todo: check args
+            return entries
+                .Where(x => x.Kind == CliCommandEntryKind.Argument)
+                .Select(x => Tuple.Create(x.Alias.ToLowerInvariant(), x.Value))
                 .ToArray();
         }
 
@@ -352,20 +410,21 @@ namespace TauCode.Cli
 
         public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator, string workerName)
         {
-            // todo check on resultAccumulator
+            if (resultAccumulator == null)
+            {
+                throw new ArgumentNullException(nameof(resultAccumulator));
+            }
+
 
             if (resultAccumulator.Count == 0)
             {
-                throw new NotImplementedException();
+                var command = CliCommand.CreateWorkerCommand(workerName);
+                resultAccumulator.AddResult(command);
+                return command;
             }
             else
             {
                 var command = resultAccumulator.GetLastResult<CliCommand>();
-                //if (command.AddInName == null)
-                //{
-                //    throw new NotImplementedException(); // error - shouldn't be
-                //}
-
                 command.SetWorkerName(workerName);
                 return command;
             }
@@ -386,64 +445,6 @@ namespace TauCode.Cli
             var command = CliCommand.CreateNamelessWorkerCommand();
             return command;
         }
-
-        //public static CliCommand EnsureAddInCommand(
-        //    this IResultAccumulator resultAccumulator,
-        //    string addInName)
-        //{
-        //    CliCommand command;
-
-        //    if (resultAccumulator.Count == 0)
-        //    {
-        //        command = new CliCommand
-        //        {
-        //            AddInName = addInName,
-        //        };
-        //        resultAccumulator.AddResult(command);
-        //    }
-        //    else
-        //    {
-        //        command = resultAccumulator.GetLastResult<CliCommand>();
-
-        //        if (command.AddInName != addInName)
-        //        {
-        //            throw new NotImplementedException(); // todo wat?
-        //        }
-        //    }
-
-        //    return command;
-        //}
-
-        //public static CliCommand EnsureWorkerCommand(
-        //    this IResultAccumulator resultAccumulator,
-        //    string workerName)
-        //{
-        //    CliCommand command;
-        //    //var workerName = workerNode.Properties.GetOrDefault("worker-name");
-
-        //    if (resultAccumulator.Count == 0)
-        //    {
-        //        command = new CliCommand
-        //        {
-        //            WorkerName = workerName,
-        //        };
-        //        resultAccumulator.AddResult(command);
-        //    }
-        //    else
-        //    {
-        //        command = resultAccumulator.GetLastResult<CliCommand>();
-        //        if (command.WorkerName == null)
-        //        {
-        //            command.WorkerName = workerName;
-        //        }
-        //        else if (command.WorkerName != workerName)
-        //        {
-        //            throw new NotImplementedException();
-        //        }
-        //    }
-
-        //    return command;
-        //}
 
         public static CliCommand ParseLine(this ICliHost host, string line)
         {

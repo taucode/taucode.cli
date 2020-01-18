@@ -37,5 +37,23 @@
 		:alias connection-string
 		:action argument)
 
+	(idle :name options)
+	(opt
+		(alt
+			(multi-text
+				:classes key
+				:values "-v" "--verbose"
+				:alias verbose
+				:action option)
+
+			(multi-text
+				:classes key
+				:values "-q" "--quiet"
+				:alias quiet
+				:action option)
+		)
+	)
+	(idle :links options next)
+
 	(end)
 )

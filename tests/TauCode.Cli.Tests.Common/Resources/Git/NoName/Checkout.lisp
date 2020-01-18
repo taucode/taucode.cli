@@ -7,46 +7,36 @@
 			"<todo>"
 			"<todo>"
 			))
-	(alt		
-		;;; checkout existing branch
-		(seq
-			(opt
-				(seq
-					(idle :name existing-branch-options)
-					(alt
-						(multi-text
-							:classes key
-							:values "-q" "--quiet"
-							:alias quiet
-							:action option)	
 
-						(multi-text
-							:classes key integer-text
-							:values "-2" "--ours"
-							:alias ours
-							:action option)
+	(idle :name options)
 
-						(multi-text
-							:classes key integer-text
-							:values "-3" "--theirs"
-							:alias theirs
-							:action option)
+	(opt
+		(alt
+			(multi-text
+				:classes key
+				:values "-q" "--quiet"
+				:alias quiet
+				:action option)	
 
-						(fallback :name bad-key-fallback)
-					)
-					(idle :links existing-branch-options next)
-					(idle)
-				)
-			)
-			(some-text
-				:name existing-branch-node
-				:classes path
-				:alias existing-branch
-				:action argument
-			)
+			(multi-text
+				:classes key integer-text
+				:values "-2" "--ours"
+				:alias ours
+				:action option)
+
+			(multi-text
+				:classes key integer-text
+				:values "-3" "--theirs"
+				:alias theirs
+				:action option)
+
+			(fallback :name bad-option-fallback)
 		)
-		
-		;;; checkout new branch
+	)
+
+	(idle :links options next)
+
+	(alt
 		(seq
 			(exact-text
 				:classes key
@@ -64,6 +54,13 @@
 				:action argument
 			)
 		)
+
+		(some-text
+			:classes path
+			:alias existing-branch-name
+			:action argument
+		)
 	)
+
 	(end)
 )

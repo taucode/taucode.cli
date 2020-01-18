@@ -24,7 +24,6 @@ namespace TauCode.Cli
             this.SupportsHelp = supportsHelp;
         }
 
-
         #endregion
 
         #region Private
@@ -37,6 +36,11 @@ namespace TauCode.Cli
 
         protected abstract string GetHelpImpl();
 
+        protected virtual void OnNodeCreated()
+        {
+            // idle
+        }
+
         #endregion
 
         #region ICliFunctionalityProvider Members
@@ -45,7 +49,21 @@ namespace TauCode.Cli
         public abstract TextWriter Output { get; set; }
         public abstract TextReader Input { get; set; }
 
-        public INode Node => _root ?? (_root = this.CreateNodeTree());
+        //public INode Node => _root ?? (_root = this.CreateNodeTree());
+
+        public INode Node
+        {
+            get
+            {
+                if (_root == null)
+                {
+                    _root = this.CreateNodeTree();
+                    this.OnNodeCreated();
+                }
+
+                return _root;
+            }
+        }
 
         public string Version { get; }
 
