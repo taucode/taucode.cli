@@ -37,5 +37,13 @@
 		:alias connection-string
 		:action argument)
 
+	(opt
+		(multi-text
+			:classes key
+			:values "-v" "--verbose"
+			:alias verbose
+			:action option)
+	)
+
 	(end)
 )
