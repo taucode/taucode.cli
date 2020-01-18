@@ -7,6 +7,7 @@ using TauCode.Cli.Tests.Common.Hosts.Curl;
 using TauCode.Cli.Tests.Common.Hosts.Git;
 using TauCode.Cli.Tests.Common.Hosts.Kubectl;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
 
@@ -42,13 +43,14 @@ namespace TauCode.Cli.Tests.Exe
         private Program()
         {
             var idleHost = new IdleHost();
-            idleHost.AddCustomHandler(
-                () => Console.WriteLine(this.GetHelp()),
-                "--help");
+            idleHost
+                .AddCustomHandler(
+                    () => Console.WriteLine(this.GetHelp()),
+                    "--help")
+                .AddCustomHandler(
+                    () => Console.WriteLine(this.GetAllHostsName()),
+                    "--all-hosts");
 
-            idleHost.AddCustomHandler(
-                () => Console.WriteLine(this.GetAllHostsName()),
-                "--all-hosts");
             _hosts = new ICliHost[]
                 {
                     new TauHost(),
@@ -64,30 +66,27 @@ namespace TauCode.Cli.Tests.Exe
                 x.Output = Console.Out;
                 x.Input = Console.In;
 
-                x.AddCustomHandler(
-                    Console.Clear, 
-                    "cls");
-
-                x.AddCustomHandler(
-                    () => throw new ExitException(),
-                    "exit");
-
-                x.AddCustomHandlerWithParameter(
-                    (token) =>
-                    {
-                        if (token is TextToken textToken)
+                x
+                    .AddCustomHandler(
+                        Console.Clear,
+                        "cls")
+                    .AddCustomHandler(
+                        () => throw new ExitException(),
+                        "exit")
+                    .AddCustomHandlerWithParameter(
+                        (token) =>
                         {
-                            var name = textToken.Text;
-                            _currentHost = _hosts[name];
-                            throw new CliCustomHandlerException();
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
-                        }
-                    },
-                    "--host"
-                );
+                            if (token is TextToken textToken && textToken.Class is TermTextClass)
+                            {
+                                var name = textToken.Text;
+                                _currentHost = _hosts[name];
+                            }
+                            else
+                            {
+                                throw new CliException("Host ID expected.");
+                            }
+                        },
+                        "--host");
 
             });
 

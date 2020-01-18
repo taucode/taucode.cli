@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
@@ -50,10 +51,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
             return root;
         }
 
-        public override void HandleFallback(FallbackNodeAcceptedTokenException ex)
+        public override FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
-            // todo: bad. should throw instead of output. redesign!
-            this.Output.WriteLine($"Bad key or option: {ex.Token}.");
+            return new FallbackInterceptedCliException($"Bad key or option: {ex.Token}.");
         }
 
         private bool BadOptionFallback(FallbackNode node, IToken token, IResultAccumulator resultAccumulator)

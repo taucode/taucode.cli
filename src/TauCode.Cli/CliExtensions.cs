@@ -3,128 +3,114 @@ using System.Collections.Generic;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
-using TauCode.Parsing.TextDecorations;
 using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo checks for all extensions when using LINQ.
     public static class CliExtensions
     {
-        private class CatchAllAndThrowNode : ActionNode
-        {
-            public CatchAllAndThrowNode(Action<IToken> handler, INodeFamily family, string name)
-                : base(BuildAction(handler), family, name)
-            {
-            }
+        #region Misc
 
-            private static Action<ActionNode, IToken, IResultAccumulator> BuildAction(Action<IToken> handler)
+        private static ITextClass GetVerbTextClass(string tokenText)
+        {
+            try
             {
-                void Result(ActionNode dummyActionNode, IToken token, IResultAccumulator resultAccumulator)
+                ILexer lexer = new CliLexer();
+                var tokens = lexer.Lexize(tokenText);
+
+                do
                 {
-                    handler(token);
+                    if (tokens.Count != 1)
+                    {
+                        break;
+                    }
 
-                    throw new NotImplementedException("You wasn't expected to get here!");
-                }
+                    var token = tokens.Single();
+                    if (token is TextToken textToken)
+                    {
+                        var textClass = textToken.Class;
+                        if (textClass is TermTextClass || textClass is KeyTextClass)
+                        {
+                            return textClass;
+                        }
+                    }
 
-                return Result;
+                } while (false);
+
+                throw new CliException("Verb for custom handler must be term or key.");
+
             }
-
-            protected override bool AcceptsTokenImpl(IToken token, IResultAccumulator resultAccumulator) => true;
-        }
-
-        public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
-            this ICliFunctionalityProvider functionalityProvider,
-            Action<IToken> handler,
-            params string[] texts)
-        {
-            // todo: a lot of copy/paste (see AddCustomHandler method)
-            if (functionalityProvider == null)
+            catch (Exception ex)
             {
-                throw new ArgumentNullException(nameof(functionalityProvider));
+                throw new CliException($"Invalid verb for custom handler: '{tokenText}'.", ex);
+            }
+        }
+        
+        private static INodeFamily CheckArgumentsAndGetOrCreateFamily(
+            this ICliFunctionalityProvider functionality)
+        {
+            if (functionality == null)
+            {
+                throw new ArgumentNullException(nameof(functionality));
             }
 
-            if (functionalityProvider.Name == null)
+            if (functionality.Name == null)
             {
                 throw new CliException("Cannot add custom handler to a nameless functionality.");
             }
 
+            var familyName = $"Family for custom handler nodes for functionality '{functionality.Name}' of type '{functionality.GetType().FullName}'.";
+
+            var links = functionality.Node.ResolveLinks()
+                .Where(x => x.Family?.Name == familyName)
+                .ToList();
+
+            var nodeFamily = links.Any() ? links.First().Family : new NodeFamily(familyName);
+            return nodeFamily;
+        }
+
+        #endregion
+
+        #region Custom Handlers Support
+
+        public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
+            this ICliFunctionalityProvider functionalityProvider,
+            Action<IToken> handler,
+            string tokenText)
+        {
             if (handler == null)
             {
                 throw new ArgumentNullException(nameof(handler));
             }
 
-            if (texts == null)
+            if (tokenText == null)
             {
-                throw new ArgumentNullException(nameof(texts));
+                throw new ArgumentNullException(nameof(tokenText));
             }
 
-            if (texts.Length == 0)
-            {
-                throw new ArgumentException($"'{nameof(texts)}' cannot be empty.");
-            }
-
-            var tokens = new List<TextToken>();
-            ITextClass textClass;
-
-            try
-            {
-                ILexer lexer = new CliLexer();
-
-                foreach (var text in texts)
-                {
-                    var singleTextTokens = lexer.Lexize(text);
-                    var isValid =
-                        singleTextTokens.Count == 1 &&
-                        singleTextTokens.Single() is TextToken;
-
-                    if (!isValid)
-                    {
-                        throw new NotImplementedException(); // error.
-                    }
-
-                    var token = (TextToken)singleTextTokens.Single();
-                    tokens.Add(token);
-                }
-
-                var classes = tokens.Select(x => x.Class).Distinct().ToList();
-                if (classes.Count > 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                textClass = classes.Single();
-
-                var decorations = tokens.Select(x => x.Decoration).Distinct().ToList();
-                if (decorations.Count != 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                if (decorations.Single() != NoneTextDecoration.Instance)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException("Bad texts. todo", ex);
-            }
-
-            INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
-
-            var commandNode = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] { textClass },
+            var family = CheckArgumentsAndGetOrCreateFamily(functionalityProvider);
+            var verbClass = GetVerbTextClass(tokenText);
+            var commandNode = new ExactTextNode(
+                tokenText,
+                verbClass,
                 true,
                 null,
-                nodeFamily,
-                null);
+                family,
+                $"Custom handler node for verb '{tokenText}'");
 
-            var argumentNode = new CatchAllAndThrowNode(handler, nodeFamily, null);
+            var argumentNode = new CustomActionNode(
+                (node, token, resultAccumulator) =>
+                {
+                    handler(token);
+                    throw new CliCustomHandlerException();
+                },
+                (token, resultAccumulator) => true,
+                family,
+                $"Argument node for custom handler with verb '{tokenText}'.");
 
             functionalityProvider.Node.EstablishLink(commandNode);
             commandNode.EstablishLink(argumentNode);
@@ -134,96 +120,34 @@ namespace TauCode.Cli
 
         public static ICliFunctionalityProvider AddCustomHandler(
             this ICliFunctionalityProvider functionalityProvider,
-            Action action,
-            params string[] texts)
+            Action handler,
+            string tokenText)
         {
-            if (functionalityProvider == null)
+            if (handler == null)
             {
-                throw new ArgumentNullException(nameof(functionalityProvider));
+                throw new ArgumentNullException(nameof(handler));
             }
 
-            if (functionalityProvider.Name == null)
+            if (tokenText == null)
             {
-                throw new CliException("Cannot add custom handler to a nameless functionality.");
+                throw new ArgumentNullException(nameof(tokenText));
             }
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            if (texts == null)
-            {
-                throw new ArgumentNullException(nameof(texts));
-            }
-
-            if (texts.Length == 0)
-            {
-                throw new ArgumentException($"'{nameof(texts)}' cannot be empty.");
-            }
-
-            var tokens = new List<TextToken>();
-            ITextClass textClass;
-
-            try
-            {
-                ILexer lexer = new CliLexer();
-
-                foreach (var text in texts)
-                {
-                    var singleTextTokens = lexer.Lexize(text);
-                    var isValid =
-                        singleTextTokens.Count == 1 &&
-                        singleTextTokens.Single() is TextToken;
-
-                    if (!isValid)
-                    {
-                        throw new NotImplementedException(); // error.
-                    }
-
-                    var token = (TextToken)singleTextTokens.Single();
-                    tokens.Add(token);
-                }
-
-                var classes = tokens.Select(x => x.Class).Distinct().ToList();
-                if (classes.Count > 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                textClass = classes.Single();
-
-                var decorations = tokens.Select(x => x.Decoration).Distinct().ToList();
-                if (decorations.Count != 1)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-
-                if (decorations.Single() != NoneTextDecoration.Instance)
-                {
-                    throw new NotImplementedException(); // error.
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException("Bad texts. todo", ex);
-            }
-
-            INodeFamily nodeFamily = new NodeFamily("dummy"); // todo
-
-            var node = new MultiTextNode(
-                tokens.Select(x => x.Text),
-                new[] { textClass },
+            var family = CheckArgumentsAndGetOrCreateFamily(functionalityProvider);
+            var verbClass = GetVerbTextClass(tokenText);
+            var commandNode = new ExactTextNode(
+                tokenText,
+                verbClass,
                 true,
-                (actionNode, token, resultAccumulator) =>
+                (node, token, resultAccumulator) =>
                 {
-                    action();
+                    handler();
                     throw new CliCustomHandlerException();
                 },
-                nodeFamily,
-                null);
+                family,
+                $"Custom handler node for verb '{tokenText}'");
 
-            functionalityProvider.Node.EstablishLink(node);
+            functionalityProvider.Node.EstablishLink(commandNode);
             return functionalityProvider;
         }
 
@@ -265,15 +189,9 @@ namespace TauCode.Cli
                 "--help");
         }
 
-        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(
-            this IEnumerable<CliCommandEntry> entries,
-            string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries.SingleOrDefault(x =>
-                string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
-        }
+        #endregion
+
+        #region Cli Command Contents Support
 
         public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
         {
@@ -308,12 +226,35 @@ namespace TauCode.Cli
 
         public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
-            // todo can throw
-            var entry = entries.Single(x =>
-                x.Kind == CliCommandEntryKind.Argument &&
-                string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return entry.Value;
+            if (argumentAlias == null)
+            {
+                throw new ArgumentNullException(nameof(argumentAlias));
+            }
+
+            argumentAlias = argumentAlias.ToLowerInvariant();
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.Argument &&
+                    string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                throw new CliException($"Argument '{argumentAlias}' not found.");
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Argument '{argumentAlias}' appears more than one time.");
+            }
+
+            return wantedEntries.Single().Value;
         }
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
@@ -354,6 +295,11 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(entries));
             }
 
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
             return entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.KeyValuePair &&
@@ -388,7 +334,11 @@ namespace TauCode.Cli
 
         public static Tuple<string, string>[] GetAllArguments(this IEnumerable<CliCommandEntry> entries)
         {
-            // todo: check args
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
             return entries
                 .Where(x => x.Kind == CliCommandEntryKind.Argument)
                 .Select(x => Tuple.Create(x.Alias.ToLowerInvariant(), x.Value))
@@ -397,9 +347,14 @@ namespace TauCode.Cli
 
         public static CliCommand AddAddInCommand(this IResultAccumulator resultAccumulator, string addInName)
         {
+            if (resultAccumulator == null)
+            {
+                throw new ArgumentNullException(nameof(resultAccumulator));
+            }
+
             if (resultAccumulator.Count != 0)
             {
-                throw new NotImplementedException(); // internal error - accumulator should be empty.
+                throw new CliException("Internal error: result accumulator must be empty.");
             }
 
             var command = CliCommand.CreateAddInCommand(addInName);
@@ -414,7 +369,6 @@ namespace TauCode.Cli
             {
                 throw new ArgumentNullException(nameof(resultAccumulator));
             }
-
 
             if (resultAccumulator.Count == 0)
             {
@@ -448,8 +402,19 @@ namespace TauCode.Cli
 
         public static CliCommand ParseLine(this ICliHost host, string line)
         {
-            // todo checks
+            if (host == null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
+            if (line == null)
+            {
+                throw new ArgumentNullException(nameof(line));
+            }
+
             return host.ParseCommand(new[] { line });
         }
+
+        #endregion
     }
 }

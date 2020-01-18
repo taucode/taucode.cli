@@ -23,9 +23,7 @@ namespace TauCode.Cli
         protected CliAddInBase(string name, string version, bool supportsHelp)
             : base(name, version, supportsHelp)
         {
-            // todo: nameless add-in cannot support version & help
-
-            _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}");
+            _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");
             _workers = new List<ICliWorker>();
         }
 
@@ -41,18 +39,18 @@ namespace TauCode.Cli
         public override TextWriter Output
         {
             get => this.Host.Output;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         public override TextReader Input
         {
             get => this.Host.Input;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         protected override string GetHelpImpl()
         {
-            return "todo: add-in help.";
+            return "Help is not supported currently.";
         }
 
         protected override INode CreateNodeTree()
@@ -61,7 +59,9 @@ namespace TauCode.Cli
 
             if (this.Name == null)
             {
-                addInNode = new IdleNode(_nodeFamily, null); // todo give it a name
+                addInNode = new IdleNode(
+                    _nodeFamily,
+                    $"Root node of nameless '{this.GetType().FullName}' add-in");
             }
             else
             {
@@ -71,7 +71,7 @@ namespace TauCode.Cli
                     true,
                     this.ProcessAddInName,
                     _nodeFamily,
-                    null); // todo: give it a name
+                    $"Root node of '{this.Name}' add-in");
 
                 addInNode.Properties["add-in-name"] = this.Name;
             }

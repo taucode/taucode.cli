@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TauCode.Cli.Exceptions;
 
 namespace TauCode.Cli.Data
 {
@@ -44,12 +45,12 @@ namespace TauCode.Cli.Data
         {
             if (this.AddInName == null)
             {
-                throw new NotImplementedException(); // shouldn't be
+                throw new CliException("Worker name can only be set if add-in name is not null.");
             }
 
             if (this.WorkerName != null)
             {
-                throw new NotImplementedException(); // shouldn't be
+                throw new CliException("Cannot change already existing worker name.");
             }
 
             this.WorkerName = workerName ?? throw new ArgumentNullException(nameof(workerName));

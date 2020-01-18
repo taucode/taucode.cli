@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
@@ -44,12 +45,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
             return false;
         }
 
-        public override void HandleFallback(FallbackNodeAcceptedTokenException ex)
+        public override FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
-            if (ex.FallbackNode.Name.ToLowerInvariant() == "bad-option-or-key")
-            {
-                this.Output.WriteLine($"Bad option or key: '{ex.Token}'.");
-            }
+            return new FallbackInterceptedCliException($"Bad option or key: '{ex.Token}'.");
         }
 
         public override void Process(IList<CliCommandEntry> entries)

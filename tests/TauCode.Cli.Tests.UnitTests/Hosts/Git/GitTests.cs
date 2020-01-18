@@ -98,15 +98,13 @@ existing-branch-name = feature/existing-branch
 
             // Act
             var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
-            var output = this.GetOutput();
-
+            
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("todo")); // todo: what data this ex needs?
-            Assert.That(output, Is.EqualTo("Bad key or option: -bad-key.\r\n"));
+            Assert.That(ex.Message, Is.EqualTo("Bad key or option: -bad-key."));
         }
 
         [Test]
-        public void Checkout_DuplicateOption_ThrowsTodo()
+        public void Checkout_DuplicateOption_ThrowsCliException()
         {
             // Arrange
             var input = "checkout --quiet --quiet my-branch";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.Exceptions;
@@ -27,8 +28,6 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(ExtractName(grammar), version, supportsHelp)
         {
-            // todo: nameless worker cannot support version & help
-
             if (grammar == null)
             {
                 throw new ArgumentNullException(nameof(grammar));
@@ -43,12 +42,12 @@ namespace TauCode.Cli
             {
                 if (this.Version != null)
                 {
-                    throw new NotImplementedException(); // nameless worker cannot have version
+                    throw new CliException("Nameless worker cannot support version.");
                 }
 
                 if (this.SupportsHelp)
                 {
-                    throw new NotImplementedException(); // nameless worker cannot support help
+                    throw new CliException("Nameless worker cannot support help.");
                 }
             }
         }
@@ -60,18 +59,18 @@ namespace TauCode.Cli
         public override TextWriter Output
         {
             get => this.AddIn.Output;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         public override TextReader Input
         {
             get => this.AddIn.Input;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         protected override string GetHelpImpl()
         {
-            return "todo: worker help.";
+            return "Help is not supported currently.";
         }
 
         protected override INode CreateNodeTree()
@@ -103,14 +102,13 @@ namespace TauCode.Cli
 
         protected virtual string CreateNodeFactoryName()
         {
-            return $"Todo: worker node factory. Name:'{this.Name}'";
+            return $"Worker node factory. Worker name:'{this.Name}'. Worker type: '{this.GetType().FullName}'.";
         }
 
         protected virtual CliWorkerNodeFactory CreateNodeFactory()
         {
             return new CliWorkerNodeFactory(this.CreateNodeFactoryName());
         }
-            
 
         #endregion
 
@@ -140,9 +138,9 @@ namespace TauCode.Cli
 
         public ICliAddIn AddIn { get; internal set; }
 
-        public virtual void HandleFallback(FallbackNodeAcceptedTokenException ex)
+        public virtual FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
-            throw new NotImplementedException(); // todo message: override to handle fallbacks.
+            throw new NotSupportedException($"If you want to support fallbacks, override '{nameof(HandleFallback)}' in your '{nameof(CliWorkerBase)}' implementation.");
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);

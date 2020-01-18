@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
+using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Exceptions;
-using TauCode.Parsing.Lab;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.Nodes;
 
@@ -27,26 +27,24 @@ namespace TauCode.Cli
 
                 if (workers.Count == 0)
                 {
-                    // todo error;
-                    // todo ut
-                    throw new NotImplementedException(workers.Count.ToString());
+                    throw new CliException("Add-in cannot have zero workers."); // actually, will never happen; CliAddInBase checks it.
                 }
 
                 if (workers.Any(x => x.Name == null))
                 {
                     if (workers.Count > 1)
                     {
-                        // todo error
-                        // todo ut
-                        throw new NotImplementedException();
+                        // actually, won't ever get here, since this thing is checked by CliAddInBase.
+                        throw new CliException("Add-in can have either exactly one nameless worker, or more than one workers all named.");
                     }
 
                     _singleUnnamedWorker = workers.Single();
                 }
                 else
                 {
-                    _workers = workers
-                        .ToDictionary(x => x.Name, x => x);
+                    _workers = workers.ToDictionary(
+                        x => x.Name,
+                        x => x);
                 }
             }
 
@@ -58,15 +56,13 @@ namespace TauCode.Cli
                 {
                     if (_singleUnnamedWorker == null)
                     {
-                        throw new NotImplementedException(); // todo: Internal error?
+                        throw new CliException("Internal error.");
                     }
 
                     return _singleUnnamedWorker;
                 }
-                else
-                {
-                    return _workers[workerName];
-                }
+
+                return _workers[workerName];
             }
         }
 
@@ -97,7 +93,10 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(name, version, supportsHelp)
         {
-            // todo: can host's name be null? I suppose not.
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name)); // host cannot be nameless.
+            }
 
             _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addInRecords = new Dictionary<string, AddInRecord>();
@@ -116,17 +115,19 @@ namespace TauCode.Cli
             {
                 if (_singleUnnamedAddInRecord == null)
                 {
-                    throw new NotImplementedException();
+                    throw new CliException("This host supports only named add-ins.");
                 }
-                else
-                {
-                    return _singleUnnamedAddInRecord;
-                }
+
+                return _singleUnnamedAddInRecord;
             }
-            else
+
+            var record = _addInRecords.GetOrDefault(addInName);
+            if (record == null)
             {
-                return _addInRecords[addInName];
+                throw new CliException($"Add-in not found: '{addInName}'.");
             }
+
+            return record;
         }
 
         #endregion
@@ -139,7 +140,7 @@ namespace TauCode.Cli
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 
-        protected virtual IParser CreateParser() => new ParserLab
+        protected virtual IParser CreateParser() => new Parser
         {
             WantsOnlyOneResult = true,
             Root = this.Node,
@@ -199,7 +200,11 @@ namespace TauCode.Cli
 
             if (addIns.Count == 0)
             {
-                throw new CliException($"'{nameof(CreateAddIns)}' must not return empty collection.");
+                _addInList = new List<ICliAddIn>();
+                var dummyRoot = new IdleNode(_nodeFamily, $"Dummy root node of empty host '{this.Name}'");
+                dummyRoot.EstablishLink(EndNode.Instance);
+
+                return dummyRoot;
             }
 
             var validTypes = addIns.All(x => x is CliAddInBase);
@@ -271,7 +276,7 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            return "todo: help for host";
+            return "Help is not supported currently.";
         }
 
         #endregion
@@ -307,14 +312,37 @@ namespace TauCode.Cli
             catch (FallbackNodeAcceptedTokenException ex)
             {
                 var worker = this.NodesByWorkers[ex.FallbackNode];
-                worker.HandleFallback(ex);
 
-                throw new FallbackInterceptedCliException("todo");
+                FallbackInterceptedCliException interceptEx;
+
+                try
+                {
+                    interceptEx = worker.HandleFallback(ex);
+                }
+                catch (Exception workerEx)
+                {
+                    throw new CliException(
+                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' thrown an exception when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.",
+                        workerEx);
+                }
+
+                if (interceptEx == null)
+                {
+                    throw new CliException(
+                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.");
+                }
+
+                throw interceptEx;
             }
         }
 
         public void DispatchCommand(CliCommand command)
         {
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
             var addInRecord = this.GetAddInRecord(command.AddInName);
             var worker = addInRecord.GetWorker(command.WorkerName);
 

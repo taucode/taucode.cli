@@ -15,10 +15,15 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo: protected virtual CliNodeFactory CreateNodeFactory, for tunability.
     public class CliWorkerNodeFactory : NodeFactoryBase
     {
+        #region Fields
+
         private readonly IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> _fallbackPredicates;
+
+        #endregion
+
+        #region Constructor
 
         public CliWorkerNodeFactory(
             string nodeFamilyName,
@@ -41,6 +46,11 @@ namespace TauCode.Cli
                 : new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>();
         }
 
+
+        #endregion
+
+        #region Overridden
+
         public override INode CreateNode(PseudoList item)
         {
             var car = item.GetCarSymbolName().ToLowerInvariant();
@@ -51,7 +61,7 @@ namespace TauCode.Cli
                 var workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
                 if (workerName == null)
                 {
-                    workerNode = new IdleNode(this.NodeFamily, "todo: Unnamed worker node");
+                    workerNode = new IdleNode(this.NodeFamily, $"Root node for unnamed worker of type {this.GetType().FullName}");
                 }
                 else
                 {
@@ -90,7 +100,7 @@ namespace TauCode.Cli
 
             if (!(node is ActionNode))
             {
-                throw new NotImplementedException(); // todo
+                throw new CliException($"'{typeof(ActionNode).Name}' instance was expected to be created.");
             }
 
             var baseResult = (ActionNode)node;
@@ -132,9 +142,26 @@ namespace TauCode.Cli
 
         protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
         {
-            return _fallbackPredicates.GetOrDefault(nodeName.ToLowerInvariant()) ??
-                   throw new NotImplementedException(); // todo nu such predicate
+            if (nodeName == null)
+            {
+                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node.");
+            }
+
+            var key = nodeName.ToLowerInvariant();
+
+            var predicate = _fallbackPredicates.GetOrDefault(key);
+            if (predicate == null)
+            {
+                throw new CliException($"Fallback predicate not found for node '{key}'.");
+            }
+
+            return predicate;
         }
+
+
+        #endregion
+
+        #region Node Actions
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
@@ -149,18 +176,6 @@ namespace TauCode.Cli
 
             var entry = CliCommandEntry.CreateKeyValuePair(alias, key);
             command.Entries.Add(entry);
-        }
-
-        private static string TokenToKey(IToken token)
-        {
-            // todo checks?
-            var textToken = (TextToken)token;
-            if (textToken.Class is KeyTextClass)
-            {
-                return textToken.Text;
-            }
-
-            throw new NotImplementedException(); // error
         }
 
         private void ValueAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
@@ -184,7 +199,6 @@ namespace TauCode.Cli
 
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            // todo: EnsureCommand (uses command from 'IResultAccumulator resultAccumulator', or adds new; everywhere!)
             var command = resultAccumulator.EnsureWorkerCommand();
 
             var alias = node.Properties["alias"];
@@ -193,11 +207,29 @@ namespace TauCode.Cli
             command.Entries.Add(entry);
         }
 
+
+        #endregion
+
+        #region Misc
+
+        private static string TokenToKey(IToken token)
+        {
+            var textToken = (TextToken)token;
+            if (textToken.Class is KeyTextClass)
+            {
+                return textToken.Text;
+            }
+
+            throw new CliException($"Token '{token}' of type '{token.GetType().FullName}' cannot be converted to key.");
+        }
+
+
         private string TokenToArgument(IToken token)
         {
-            // todo checks?
             var textToken = (TextToken)token;
             return textToken.Text;
         }
+
+        #endregion
     }
 }

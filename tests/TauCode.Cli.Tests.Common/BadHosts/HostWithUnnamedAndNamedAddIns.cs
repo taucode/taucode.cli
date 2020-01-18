@@ -3,7 +3,6 @@ using TauCode.Cli.Data;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {
-    // todo finish this job
     public class HostWithUnnamedAndNamedAddIns : CliHostBase
     {
         private class WorkerOne : CliWorkerBase
@@ -14,7 +13,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
             public override void Process(IList<CliCommandEntry> entries)
             {
-                throw new System.NotImplementedException();
+                this.Output.WriteLine("Dummy implementation. Get back here when ready.");
             }
         }
 
@@ -28,7 +27,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
             protected override IReadOnlyList<ICliWorker> CreateWorkers()
             {
-                throw new System.NotImplementedException();
+                return null; // will throw; postponed.
             }
         }
 
@@ -36,7 +35,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
         {
             protected override IReadOnlyList<ICliWorker> CreateWorkers()
             {
-                throw new System.NotImplementedException();
+                return null; // will throw; postponed.
             }
         }
 
