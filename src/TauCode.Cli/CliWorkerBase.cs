@@ -102,14 +102,13 @@ namespace TauCode.Cli
 
         protected virtual string CreateNodeFactoryName()
         {
-            return $"Todo: worker node factory. Name:'{this.Name}'";
+            return $"Worker node factory. Worker name:'{this.Name}'. Worker type: '{this.GetType().FullName}'.";
         }
 
         protected virtual CliWorkerNodeFactory CreateNodeFactory()
         {
             return new CliWorkerNodeFactory(this.CreateNodeFactoryName());
         }
-            
 
         #endregion
 
@@ -141,7 +140,7 @@ namespace TauCode.Cli
 
         public virtual FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
-            throw new NotSupportedException($"If you want to support fallbacks, override '{nameof(HandleFallback)}' in your '{nameof(CliWorkerBase)}' implementation."); // todo ut this
+            throw new NotSupportedException($"If you want to support fallbacks, override '{nameof(HandleFallback)}' in your '{nameof(CliWorkerBase)}' implementation.");
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);

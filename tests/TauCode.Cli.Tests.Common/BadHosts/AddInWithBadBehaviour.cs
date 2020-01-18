@@ -50,7 +50,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
             public override void Process(IList<CliCommandEntry> entries)
             {
-                throw new System.NotImplementedException();
+                // idle
             }
         }
 
@@ -62,6 +62,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             NullWorkers = 1,
             EmptyWorkers = 2,
             CustomWorker = 3,
+            GoodButNoName = 4,
         }
 
         private readonly BadBehaviour _behaviour;
@@ -87,6 +88,12 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
                 case BadBehaviour.NullWorkers:
                     return null;
+
+                case BadBehaviour.GoodButNoName:
+                    return new List<ICliWorker>
+                    {
+                        new StandardWorker(),
+                    };
 
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -49,7 +49,6 @@ namespace TauCode.Cli
         public abstract TextWriter Output { get; set; }
         public abstract TextReader Input { get; set; }
 
-        //public INode Node => _root ?? (_root = this.CreateNodeTree());
 
         public INode Node
         {
@@ -71,7 +70,7 @@ namespace TauCode.Cli
 
         public string GetHelp()
         {
-            if (this.SupportsHelp)
+            if (!this.SupportsHelp)
             {
                 throw new CliException("Help is not supported.");
             }

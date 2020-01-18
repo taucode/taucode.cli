@@ -49,5 +49,19 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Assert
             Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must not return empty collection."));
         }
+
+        [Test]
+        public void GetHelp_AddInWithoutName_ThrowsCliException()
+        {
+            // Arrange
+
+            // Act
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyWorkers);
+            string help;
+            var ex = Assert.Throws<CliException>(() => help = addIn.GetHelp());
+            
+            // Assert
+            Assert.That(ex.Message, Is.EqualTo("Help is not supported."));
+        }
     }
 }
