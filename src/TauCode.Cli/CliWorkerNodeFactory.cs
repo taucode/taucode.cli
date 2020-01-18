@@ -100,7 +100,7 @@ namespace TauCode.Cli
 
             if (!(node is ActionNode))
             {
-                throw new CliException($"'{typeof(ActionNode).Name}' instance was expected to be created."); // todo ut
+                throw new CliException($"'{typeof(ActionNode).Name}' instance was expected to be created.");
             }
 
             var baseResult = (ActionNode)node;

@@ -9,17 +9,45 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
     public class BadAddInsTests
     {
         [Test]
-        public void Constructor_HostWithoutAddIns_RunsOk()
+        public void Constructor_AddInWithCustomWorkers_ThrowsCliException()
         {
             // Arrange
 
             // Act
-            var addIn = new AddInWithCustomWorkers();
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.CustomWorker);
             INode dummy;
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must return instances of type 'TauCode.Cli.CliWorkerBase'."));
+        }
+
+        [Test]
+        public void Constructor_AddInWithNullWorkers_ThrowsCliException()
+        {
+            // Arrange
+
+            // Act
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.NullWorkers);
+            INode dummy;
+            var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
+
+            // Assert
+            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must not return null."));
+        }
+
+        [Test]
+        public void Constructor_AddInWithEmptyWorkers_ThrowsCliException()
+        {
+            // Arrange
+
+            // Act
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyWorkers);
+            INode dummy;
+            var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
+
+            // Assert
+            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must not return empty collection."));
         }
     }
 }

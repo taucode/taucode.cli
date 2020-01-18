@@ -59,18 +59,18 @@ namespace TauCode.Cli
         public override TextWriter Output
         {
             get => this.AddIn.Output;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         public override TextReader Input
         {
             get => this.AddIn.Input;
-            set => throw new NotSupportedException(); // todo: message 'use writer of owner'
+            set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
         protected override string GetHelpImpl()
         {
-            return "todo: worker help.";
+            return "Help is not supported currently.";
         }
 
         protected override INode CreateNodeTree()

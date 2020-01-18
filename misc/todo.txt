@@ -12,3 +12,4 @@ db sd -c / - c .
     1. Lexer implementation produces weird exception "Unexpected char '<foo>'". Meanwhile, '<foo>' itself might be fine, it is the whole token who produces error.
     2. UT kubectl (including port forwarding) and curl, and others.
     3. Support integer args
+    4. Support help for hosts, add-ins and workers.

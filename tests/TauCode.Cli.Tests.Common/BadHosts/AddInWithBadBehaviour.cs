@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
@@ -8,8 +9,10 @@ using TauCode.Parsing.Exceptions;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {
-    public class AddInWithCustomWorkers : CliAddInBase
+    public class AddInWithBadBehaviour : CliAddInBase
     {
+        #region Nested
+
         private class CustomWorker : ICliWorker
         {
             public string Name { get; }
@@ -51,13 +54,43 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             }
         }
 
+
+        #endregion
+
+        public enum BadBehaviour
+        {
+            NullWorkers = 1,
+            EmptyWorkers = 2,
+            CustomWorker = 3,
+        }
+
+        private readonly BadBehaviour _behaviour;
+
+        public AddInWithBadBehaviour(BadBehaviour behaviour)
+        {
+            _behaviour = behaviour;
+        }
+
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
-            return new List<ICliWorker>
+            switch (_behaviour)
             {
-                new StandardWorker(),
-                new CustomWorker(),
-            };
+                case BadBehaviour.CustomWorker:
+                    return new List<ICliWorker>
+                    {
+                        new StandardWorker(),
+                        new CustomWorker(),
+                    };
+
+                case BadBehaviour.EmptyWorkers:
+                    return new List<ICliWorker>();
+
+                case BadBehaviour.NullWorkers:
+                    return null;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

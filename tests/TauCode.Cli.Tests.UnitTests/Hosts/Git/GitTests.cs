@@ -104,7 +104,7 @@ existing-branch-name = feature/existing-branch
         }
 
         [Test]
-        public void Checkout_DuplicateOption_ThrowsTodo()
+        public void Checkout_DuplicateOption_ThrowsCliException()
         {
             // Arrange
             var input = "checkout --quiet --quiet my-branch";

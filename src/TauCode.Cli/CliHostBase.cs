@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Extensions;
@@ -58,7 +57,7 @@ namespace TauCode.Cli
                 {
                     if (_singleUnnamedWorker == null)
                     {
-                        throw new AbandonedMutexException(); // todo: Internal error? todo: proper ex & ut.
+                        throw new CliException("Internal error.");
                     }
 
                     return _singleUnnamedWorker;
@@ -95,7 +94,11 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(name, version, supportsHelp)
         {
-            // todo: can host's name be null? I suppose not.
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name)); // host cannot be nameless.
+            }
+
             _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addInRecords = new Dictionary<string, AddInRecord>();
 
@@ -274,7 +277,7 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            return "todo: help for host";
+            return "Help is not supported currently.";
         }
 
         #endregion
@@ -321,16 +324,16 @@ namespace TauCode.Cli
                 {
                     throw new CliException(
                         $"Worker's '{nameof(ICliWorker.HandleFallback)}' thrown an exception when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.",
-                        workerEx); // todo ut
+                        workerEx);
                 }
 
                 if (interceptEx == null)
                 {
                     throw new CliException(
-                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'."); // todo ut
+                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.");
                 }
 
-                throw interceptEx; // todo ut
+                throw interceptEx;
             }
         }
 

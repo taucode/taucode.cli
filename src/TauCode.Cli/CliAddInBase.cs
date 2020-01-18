@@ -82,20 +82,17 @@ namespace TauCode.Cli
 
             if (workers == null)
             {
-                // todo ut
                 throw new CliException($"'{nameof(CreateWorkers)}' must not return null.");
             }
 
             if (workers.Count == 0)
             {
-                // todo ut
                 throw new CliException($"'{nameof(CreateWorkers)}' must not return empty collection.");
             }
 
             var validTypes = workers.All(x => x is CliWorkerBase);
             if (!validTypes)
             {
-                // todo ut
                 throw new CliException($"'{nameof(CreateWorkers)}' must return instances of type '{typeof(CliWorkerBase).FullName}'.");
             }
 
