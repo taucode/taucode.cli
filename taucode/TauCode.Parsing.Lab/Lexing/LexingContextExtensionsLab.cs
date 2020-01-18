@@ -12,14 +12,12 @@ namespace TauCode.Parsing.Lab.Lexing
                 throw new ArgumentNullException(nameof(start));
             }
 
-            var remaining = context.GetRemainingCharCounts();
+            var remaining = context.GetRemainingCharCount();
             if (remaining < start.Length)
             {
                 return false;
             }
 
-            var startLength = start.Length;
-            
             var text = context.Text;
             var initialIndex = context.Index;
             for (var i = 0; i < start.Length; i++)
@@ -35,7 +33,7 @@ namespace TauCode.Parsing.Lab.Lexing
             return true;
         }
 
-        public static int GetRemainingCharCounts(this LexingContext context)
+        public static int GetRemainingCharCount(this LexingContext context)
         {
             return context.Text.Length - context.Index;
         }
