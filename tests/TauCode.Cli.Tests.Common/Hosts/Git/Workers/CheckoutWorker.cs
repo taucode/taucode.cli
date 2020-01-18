@@ -52,6 +52,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 
         public override void HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
+            // todo: bad. should throw instead of output. redesign!
             this.Output.WriteLine($"Bad key or option: {ex.Token}.");
         }
 

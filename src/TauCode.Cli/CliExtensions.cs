@@ -349,6 +349,11 @@ namespace TauCode.Cli
 
         public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)
         {
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
             return entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.KeyValuePair &&
@@ -359,10 +364,25 @@ namespace TauCode.Cli
 
         public static string[] GetAllOptionAliases(this IEnumerable<CliCommandEntry> entries)
         {
-            // todo: check options are not repeated
-            return entries
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
+            var groups = entries
                 .Where(x => x.Kind == CliCommandEntryKind.Option)
                 .Select(x => x.Alias.ToLowerInvariant())
+                .GroupBy(x => x)
+                .ToList();
+
+            var badGroup = groups.FirstOrDefault(x => x.Count() > 1);
+            if (badGroup != null)
+            {
+                throw new CliException($"Multiple option. Alias: '{badGroup.Key}'.");
+            }
+
+            return groups
+                .Select(x => x.Key)
                 .ToArray();
         }
 

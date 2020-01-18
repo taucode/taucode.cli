@@ -27,6 +27,8 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(ExtractName(grammar), version, supportsHelp)
         {
+            // todo: nameless worker cannot support version & help
+
             if (grammar == null)
             {
                 throw new ArgumentNullException(nameof(grammar));

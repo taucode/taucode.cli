@@ -24,7 +24,6 @@ namespace TauCode.Cli
             this.SupportsHelp = supportsHelp;
         }
 
-
         #endregion
 
         #region Private

@@ -97,6 +97,8 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(name, version, supportsHelp)
         {
+            // todo: can host's name be null? I suppose not.
+
             _nodeFamily = new NodeFamily($"Node family for host '{this.Name}'");
             _addInRecords = new Dictionary<string, AddInRecord>();
 

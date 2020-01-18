@@ -25,8 +25,4 @@
     <ProjectReference Include="..\TauCode.Cli.Tests.Common\TauCode.Cli.Tests.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Hosts\Tau\Dev\" />
-  </ItemGroup>
-
 </Project>

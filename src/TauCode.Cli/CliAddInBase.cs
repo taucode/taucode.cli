@@ -23,6 +23,8 @@ namespace TauCode.Cli
         protected CliAddInBase(string name, string version, bool supportsHelp)
             : base(name, version, supportsHelp)
         {
+            // todo: nameless add-in cannot support version & help
+
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}");
             _workers = new List<ICliWorker>();
         }

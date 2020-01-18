@@ -19,6 +19,5 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Curl
         {
             this.SetUpBase();
         }
-
     }
 }
