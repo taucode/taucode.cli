@@ -27,7 +27,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
                 this.CreateNodeFactoryName(),
                 new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>
                 {
-                    ["bad-key-fallback"] = BadKeyFallback
+                    ["bad-option-fallback"] = BadOptionFallback
                 });
         }
 
@@ -36,8 +36,16 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
             var root = base.CreateNodeTree();
 
             var allNodes = root.FetchTree();
-            var node = (ActionNode)allNodes.Single(x => string.Equals(x.Name, "existing-branch-node", StringComparison.InvariantCultureIgnoreCase));
-            node.AdditionalChecker = (token, accumulator) => !token.ToString().StartsWith("-");
+            var pathNodes = allNodes
+                .Where(x => x is TextNode)
+                .Cast<TextNodeBase>()
+                .Where(x =>
+                    x is TextNode textNode &&
+                    textNode.TextClasses.Contains(PathTextClass.Instance))
+                .Cast<TextNode>()
+                .ToList();
+
+            pathNodes.ForEach(x => x.AdditionalChecker = (token, accumulator) => !token.ToString().StartsWith("-"));
 
             return root;
         }
@@ -47,7 +55,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
             this.Output.WriteLine($"Bad key or option: {ex.Token}.");
         }
 
-        private bool BadKeyFallback(FallbackNode node, IToken token, IResultAccumulator resultAccumulator)
+        private bool BadOptionFallback(FallbackNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             if (token is TextToken textToken)
             {
@@ -59,23 +67,14 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 
         public override void Process(IList<CliCommandEntry> entries)
         {
-            if (entries.ContainsOption("new-branch"))
+            this.Output.WriteLine("Git Checkout");
+            var options = entries.GetAllOptionAliases();
+            this.Output.WriteLine($"Options: {string.Join(", ", options)}");
+            this.Output.WriteLine("Arguments:");
+            var arguments = entries.GetAllArguments();
+            foreach (var argument in arguments)
             {
-                var newBranchName = entries.GetArgument("new-branch-name");
-                var baseBranchName = entries.GetArgument("base-branch-name");
-
-                this.Output.WriteLine($"Checkout new branch: '{newBranchName}' based on '{baseBranchName}'.");
-            }
-            else
-            {
-                var branchName = entries.GetArgument("existing-branch");
-                var options = entries.GetAllOptionAliases();
-                this.Output.WriteLine($"Checkout existing branch: '{branchName}'.");
-                this.Output.WriteLine("Options:");
-                foreach (var option in options)
-                {
-                    this.Output.WriteLine(option);
-                }
+                this.Output.WriteLine($"{argument.Item1} = {argument.Item2}");
             }
         }
     }

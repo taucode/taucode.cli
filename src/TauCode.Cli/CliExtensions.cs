@@ -359,9 +359,19 @@ namespace TauCode.Cli
 
         public static string[] GetAllOptionAliases(this IEnumerable<CliCommandEntry> entries)
         {
+            // todo: check options are not repeated
             return entries
                 .Where(x => x.Kind == CliCommandEntryKind.Option)
-                .Select(x => x.Alias)
+                .Select(x => x.Alias.ToLowerInvariant())
+                .ToArray();
+        }
+
+        public static Tuple<string, string>[] GetAllArguments(this IEnumerable<CliCommandEntry> entries)
+        {
+            // todo: check args
+            return entries
+                .Where(x => x.Kind == CliCommandEntryKind.Argument)
+                .Select(x => Tuple.Create(x.Alias.ToLowerInvariant(), x.Value))
                 .ToArray();
         }
 
@@ -380,11 +390,17 @@ namespace TauCode.Cli
 
         public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator, string workerName)
         {
-            // todo check on resultAccumulator
+            if (resultAccumulator == null)
+            {
+                throw new ArgumentNullException(nameof(resultAccumulator));
+            }
+
 
             if (resultAccumulator.Count == 0)
             {
-                throw new NotImplementedException();
+                var command = CliCommand.CreateWorkerCommand(workerName);
+                resultAccumulator.AddResult(command);
+                return command;
             }
             else
             {

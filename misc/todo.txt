@@ -6,3 +6,7 @@
 ==========
     1. Lexing will fail on:
 db sd -c / - c .
+
+2020-01-18
+==========
+    1. Lexer implementation produces weird exception "Unexpected char '<foo>'". Meanwhile, '<foo>' itself might be fine, it is the whole token who produces error.

@@ -77,6 +77,12 @@ namespace TauCode.Cli
             }
 
             var node = base.CreateNode(item);
+
+            if (node == null)
+            {
+                throw new CliException($"Could not build node for item '{car}'.");
+            }
+
             if (node is FallbackNode)
             {
                 return node;
@@ -87,12 +93,7 @@ namespace TauCode.Cli
                 throw new NotImplementedException(); // todo
             }
 
-            var baseResult = (ActionNode) node;
-
-            if (baseResult == null)
-            {
-                throw new CliException($"Could not build node for item '{car}'.");
-            }
+            var baseResult = (ActionNode)node;
 
             var action = item.GetSingleKeywordArgument<Symbol>(":action", true)?.Name?.ToLowerInvariant();
             string alias;
@@ -123,7 +124,7 @@ namespace TauCode.Cli
 
 
                 default:
-                    throw new CliException($"Keyword ':action' is missing for item '{car}'.");
+                    throw new CliException($"Keyword ':action' is missing or invalid for item '{car}'.");
             }
 
             return baseResult;
@@ -153,7 +154,7 @@ namespace TauCode.Cli
         private static string TokenToKey(IToken token)
         {
             // todo checks?
-            var textToken = (TextToken) token;
+            var textToken = (TextToken)token;
             if (textToken.Class is KeyTextClass)
             {
                 return textToken.Text;
@@ -166,7 +167,7 @@ namespace TauCode.Cli
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
             var entry = command.Entries.Last();
-            var textToken = (TextToken) token;
+            var textToken = (TextToken)token;
             entry.SetKeyValue(textToken.Text);
         }
 
@@ -195,7 +196,7 @@ namespace TauCode.Cli
         private string TokenToArgument(IToken token)
         {
             // todo checks?
-            var textToken = (TextToken) token;
+            var textToken = (TextToken)token;
             return textToken.Text;
         }
     }

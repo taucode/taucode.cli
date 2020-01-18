@@ -33,7 +33,7 @@ namespace TauCode.Cli.TokenProducers
 
                     c = text[index];
 
-                    if (IsPathFirstChar(c) || c == ':')
+                    if (IsPathInnerChar(c))
                     {
                         index++;
                         continue;
@@ -70,5 +70,8 @@ namespace TauCode.Cli.TokenProducers
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c) ||
             c.IsIn('\\', '/', '.', '!', '~', '$', '%', ';');
+
+        public static bool IsPathInnerChar(char c) =>
+            IsPathFirstChar(c) || c.IsIn(':', '-');
     }
 }

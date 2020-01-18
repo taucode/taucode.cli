@@ -9,7 +9,7 @@ using TauCode.Parsing.Lab.Exceptions;
 namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
 {
     [TestFixture]
-    public class TauDbTests : TauTestBase
+    public class TauDbSdTests : TauTestBase
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()

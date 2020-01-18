@@ -26,9 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Hosts\Curl\" />
-    <Folder Include="Hosts\Kubectl\" />
-    <Folder Include="Hosts\Git\" />
     <Folder Include="Hosts\Tau\Dev\" />
   </ItemGroup>
 
