@@ -2,6 +2,10 @@
 using System;
 using System.Linq;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.Tests.Common.Hosts.Tau;
+using TauCode.Cli.Tests.Common.Hosts.Tau.Db;
+using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers;
+using TauCode.Parsing.Lab.Exceptions;
 
 namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
 {
@@ -17,6 +21,8 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
         [SetUp]
         public void SetUp()
         {
+            DbAddIn.CurrentVersion = DbAddIn.DefaultVersion;
+            SerializeDataWorker.CurrentVersion = SerializeDataWorker.DefaultVersion;
             this.SetUpBase();
         }
 
@@ -190,34 +196,51 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         public void TauVersion_VersionDoesNotExist_ThrowsTodoException()
         {
             // Arrange
-
+            this.Host = new TauHost(null, true);
+            var input = "--version";
+            
             // Act
+            var ex = Assert.Throws<UnexpectedTokenExceptionLab>(() => this.Host.ParseLine(input));
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));
         }
 
         [Test]
         public void TauDbVersion_VersionDoesNotExist_ThrowsTodoException()
         {
             // Arrange
+            DbAddIn.CurrentVersion = null;
+
+            this.Host = new TauHost();
+            var input = "db --version";
 
             // Act
+            var ex = Assert.Throws<UnexpectedTokenExceptionLab>(() => this.Host.ParseLine(input));
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));
         }
 
         [Test]
         public void TauDbSdVersion_VersionDoesNotExist_ThrowsTodoException()
         {
             // Arrange
+            SerializeDataWorker.CurrentVersion = null;
+
+            this.Host = new TauHost
+            {
+                Output = this.Output
+            };
+
+            var input = "db sd --version";
 
             // Act
+            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
 
             // Assert
-            throw new NotImplementedException();
+            var output = this.GetOutput();
+            Assert.That(output.Trim(), Is.EqualTo("Bad option or key: '--version'."));
         }
-
     }
 }

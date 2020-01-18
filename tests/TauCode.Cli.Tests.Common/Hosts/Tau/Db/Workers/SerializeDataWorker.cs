@@ -5,6 +5,7 @@ using TauCode.Cli.Data;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
+using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
 
@@ -12,10 +13,13 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
     public class SerializeDataWorker : CliWorkerBase
     {
+        public const string DefaultVersion = "sd-1.0";
+        public static string CurrentVersion { get; set; } = DefaultVersion;
+
         public SerializeDataWorker()
             : base(
                 typeof(SerializeDataWorker).Assembly.GetResourceText(".Tau.Db.SerializeData.lisp", true),
-                "sd-1.0",
+                CurrentVersion,
                 true)
         {
         }
@@ -38,6 +42,14 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
             }
 
             return false;
+        }
+
+        public override void HandleFallback(FallbackNodeAcceptedTokenException ex)
+        {
+            if (ex.FallbackNode.Name.ToLowerInvariant() == "bad-option-or-key")
+            {
+                this.Output.WriteLine($"Bad option or key: '{ex.Token}'.");
+            }
         }
 
         public override void Process(IList<CliCommandEntry> entries)

@@ -5,8 +5,11 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
 {
     public class DbAddIn : CliAddInBase
     {
+        public const string DefaultVersion = "db-1.0";
+        public static string CurrentVersion { get; set; } = DefaultVersion;
+
         public DbAddIn()
-            : base("db", "db-1.0", true)
+            : base("db", CurrentVersion, true)
         {
         }
 

@@ -1,4 +1,5 @@
-﻿using TauCode.Extensions;
+﻿using System.IO;
+using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.UnitTests
 {
@@ -7,16 +8,18 @@ namespace TauCode.Cli.Tests.UnitTests
         protected const string DQ = "\"";
 
         protected abstract ICliHost CreateHost();
-        protected ICliHost Host { get; private set; }
+        protected ICliHost Host { get; set; }
+        protected TextWriter Output;
 
         protected void OneTimeSetUpBase()
         {
-            this.Host = this.CreateHost();
         }
 
         protected void SetUpBase()
         {
-            this.Host.Output = new StringWriterWithEncoding();
+            this.Output = new StringWriterWithEncoding();
+            this.Host = this.CreateHost();
+            this.Host.Output = this.Output;
         }
 
         protected string GetOutput()
@@ -25,5 +28,8 @@ namespace TauCode.Cli.Tests.UnitTests
             var sb = ((StringWriterWithEncoding)this.Host.Output).GetStringBuilder();
             return sb.ToString();
         }
+
+        protected THost GetHostAs<THost>() where THost : ICliHost
+            => (THost)this.Host;
     }
 }
