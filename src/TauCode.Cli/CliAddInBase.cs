@@ -119,6 +119,20 @@ namespace TauCode.Cli
 
             return addInNode;
         }
+
+        protected override void OnNodeCreated()
+        {
+            if (this.Version != null)
+            {
+                this.AddVersion();
+            }
+
+            if (this.SupportsHelp)
+            {
+                this.AddHelp();
+            }
+        }
+
         #endregion
 
         #region Private

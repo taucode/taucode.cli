@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Linq;
+using TauCode.Cli.Exceptions;
 
 namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
 {
@@ -19,8 +21,10 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
         }
 
         [Test]
-        [TestCase("db sd -p sqlserver -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'")]
-        [TestCase("db sd --provider sqlserver --exclude 'table1' -e table2 \"Server=.;Database=mydb;Trusted_Connection=True;\"")]
+        [TestCase(
+            "db sd -p sqlserver -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'")]
+        [TestCase(
+            "db sd --provider sqlserver --exclude 'table1' -e table2 \"Server=.;Database=mydb;Trusted_Connection=True;\"")]
         public void SerializeData_ValidInput_ProducesValidCommand(string input)
         {
             // Arrange
@@ -113,33 +117,73 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
         public void TauVersion_VersionExists_VersionIsShown()
         {
             // Arrange
+            var input = "--version";
 
             // Act
+            try
+            {
+                this.Host.ParseLine(input);
+            }
+            catch (CliCustomHandlerException)
+            {
+                // dismiss
+            }
+
+            var output = this.GetOutput();
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(output.Trim(), Is.EqualTo(this.Host.Version));
         }
 
         [Test]
         public void TauDbVersion_VersionExists_VersionIsShown()
         {
             // Arrange
+            var input = "db --version";
 
             // Act
+            try
+            {
+                this.Host.ParseLine(input);
+            }
+            catch (CliCustomHandlerException)
+            {
+                // dismiss
+            }
+
+            var output = this.GetOutput();
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(output.Trim(), Is.EqualTo(this.Host.GetAddIns().Single(x => x.Name == "db").Version));
         }
 
         [Test]
         public void TauDbSdVersion_VersionExists_VersionIsShown()
         {
             // Arrange
+            var input = "db sd --version";
 
             // Act
+            try
+            {
+                this.Host.ParseLine(input);
+            }
+            catch (CliCustomHandlerException)
+            {
+                // dismiss
+            }
+
+            var output = this.GetOutput();
 
             // Assert
-            throw new NotImplementedException();
+            Assert.That(
+                output.Trim(), 
+                Is.EqualTo(this.Host
+                    .GetAddIns()
+                    .Single(x => x.Name == "db")
+                    .GetWorkers()
+                    .Single(x => x.Name.ToLowerInvariant() == "serialize-data")
+                    .Version));
         }
 
         [Test]

@@ -182,6 +182,19 @@ namespace TauCode.Cli
 
         #region Overridden
 
+        protected override void OnNodeCreated()
+        {
+            if (this.Version != null)
+            {
+                this.AddVersion();
+            }
+
+            if (this.SupportsHelp)
+            {
+                this.AddHelp();
+            }
+        }
+
         protected override INode CreateNodeTree()
         {
             var addIns = this.CreateAddIns();
