@@ -144,7 +144,7 @@ namespace TauCode.Cli
         {
             if (nodeName == null)
             {
-                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node."); // todo ut
+                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node.");
             }
 
             var key = nodeName.ToLowerInvariant();
@@ -152,7 +152,7 @@ namespace TauCode.Cli
             var predicate = _fallbackPredicates.GetOrDefault(key);
             if (predicate == null)
             {
-                throw new CliException($"Fallback predicate not found for node '{key}'."); // todo ut
+                throw new CliException($"Fallback predicate not found for node '{key}'.");
             }
 
             return predicate;

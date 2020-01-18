@@ -339,7 +339,10 @@ namespace TauCode.Cli
 
         public void DispatchCommand(CliCommand command)
         {
-            // todo check args
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
 
             var addInRecord = this.GetAddInRecord(command.AddInName);
             var worker = addInRecord.GetWorker(command.WorkerName);

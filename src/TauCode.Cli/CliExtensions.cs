@@ -11,9 +11,10 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo checks for all extensions when using LINQ.
     public static class CliExtensions
     {
+        #region Nested
+
         private class CatchAllAndThrowNode : ActionNode
         {
             public CatchAllAndThrowNode(Action<IToken> handler, INodeFamily family, string name)
@@ -34,6 +35,11 @@ namespace TauCode.Cli
 
             protected override bool AcceptsTokenImpl(IToken token, IResultAccumulator resultAccumulator) => true;
         }
+
+
+        #endregion
+
+        #region Custom Handlers Support
 
         public static ICliFunctionalityProvider AddCustomHandlerWithParameter(
             this ICliFunctionalityProvider functionalityProvider,
@@ -264,15 +270,9 @@ namespace TauCode.Cli
                 "--help");
         }
 
-        public static CliCommandEntry GetSingleOrDefaultEntryByAlias(
-            this IEnumerable<CliCommandEntry> entries,
-            string alias)
-        {
-            // todo checks
-            // todo can throw
-            return entries.SingleOrDefault(x =>
-                string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
-        }
+        #endregion
+
+        #region Cli Command Contents Support
 
         public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
         {
@@ -307,12 +307,35 @@ namespace TauCode.Cli
 
         public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
-            // todo can throw
-            var entry = entries.Single(x =>
-                x.Kind == CliCommandEntryKind.Argument &&
-                string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase));
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
 
-            return entry.Value;
+            if (argumentAlias == null)
+            {
+                throw new ArgumentNullException(nameof(argumentAlias));
+            }
+
+            argumentAlias = argumentAlias.ToLowerInvariant();
+
+            var wantedEntries = entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.Argument &&
+                    string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (wantedEntries.Count == 0)
+            {
+                throw new CliException($"Argument '{argumentAlias}' not found.");
+            }
+
+            if (wantedEntries.Count > 1)
+            {
+                throw new CliException($"Argument '{argumentAlias}' appears more than one time.");
+            }
+
+            return wantedEntries.Single().Value;
         }
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
@@ -353,6 +376,11 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(entries));
             }
 
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
             return entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.KeyValuePair &&
@@ -387,7 +415,11 @@ namespace TauCode.Cli
 
         public static Tuple<string, string>[] GetAllArguments(this IEnumerable<CliCommandEntry> entries)
         {
-            // todo: check args
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
             return entries
                 .Where(x => x.Kind == CliCommandEntryKind.Argument)
                 .Select(x => Tuple.Create(x.Alias.ToLowerInvariant(), x.Value))
@@ -396,9 +428,14 @@ namespace TauCode.Cli
 
         public static CliCommand AddAddInCommand(this IResultAccumulator resultAccumulator, string addInName)
         {
+            if (resultAccumulator == null)
+            {
+                throw new ArgumentNullException(nameof(resultAccumulator));
+            }
+
             if (resultAccumulator.Count != 0)
             {
-                throw new NotImplementedException(); // internal error - accumulator should be empty.
+                throw new CliException("Internal error: result accumulator must be empty.");
             }
 
             var command = CliCommand.CreateAddInCommand(addInName);
@@ -446,8 +483,19 @@ namespace TauCode.Cli
 
         public static CliCommand ParseLine(this ICliHost host, string line)
         {
-            // todo checks
+            if (host == null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
+            if (line == null)
+            {
+                throw new ArgumentNullException(nameof(line));
+            }
+
             return host.ParseCommand(new[] { line });
         }
+
+        #endregion
     }
 }
