@@ -61,7 +61,9 @@ namespace TauCode.Cli
 
             if (this.Name == null)
             {
-                addInNode = new IdleNode(_nodeFamily, null); // todo give it a name
+                addInNode = new IdleNode(
+                    _nodeFamily,
+                    $"Root node of nameless '{this.GetType().FullName}' add-in");
             }
             else
             {
@@ -71,7 +73,7 @@ namespace TauCode.Cli
                     true,
                     this.ProcessAddInName,
                     _nodeFamily,
-                    null); // todo: give it a name
+                    $"Root node of '{this.Name}' add-in");
 
                 addInNode.Properties["add-in-name"] = this.Name;
             }

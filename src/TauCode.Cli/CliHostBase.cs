@@ -29,7 +29,7 @@ namespace TauCode.Cli
 
                 if (workers.Count == 0)
                 {
-                    throw new CliException("Add-in cannot have zero workers."); // todo ut
+                    throw new CliException("Add-in cannot have zero workers."); // actually, will never happen; CliAddInBase checks it.
                 }
 
                 if (workers.Any(x => x.Name == null))
@@ -44,8 +44,9 @@ namespace TauCode.Cli
                 }
                 else
                 {
-                    _workers = workers
-                        .ToDictionary(x => x.Name, x => x);
+                    _workers = workers.ToDictionary(
+                        x => x.Name,
+                        x => x);
                 }
             }
 
@@ -62,10 +63,8 @@ namespace TauCode.Cli
 
                     return _singleUnnamedWorker;
                 }
-                else
-                {
-                    return _workers[workerName];
-                }
+
+                return _workers[workerName];
             }
         }
 
@@ -116,21 +115,17 @@ namespace TauCode.Cli
                 {
                     throw new CliException("This host supports only named add-ins.");
                 }
-                else
-                {
-                    return _singleUnnamedAddInRecord;
-                }
-            }
-            else
-            {
-                var record = _addInRecords.GetOrDefault(addInName);
-                if (record == null)
-                {
-                    throw new CliException($"Add-in not found: '{addInName}'.");
-                }
 
-                return record;
+                return _singleUnnamedAddInRecord;
             }
+
+            var record = _addInRecords.GetOrDefault(addInName);
+            if (record == null)
+            {
+                throw new CliException($"Add-in not found: '{addInName}'.");
+            }
+
+            return record;
         }
 
         #endregion
@@ -203,7 +198,11 @@ namespace TauCode.Cli
 
             if (addIns.Count == 0)
             {
-                throw new CliException($"'{nameof(CreateAddIns)}' must not return empty collection.");
+                _addInList = new List<ICliAddIn>();
+                var dummyRoot = new IdleNode(_nodeFamily, $"Dummy root node of empty host '{this.Name}'");
+                dummyRoot.EstablishLink(EndNode.Instance);
+
+                return dummyRoot;
             }
 
             var validTypes = addIns.All(x => x is CliAddInBase);
