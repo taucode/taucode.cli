@@ -11,7 +11,6 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     // todo checks for all extensions when using LINQ.
     public static class CliExtensions
     {
@@ -276,22 +275,6 @@ namespace TauCode.Cli
                 string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        //public static CliCommandEntry GetSingleEntryByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        //{
-        //    // todo checks
-        //    // todo can throw
-        //    return entries.Single(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase));
-        //}
-
-        //public static IList<CliCommandEntry> GetEntriesByAlias(this IEnumerable<CliCommandEntry> entries, string alias)
-        //{
-        //    // todo checks
-        //    // todo can throw
-        //    return entries
-        //        .Where(x => string.Equals(alias, x.Alias, StringComparison.InvariantCultureIgnoreCase))
-        //        .ToList();
-        //}
-
         public static bool ContainsOption(this IEnumerable<CliCommandEntry> entries, string optionAlias)
         {
             if (entries == null)
@@ -325,6 +308,7 @@ namespace TauCode.Cli
 
         public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
+            // todo can throw
             var entry = entries.Single(x =>
                 x.Kind == CliCommandEntryKind.Argument &&
                 string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase));
@@ -405,11 +389,6 @@ namespace TauCode.Cli
             else
             {
                 var command = resultAccumulator.GetLastResult<CliCommand>();
-                //if (command.AddInName == null)
-                //{
-                //    throw new NotImplementedException(); // error - shouldn't be
-                //}
-
                 command.SetWorkerName(workerName);
                 return command;
             }
@@ -430,64 +409,6 @@ namespace TauCode.Cli
             var command = CliCommand.CreateNamelessWorkerCommand();
             return command;
         }
-
-        //public static CliCommand EnsureAddInCommand(
-        //    this IResultAccumulator resultAccumulator,
-        //    string addInName)
-        //{
-        //    CliCommand command;
-
-        //    if (resultAccumulator.Count == 0)
-        //    {
-        //        command = new CliCommand
-        //        {
-        //            AddInName = addInName,
-        //        };
-        //        resultAccumulator.AddResult(command);
-        //    }
-        //    else
-        //    {
-        //        command = resultAccumulator.GetLastResult<CliCommand>();
-
-        //        if (command.AddInName != addInName)
-        //        {
-        //            throw new NotImplementedException(); // todo wat?
-        //        }
-        //    }
-
-        //    return command;
-        //}
-
-        //public static CliCommand EnsureWorkerCommand(
-        //    this IResultAccumulator resultAccumulator,
-        //    string workerName)
-        //{
-        //    CliCommand command;
-        //    //var workerName = workerNode.Properties.GetOrDefault("worker-name");
-
-        //    if (resultAccumulator.Count == 0)
-        //    {
-        //        command = new CliCommand
-        //        {
-        //            WorkerName = workerName,
-        //        };
-        //        resultAccumulator.AddResult(command);
-        //    }
-        //    else
-        //    {
-        //        command = resultAccumulator.GetLastResult<CliCommand>();
-        //        if (command.WorkerName == null)
-        //        {
-        //            command.WorkerName = workerName;
-        //        }
-        //        else if (command.WorkerName != workerName)
-        //        {
-        //            throw new NotImplementedException();
-        //        }
-        //    }
-
-        //    return command;
-        //}
 
         public static CliCommand ParseLine(this ICliHost host, string line)
         {

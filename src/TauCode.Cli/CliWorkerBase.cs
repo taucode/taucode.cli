@@ -11,12 +11,10 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli
 {
-    // todo clean up
     public abstract class CliWorkerBase : CliFunctionalityProviderBase, ICliWorker
     {
         #region Fields
 
-        //private INode _node;
         private readonly PseudoList _form;
 
         #endregion
@@ -38,10 +36,6 @@ namespace TauCode.Cli
             var tinyLispPseudoReader = new TinyLispPseudoReader();
             var lispTokens = tinyLispLexer.Lexize(grammar);
             _form = tinyLispPseudoReader.Read(lispTokens);
-
-            //this.Name = this.ExtractName();
-            //this.Version = version;
-            //this.SupportsHelp = supportsHelp;
 
             if (this.Name == null)
             {
@@ -80,7 +74,6 @@ namespace TauCode.Cli
 
         protected override INode CreateNodeTree()
         {
-            //INodeFactory nodeFactory = new CliNodeFactory($"Todo: worker node factory. Name:'{this.Name}'");
             var nodeFactory = this.CreateNodeFactory();
 
             ITreeBuilder builder = new TreeBuilder();
@@ -138,7 +131,6 @@ namespace TauCode.Cli
 
             return name;
         }
-        
 
         #endregion
 
@@ -152,56 +144,6 @@ namespace TauCode.Cli
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);
-
-        #endregion
-
-        #region ICliFunctionalityProvider Members
-
-        //public string Name { get; }
-
-        //public TextWriter Output
-        //{
-        //    get => this.AddIn.Output;
-        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        //}
-
-        //public TextReader Input
-        //{
-        //    get => this.AddIn.Input;
-        //    set => throw new NotSupportedException(); // todo: message 'use writer of owner'
-        //}
-
-        //public INode Node
-        //{
-        //    get
-        //    {
-        //        if (_node == null)
-        //        {
-        //            _node = this.BuildNode();
-
-        //            if (this.Version != null)
-        //            {
-        //                this.AddVersion();
-        //            }
-
-        //            if (this.SupportsHelp)
-        //            {
-        //                this.AddHelp();
-        //            }
-        //        }
-
-        //        return _node;
-        //    }
-        //}
-
-        //public string Version { get; }
-
-        //public bool SupportsHelp { get; }
-
-        //public virtual string GetHelp()
-        //{
-        //    return "todo: worker help.";
-        //}
 
         #endregion
     }

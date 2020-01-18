@@ -12,7 +12,6 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Exe
 {
-    // todo: clean up
     public class Program
     {
         #region Nested
@@ -92,7 +91,6 @@ namespace TauCode.Cli.Tests.Exe
 
             });
 
-            //_currentHost = idleHost;
             _currentHost = _hosts.Values.Single(x => x is CurlHost);
         }
 

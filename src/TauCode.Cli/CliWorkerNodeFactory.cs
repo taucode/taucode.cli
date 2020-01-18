@@ -16,7 +16,6 @@ using TauCode.Parsing.Tokens;
 namespace TauCode.Cli
 {
     // todo: protected virtual CliNodeFactory CreateNodeFactory, for tunability.
-    // todo clean up
     public class CliWorkerNodeFactory : NodeFactoryBase
     {
         private readonly IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> _fallbackPredicates;
@@ -37,21 +36,10 @@ namespace TauCode.Cli
                 },
                 true)
         {
-            _fallbackPredicates = fallbackPredicates != null ?
-                fallbackPredicates.ToDictionary(x => x.Key.ToLowerInvariant(), x => x.Value) :
-                new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>();
+            _fallbackPredicates = fallbackPredicates != null
+                ? fallbackPredicates.ToDictionary(x => x.Key.ToLowerInvariant(), x => x.Value)
+                : new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>();
         }
-
-        // todo
-        //protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
-        //{
-        //    if (nodeName.ToLowerInvariant() == "bad-key-fallback")
-        //    {
-        //        return BadKeyFallbackPredictate;
-        //    }
-
-        //    throw new ArgumentException($"Unknown fallback name: '{nodeName}'.", nameof(nodeName));
-        //}
 
         public override INode CreateNode(PseudoList item)
         {
@@ -99,7 +87,7 @@ namespace TauCode.Cli
                 throw new NotImplementedException(); // todo
             }
 
-            var baseResult = (ActionNode)node;
+            var baseResult = (ActionNode) node;
 
             if (baseResult == null)
             {
@@ -143,38 +131,18 @@ namespace TauCode.Cli
 
         protected override Func<FallbackNode, IToken, IResultAccumulator, bool> CreateFallbackPredicate(string nodeName)
         {
-            return _fallbackPredicates.GetOrDefault(nodeName.ToLowerInvariant()) ?? throw new NotImplementedException(); // todo nu such predicate
+            return _fallbackPredicates.GetOrDefault(nodeName.ToLowerInvariant()) ??
+                   throw new NotImplementedException(); // todo nu such predicate
         }
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             resultAccumulator.EnsureWorkerCommand(node.Properties["worker-name"]);
-
-            //if (resultAccumulator.Count == 0)
-            //{
-            //    var command = new CliCommand
-            //    {
-            //        WorkerName = node.Properties["worker-name"],
-            //    };
-
-            //    resultAccumulator.AddResult(command);
-            //}
-            //else
-            //{
-            //    var command = resultAccumulator.GetLastResult<CliCommand>();
-            //    command.WorkerName = node.Properties["worker-name"];
-            //}
         }
 
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             var command = resultAccumulator.EnsureWorkerCommand();
-
-            //var command = resultAccumulator.GetLastResult<CliCommand>();
-            //var entry = new CliCommandEntry
-            //{
-            //    Alias = node.Properties["alias"],
-            //};
             var alias = node.Properties["alias"];
             var key = TokenToKey(token);
 
@@ -185,7 +153,7 @@ namespace TauCode.Cli
         private static string TokenToKey(IToken token)
         {
             // todo checks?
-            var textToken = (TextToken)token;
+            var textToken = (TextToken) token;
             if (textToken.Class is KeyTextClass)
             {
                 return textToken.Text;
@@ -198,8 +166,7 @@ namespace TauCode.Cli
         {
             var command = resultAccumulator.GetLastResult<CliCommand>();
             var entry = command.Entries.Last();
-            var textToken = (TextToken)token;
-            //entry.Value = textToken.Text;
+            var textToken = (TextToken) token;
             entry.SetKeyValue(textToken.Text);
         }
 
@@ -217,24 +184,6 @@ namespace TauCode.Cli
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
             // todo: EnsureCommand (uses command from 'IResultAccumulator resultAccumulator', or adds new; everywhere!)
-            //CliCommand command;
-            //if (resultAccumulator.Count == 0)
-            //{
-            //    command = new CliCommand
-            //    {
-            //        WorkerName = node.Properties.GetOrDefault("worker-name"),
-            //    };
-
-            //    resultAccumulator.AddResult(command);
-            //}
-            //else
-            //{
-            //    command = resultAccumulator.GetLastResult<CliCommand>();
-            //    command.WorkerName = node.Properties.GetOrDefault("worker-name");
-            //}
-
-            //var command = resultAccumulator.GetLastResult<CliCommand>();
-
             var command = resultAccumulator.EnsureWorkerCommand();
 
             var alias = node.Properties["alias"];
@@ -246,7 +195,7 @@ namespace TauCode.Cli
         private string TokenToArgument(IToken token)
         {
             // todo checks?
-            var textToken = (TextToken)token;
+            var textToken = (TextToken) token;
             return textToken.Text;
         }
     }
