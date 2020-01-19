@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
@@ -46,7 +47,7 @@ namespace TauCode.Cli
 
             try
             {
-                var helper = new CliWorkerDescriptorHelper(grammar);
+                var helper = new CliWorkerDescriptorBuilder(grammar);
                 this.Descriptor = helper.Build();
             }
             catch (CliException)
@@ -71,7 +72,60 @@ namespace TauCode.Cli
             set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
-        protected override string GetHelpImpl() => _grammar;
+        protected override string GetHelpImpl()
+        {
+            if (this.Descriptor == null)
+            {
+                return _grammar;
+            }
+
+            var sb = new StringBuilder();
+            var descr = this.Descriptor;
+            sb.AppendLine(descr.Description);
+            if (descr.UsageSamples.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Usage samples:");
+                foreach (var usageSample in descr.UsageSamples)
+                {
+                    sb.AppendLine(usageSample);
+                }
+            }
+
+            if (descr.Keys.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Keys:");
+                foreach (var key in descr.Keys)
+                {
+                    sb.Append(string.Join(", ", key.Keys));
+                    sb.Append($" <{key.ValueDescriptor.DocSubstitution}>");
+                    sb.AppendLine();
+                }
+            }
+
+            if (descr.Arguments.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Arguments:");
+                foreach (var arg in descr.Arguments)
+                {
+                    sb.AppendLine($"<{arg.DocSubstitution}>");
+                }
+            }
+
+            if (descr.Options.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Options:");
+                foreach (var option in descr.Options)
+                {
+                    sb.AppendLine(string.Join(", ", option.Options));
+                }
+            }
+
+            return sb.ToString();
+        }
 
         protected override INode CreateNodeTree()
         {

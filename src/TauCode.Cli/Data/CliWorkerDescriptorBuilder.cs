@@ -8,11 +8,11 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli.Data
 {
-    public class CliWorkerDescriptorHelper
+    public class CliWorkerDescriptorBuilder
     {
         private readonly PseudoList _form;
 
-        public CliWorkerDescriptorHelper(string workerGrammar)
+        public CliWorkerDescriptorBuilder(string workerGrammar)
         {
             ILexer lexer = new TinyLispLexer();
             var tokens = lexer.Lexize(workerGrammar);
