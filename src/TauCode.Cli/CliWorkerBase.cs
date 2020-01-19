@@ -16,6 +16,7 @@ namespace TauCode.Cli
     {
         #region Fields
 
+        private readonly string _grammar;
         private readonly PseudoList _form;
 
         #endregion
@@ -28,10 +29,7 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(ExtractName(grammar), version, supportsHelp)
         {
-            if (grammar == null)
-            {
-                throw new ArgumentNullException(nameof(grammar));
-            }
+            _grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
 
             var tinyLispLexer = new TinyLispLexer();
             var tinyLispPseudoReader = new TinyLispPseudoReader();
@@ -44,11 +42,16 @@ namespace TauCode.Cli
                 {
                     throw new CliException("Nameless worker cannot support version.");
                 }
+            }
 
-                if (this.SupportsHelp)
-                {
-                    throw new CliException("Nameless worker cannot support help.");
-                }
+            try
+            {
+                var helper = new CliWorkerDescriptorHelper(grammar);
+                this.Descriptor = helper.Build();
+            }
+            catch (CliException)
+            {
+                // couldn't build descriptor
             }
         }
 
@@ -68,10 +71,7 @@ namespace TauCode.Cli
             set => throw new NotSupportedException($"Use host's '{nameof(Output)}'.");
         }
 
-        protected override string GetHelpImpl()
-        {
-            return "Help is not supported currently.";
-        }
+        protected override string GetHelpImpl() => _grammar;
 
         protected override INode CreateNodeTree()
         {
@@ -144,6 +144,8 @@ namespace TauCode.Cli
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);
+
+        public CliWorkerDescriptor Descriptor { get; set; }
 
         #endregion
     }

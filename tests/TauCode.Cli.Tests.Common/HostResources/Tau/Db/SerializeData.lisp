@@ -2,6 +2,11 @@
 	(worker
 		:worker-name serialize-data
 		:verbs "sd"
+		:description "Serialize data"
+		:usage-samples (
+			"sd -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
+			"sd --provider postgresql 'Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;'"
+		)
 	)
 
 	(idle :name keys)
@@ -11,11 +16,15 @@
 				:classes key
 				:values "-p" "--provider"
 				:alias provider
-				:action key)
+				:action key
+				:is-mandatory t
+				:is-single t)
 			(multi-text
 				:classes term
 				:values "sqlserver" "postgresql"
-				:action value)
+				:action value
+				:description "DB provider identifier"
+				:doc-subst "db provider")
 		)
 		(seq
 			(multi-text
@@ -25,7 +34,9 @@
 				:action key)
 			(some-text
 				:classes term string
-				:action value)
+				:action value
+				:description "Table to exclude from serializing"
+				:doc-subst "table to exclude")
 		)
 		(fallback :name bad-option-or-key)
 	)
@@ -35,7 +46,9 @@
 	(some-text
 		:classes path string
 		:alias connection-string
-		:action argument)
+		:action argument		
+		:description "DB connection string to use"
+		:doc-subst "connection string")
 
 	(idle :name options)
 	(opt
@@ -44,13 +57,15 @@
 				:classes key
 				:values "-v" "--verbose"
 				:alias verbose
-				:action option)
+				:action option
+				:description "Verbose output")
 
 			(multi-text
 				:classes key
 				:values "-q" "--quiet"
 				:alias quiet
-				:action option)
+				:action option
+				:description "Don't show output")
 		)
 	)
 	(idle :links options next)

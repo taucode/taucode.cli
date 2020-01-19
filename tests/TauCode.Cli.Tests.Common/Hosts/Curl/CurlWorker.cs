@@ -10,8 +10,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             : base(
                 typeof(CurlWorker).Assembly.GetResourceText(".Curl.NoName.NoName.lisp", true),
                 null,
-                false)
+                true)
         {
+        }
+
+        protected override void OnNodeCreated()
+        {   
         }
 
         public override void Process(IList<CliCommandEntry> entries)

@@ -1,46 +1,73 @@
 (defblock :name drop-all-tables :is-top t
 	(worker
 		:worker-name drop-all-tables
-		:verbs "drop-all-tables" "dat"
-		:doc "Drop all tables of a database."
+		:verbs "drop-all-tables"
+		:description "Drop all tables of a database."
 		:usage-samples (
-			"drop-all-tables --conn Server=.;Database=my_db;Trusted_Connection=True; --provider sqlserver --exclude table_1 --exclude table_2"
-			"dat -c Server=some-host;Database=my_db; -p postgresql -e table_1 -e table_2"
-			))
-	(idle :name args)
-	(alt
-		(seq
-			(multi-text
-				:classes key
-				:values "-c" "--connection"
-				:alias connection
-				:action key)
-			(some-text
-				:classes path
-				:action value)
+			"drop-all-tables -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
 		)
+	)
+
+	(idle :name keys)
+	(alt
 		(seq
 			(multi-text
 				:classes key
 				:values "-p" "--provider"
 				:alias provider
-				:action key)
+				:action key
+				:is-mandatory t
+				:is-single t)
 			(multi-text
 				:classes term
 				:values "sqlserver" "postgresql"
-				:action value)
+				:action value
+				:description "DB provider identifier"
+				:doc-subst "db provider")
 		)
 		(seq
 			(multi-text
 				:classes key
 				:values "-e" "--exclude"
-				:alias exclude
+				:alias exclude-table
 				:action key)
 			(some-text
-				:classes string term				
-				:action value)
+				:classes term string
+				:action value
+				:description "Table to exclude from serializing"
+				:doc-subst "table to exclude")
+		)
+		(fallback :name bad-option-or-key)
+	)
+
+	(idle :links keys next)
+
+	(some-text
+		:classes path string
+		:alias connection-string
+		:action argument		
+		:description "DB connection string to use"
+		:doc-subst "connection string")
+
+	(idle :name options)
+	(opt
+		(alt
+			(multi-text
+				:classes key
+				:values "-v" "--verbose"
+				:alias verbose
+				:action option
+				:description "Verbose output")
+
+			(multi-text
+				:classes key
+				:values "-q" "--quiet"
+				:alias quiet
+				:action option
+				:description "Don't show output")
 		)
 	)
-	(idle :links args next)
+	(idle :links options next)
+
 	(end)
 )

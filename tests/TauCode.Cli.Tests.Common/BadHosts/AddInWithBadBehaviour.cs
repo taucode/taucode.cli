@@ -36,6 +36,8 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             {
                 // void
             }
+
+            public CliWorkerDescriptor Descriptor { get; }
         }
 
         private class StandardWorker : CliWorkerBase

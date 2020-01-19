@@ -90,7 +90,7 @@ namespace TauCode.Cli.Tests.Exe
 
             });
 
-            _currentHost = _hosts.Values.Single(x => x is CurlHost);
+            _currentHost = _hosts.Values.Single(x => x is TauHost);
         }
 
         private string GetAllHostsName()
