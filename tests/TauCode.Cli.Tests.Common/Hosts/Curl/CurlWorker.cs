@@ -10,7 +10,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             : base(
                 typeof(CurlWorker).Assembly.GetResourceText(".Curl.NoName.NoName.lisp", true),
                 null,
-                true)
+                false)
         {
         }
 

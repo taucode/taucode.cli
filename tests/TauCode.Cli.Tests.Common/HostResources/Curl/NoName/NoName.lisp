@@ -8,9 +8,9 @@
 	(opt :name pre-url-keys
 		(alt
 			(seq
-				(exact-text
+				(multi-text
 					:classes key
-					:value "-H"
+					:values "-H"
 					:alias header
 					:action key
 				)
@@ -32,9 +32,9 @@
 	)
 
 	(opt
-		(exact-text
+		(multi-text
 			:classes key
-			:value "-v" "--verbose"
+			:values "-v" "--verbose"
 			:alias verbose
 			:action option
 		)

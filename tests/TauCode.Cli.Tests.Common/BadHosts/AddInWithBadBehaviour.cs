@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using TauCode.Cli.Data;
+using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 using TauCode.Extensions;
 using TauCode.Parsing;
@@ -27,6 +28,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             }
 
             public ICliAddIn AddIn { get; }
+
             public FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
             {
                 return null;

@@ -8,6 +8,15 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
     /// </summary>
     public class GitAddIn : CliAddInBase
     {
+        public GitAddIn()
+            : base(null, null, false)
+        {
+        }
+
+        protected override void OnNodeCreated()
+        {   
+        }
+
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
             return new ICliWorker[]

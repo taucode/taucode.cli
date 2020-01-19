@@ -66,11 +66,7 @@ namespace TauCode.Cli
                 else
                 {
                     workerNode = new MultiTextNode(
-                        item
-                            .GetAllKeywordArguments(":verbs")
-                            .Cast<StringAtom>()
-                            .Select(x => x.Value)
-                            .ToList(),
+                        new string[] { item.GetSingleKeywordArgument<StringAtom>(":verb").Value },
                         new ITextClass[]
                         {
                             TermTextClass.Instance,

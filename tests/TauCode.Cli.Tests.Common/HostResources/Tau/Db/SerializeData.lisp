@@ -1,7 +1,7 @@
 (defblock :name serialize-data :is-top t
 	(worker
 		:worker-name serialize-data
-		:verbs "sd"
+		:verb "sd"
 		:description "Serialize data"
 		:usage-samples (
 			"sd -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
@@ -17,8 +17,7 @@
 				:values "-p" "--provider"
 				:alias provider
 				:action key
-				:is-mandatory t
-				:is-single t)
+				:is-mandatory t)
 			(multi-text
 				:classes term
 				:values "sqlserver" "postgresql"

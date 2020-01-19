@@ -1,7 +1,7 @@
 (defblock :name clone :is-top t
 	(worker
 		:worker-name clone
-		:verbs "clone"
+		:verb "clone"
 		:doc "Clone a repo."
 		:usage-samples (
 			"<todo>"

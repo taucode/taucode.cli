@@ -1,7 +1,7 @@
 (defblock :name drop-all-tables :is-top t
 	(worker
 		:worker-name drop-all-tables
-		:verbs "drop-all-tables"
+		:verb "drop-all-tables"
 		:description "Drop all tables of a database."
 		:usage-samples (
 			"drop-all-tables -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"

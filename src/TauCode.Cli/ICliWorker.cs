@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing.Exceptions;
 
