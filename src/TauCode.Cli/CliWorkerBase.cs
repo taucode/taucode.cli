@@ -83,6 +83,8 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
+            return this.Descriptor.GetHelp();
+
             throw new NotImplementedException();
             //if (this.Descriptor == null)
             //{
