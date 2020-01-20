@@ -165,9 +165,14 @@ namespace TauCode.Cli.Descriptors
                     .ToList();
             }
 
+            var isMandatory = subForm.GetSingleArgumentAsBool(":is-mandatory") ?? false;
+            var allowsMultiple = subForm.GetSingleArgumentAsBool(":allows-multiple") ?? false;
+
             var argumentDescriptor = new CliWorkerArgumentDescriptor(
                 alias,
                 values,
+                isMandatory,
+                allowsMultiple,
                 description,
                 docSubstitution);
             

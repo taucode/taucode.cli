@@ -9,6 +9,8 @@ namespace TauCode.Cli.Descriptors
         public CliWorkerArgumentDescriptor(
             string alias,
             IEnumerable<string> values,
+            bool isMandatory,
+            bool allowsMultiple,
             string description,
             string docSubstitution)
         {
@@ -35,12 +37,17 @@ namespace TauCode.Cli.Descriptors
                 this.Values = new HashSet<string>(valueList);
             }
 
+            this.IsMandatory = isMandatory;
+            this.AllowsMultiple = allowsMultiple;
+
             this.Description = description;
             this.DocSubstitution = docSubstitution;
         }
 
         public string Alias { get; }
         public HashSet<string> Values { get; }
+        public bool IsMandatory { get; }
+        public bool AllowsMultiple { get; }
         public string Description { get; }
         public string DocSubstitution { get; }
     }

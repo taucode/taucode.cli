@@ -44,7 +44,7 @@ namespace TauCode.Cli
 
                 if (this.SupportsHelp)
                 {
-                    throw new ArgumentException("Nameless worker cannot support help.", nameof(version));
+                    throw new ArgumentException("Nameless worker cannot support help.", nameof(supportsHelp));
                 }
             }
 
