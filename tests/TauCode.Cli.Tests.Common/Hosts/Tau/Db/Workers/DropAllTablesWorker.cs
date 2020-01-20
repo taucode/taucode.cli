@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TauCode.Cli.Data;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
@@ -9,7 +8,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class DropAllTablesWorker : CliWorkerBase
+    public class DropAllTablesWorker : CommonWorker
     {
         public DropAllTablesWorker()
             : base(
@@ -37,11 +36,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
             }
 
             return false;
-        }
-
-        public override void Process(IList<CliCommandEntry> entries)
-        {
-            this.Output.WriteLine("Dummy implementation. Get back here when ready.");
         }
     }
 }

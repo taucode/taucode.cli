@@ -90,6 +90,5 @@ namespace TauCode.Cli.Descriptors
         public IReadOnlyList<CliWorkerKeyDescriptor> Keys { get; }
         public IReadOnlyList<CliWorkerArgumentDescriptor> Arguments { get; }
         public IReadOnlyList<CliWorkerOptionDescriptor> Options { get; }
-
     }
 }

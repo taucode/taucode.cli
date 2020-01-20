@@ -29,14 +29,14 @@ namespace TauCode.Cli.Descriptors
                     throw new NotImplementedException(); // todo
                 }
 
-                this.Values = valueList;
+                this.Values = new HashSet<string>(valueList);
             }
 
             this.Description = description;
             this.DocSubstitution = docSubstitution;
         }
 
-        public List<string> Values { get; }
+        public HashSet<string> Values { get; }
         public string Description { get; }
         public string DocSubstitution { get; }
     }

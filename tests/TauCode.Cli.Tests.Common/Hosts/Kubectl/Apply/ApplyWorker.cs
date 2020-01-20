@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using TauCode.Cli.Data;
-using TauCode.Extensions;
+﻿using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Apply
 {
-    public class ApplyWorker : CliWorkerBase
+    public class ApplyWorker : CommonWorker
     {
         public ApplyWorker()
             : base(
@@ -12,11 +10,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Apply
                 null,
                 false)
         {
-        }
-
-        public override void Process(IList<CliCommandEntry> entries)
-        {
-            this.Output.WriteLine("Dummy implementation. Get back here when ready.");
         }
     }
 }

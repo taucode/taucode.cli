@@ -30,7 +30,8 @@
 				:classes key
 				:values "-e" "--exclude"
 				:alias exclude-table
-				:action key)
+				:action key
+				:allows-multiple t)
 			(some-text
 				:classes term string
 				:action value

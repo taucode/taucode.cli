@@ -224,7 +224,7 @@ namespace TauCode.Cli
             return true;
         }
 
-        public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
+        public static string[] GetArguments(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
             if (entries == null)
             {
@@ -238,23 +238,14 @@ namespace TauCode.Cli
 
             argumentAlias = argumentAlias.ToLowerInvariant();
 
-            var wantedEntries = entries
+            var arguments = entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.Argument &&
                     string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
+                .Select(x => x.Value)
+                .ToArray();
 
-            if (wantedEntries.Count == 0)
-            {
-                throw new CliException($"Argument '{argumentAlias}' not found.");
-            }
-
-            if (wantedEntries.Count > 1)
-            {
-                throw new CliException($"Argument '{argumentAlias}' appears more than one time.");
-            }
-
-            return wantedEntries.Single().Value;
+            return arguments;
         }
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
@@ -286,6 +277,25 @@ namespace TauCode.Cli
             }
 
             return wantedEntries.Single().Value;
+        }
+
+        public static CliCommandEntry[] GetKeyEntries(this IEnumerable<CliCommandEntry> entries, string keyAlias)
+        {
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
+            return entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.KeyValuePair &&
+                    string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToArray();
         }
 
         public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)

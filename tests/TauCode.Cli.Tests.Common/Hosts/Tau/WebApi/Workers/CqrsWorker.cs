@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using TauCode.Cli.Data;
-using TauCode.Extensions;
+﻿using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Workers
 {
-    public class CqrsWorker : CliWorkerBase
+    public class CqrsWorker : CommonWorker
     {
         public CqrsWorker()
             : base(
@@ -12,11 +10,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Workers
                 "cqrs-1.0", 
                 true)
         {
-        }
-
-        public override void Process(IList<CliCommandEntry> entries)
-        {
-            this.Output.WriteLine("Dummy implementation. Get back here when ready.");
         }
     }
 }
