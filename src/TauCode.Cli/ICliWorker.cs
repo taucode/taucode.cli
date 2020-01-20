@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TauCode.Cli.Data;
+using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing.Exceptions;
 
@@ -13,5 +14,6 @@ namespace TauCode.Cli
         ICliAddIn AddIn { get; }
         FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex);
         void Process(IList<CliCommandEntry> entries);
+        CliWorkerDescriptor Descriptor { get; }
     }
 }

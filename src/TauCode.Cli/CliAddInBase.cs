@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
@@ -23,6 +24,19 @@ namespace TauCode.Cli
         protected CliAddInBase(string name, string version, bool supportsHelp)
             : base(name, version, supportsHelp)
         {
+            if (name == null)
+            {
+                if (version != null)
+                {
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                }
+
+                if (supportsHelp)
+                {
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                }
+            }
+
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");
             _workers = new List<ICliWorker>();
         }
@@ -50,7 +64,47 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            return "Help is not supported currently.";
+            var dummy = this.Node;
+
+            if (this.Name != null)
+            {
+                return "todo: write about myself.";
+            }
+
+            if (_workers[0].Name == null)
+            {
+                // single unnamed worker
+                try
+                {
+                    return _workers.Single().GetHelp();
+                }
+                catch
+                {
+                    return "Help is not supported.";
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine(this.Name);
+
+            foreach (var worker in _workers)
+            {
+                sb.Append(worker.Name);
+                var workerDescription = "";
+                try
+                {
+                    workerDescription = worker.Descriptor.Description;
+                }
+                catch
+                {
+                    // dismiss
+                }
+
+                sb.Append($" {workerDescription}");
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         protected override INode CreateNodeTree()

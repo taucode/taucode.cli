@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TauCode.Cli.Data;
+using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
@@ -12,10 +12,12 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli
 {
+    // todo clean
     public abstract class CliWorkerBase : CliFunctionalityProviderBase, ICliWorker
     {
         #region Fields
 
+        //private readonly string _grammar;
         private readonly PseudoList _form;
 
         #endregion
@@ -28,27 +30,38 @@ namespace TauCode.Cli
             bool supportsHelp)
             : base(ExtractName(grammar), version, supportsHelp)
         {
-            if (grammar == null)
-            {
-                throw new ArgumentNullException(nameof(grammar));
-            }
+            //_grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
 
             var tinyLispLexer = new TinyLispLexer();
             var tinyLispPseudoReader = new TinyLispPseudoReader();
             var lispTokens = tinyLispLexer.Lexize(grammar);
             _form = tinyLispPseudoReader.Read(lispTokens);
 
+            this.Descriptor = (new CliWorkerDescriptorBuilder(grammar)).Build();
+
+            //this.Verb = ExtractVerb(grammar);
+
             if (this.Name == null)
             {
                 if (this.Version != null)
                 {
-                    throw new CliException("Nameless worker cannot support version.");
+                    throw new ArgumentException("Nameless worker cannot support version.", nameof(version));
                 }
 
                 if (this.SupportsHelp)
                 {
-                    throw new CliException("Nameless worker cannot support help.");
+                    throw new ArgumentException("Nameless worker cannot support help.", nameof(version));
                 }
+            }
+
+            try
+            {
+                var helper = new CliWorkerDescriptorBuilder(grammar);
+                this.Descriptor = helper.Build();
+            }
+            catch (CliException)
+            {
+                // couldn't build descriptor
             }
         }
 
@@ -70,7 +83,60 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            return "Help is not supported currently.";
+            return this.Descriptor.GetHelp();
+
+            throw new NotImplementedException();
+            //if (this.Descriptor == null)
+            //{
+            //    return _grammar;
+            //}
+
+            //var sb = new StringBuilder();
+            //var descr = this.Descriptor;
+            //sb.AppendLine(descr.Description);
+            //if (descr.UsageSamples.Any())
+            //{
+            //    sb.AppendLine();
+            //    sb.AppendLine("Usage samples:");
+            //    foreach (var usageSample in descr.UsageSamples)
+            //    {
+            //        sb.AppendLine(usageSample);
+            //    }
+            //}
+
+            //if (descr.Keys.Any())
+            //{
+            //    sb.AppendLine();
+            //    sb.AppendLine("Keys:");
+            //    foreach (var key in descr.Keys)
+            //    {
+            //        sb.Append(string.Join(", ", key.Keys));
+            //        sb.Append($" <{key.ValueDescriptor.DocSubstitution}>");
+            //        sb.AppendLine();
+            //    }
+            //}
+
+            //if (descr.Arguments.Any())
+            //{
+            //    sb.AppendLine();
+            //    sb.AppendLine("Arguments:");
+            //    foreach (var arg in descr.Arguments)
+            //    {
+            //        sb.AppendLine($"<{arg.DocSubstitution}>");
+            //    }
+            //}
+
+            //if (descr.Options.Any())
+            //{
+            //    sb.AppendLine();
+            //    sb.AppendLine("Options:");
+            //    foreach (var option in descr.Options)
+            //    {
+            //        sb.AppendLine(string.Join(", ", option.Options));
+            //    }
+            //}
+
+            //return sb.ToString();
         }
 
         protected override INode CreateNodeTree()
@@ -114,23 +180,41 @@ namespace TauCode.Cli
 
         #region Private
 
-        private static string ExtractName(string grammar)
-        {
-            var tinyLispLexer = new TinyLispLexer();
-            var tinyLispPseudoReader = new TinyLispPseudoReader();
-            var lispTokens = tinyLispLexer.Lexize(grammar);
-            var form = tinyLispPseudoReader.Read(lispTokens);
+        //private static string ExtractVerb(string grammar)
+        //{
+        //    var tinyLispLexer = new TinyLispLexer();
+        //    var tinyLispPseudoReader = new TinyLispPseudoReader();
+        //    var lispTokens = tinyLispLexer.Lexize(grammar);
+        //    var form = tinyLispPseudoReader.Read(lispTokens);
 
-            var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
-            var supposedCommandForm = topDefblock.GetFreeArguments().First();
-            string name = null;
-            if (supposedCommandForm.GetCarSymbolName() == "WORKER")
-            {
-                name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
-            }
+        //    var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
+        //    var supposedCommandForm = topDefblock.GetFreeArguments().First();
+        //    string verb = null;
+        //    if (supposedCommandForm.GetCarSymbolName() == "WORKER")
+        //    {
+        //        verb = supposedCommandForm.GetSingleKeywordArgument<StringAtom>(":verb", true)?.Value;
+        //    }
 
-            return name;
-        }
+        //    return verb;
+        //}
+
+        private static string ExtractName(string grammar) => (new CliWorkerDescriptorBuilder(grammar)).Build().Name;
+        //{
+        //    var tinyLispLexer = new TinyLispLexer();
+        //    var tinyLispPseudoReader = new TinyLispPseudoReader();
+        //    var lispTokens = tinyLispLexer.Lexize(grammar);
+        //    var form = tinyLispPseudoReader.Read(lispTokens);
+
+        //    var topDefblock = form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
+        //    var supposedCommandForm = topDefblock.GetFreeArguments().First();
+        //    string name = null;
+        //    if (supposedCommandForm.GetCarSymbolName() == "WORKER")
+        //    {
+        //        name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+        //    }
+
+        //    return name;
+        //}
 
         #endregion
 
@@ -144,6 +228,8 @@ namespace TauCode.Cli
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);
+
+        public CliWorkerDescriptor Descriptor { get; }
 
         #endregion
     }

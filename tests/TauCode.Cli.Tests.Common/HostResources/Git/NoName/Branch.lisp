@@ -1,7 +1,7 @@
 ﻿(defblock :name branch :is-top t
 	(worker
 		:worker-name branch
-		:verbs "branch"
+		:verb "branch"
 		:doc "Branch management.")
 	(idle :name args)
 	(alt

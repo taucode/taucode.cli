@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Curl
 {
@@ -16,5 +17,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
                 new CurlAddIn(),
             };
         }
+
+        protected override string GetHelpImpl() => this
+            .GetAddIns()
+            .Single()
+            .GetWorkers()
+            .Single()
+            .GetHelp();
     }
 }

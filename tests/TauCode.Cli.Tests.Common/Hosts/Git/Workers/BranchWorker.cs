@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using TauCode.Cli.Data;
-using TauCode.Extensions;
+﻿using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 {
-    public class BranchWorker : CliWorkerBase
+    public class BranchWorker : CommonWorker
     {
         public BranchWorker()
             : base(
@@ -12,11 +10,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
                 null,
                 true)
         {
-        }
-
-        public override void Process(IList<CliCommandEntry> entries)
-        {
-            this.Output.WriteLine("Dummy implementation. Get back here when ready.");
         }
     }
 }

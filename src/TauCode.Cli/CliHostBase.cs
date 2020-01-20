@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Extensions;
@@ -276,7 +277,22 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            return "Help is not supported currently.";
+            if (_singleUnnamedAddInRecord != null)
+            {
+                return _singleUnnamedAddInRecord.AddIn.GetHelp();
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("Available add-ins:");
+                foreach (var record in _addInRecords.Values)
+                {
+                    var addIn = record.AddIn;
+                    sb.AppendLine(addIn.Name);
+                }
+
+                return sb.ToString();
+            }
         }
 
         #endregion

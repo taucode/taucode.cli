@@ -1,7 +1,7 @@
 (defblock :name checkout :is-top t
 	(worker
 		:worker-name checkout
-		:verbs "checkout"
+		:verb "checkout"
 		:doc "Checkout a branch."
 		:usage-samples (
 			"<todo>"
@@ -38,9 +38,9 @@
 
 	(alt
 		(seq
-			(exact-text
+			(multi-text
 				:classes key
-				:value "-b"
+				:values "-b"
 				:alias new-branch
 				:action option)
 			(some-text

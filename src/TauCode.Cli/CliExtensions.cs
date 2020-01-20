@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TauCode.Cli.Data;
+using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.Help;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
@@ -11,6 +14,8 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
+    // todo: delete un-used methods?
+    // todo: regions
     public static class CliExtensions
     {
         #region Misc
@@ -224,7 +229,7 @@ namespace TauCode.Cli
             return true;
         }
 
-        public static string GetArgument(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
+        public static string[] GetArguments(this IEnumerable<CliCommandEntry> entries, string argumentAlias)
         {
             if (entries == null)
             {
@@ -238,23 +243,14 @@ namespace TauCode.Cli
 
             argumentAlias = argumentAlias.ToLowerInvariant();
 
-            var wantedEntries = entries
+            var arguments = entries
                 .Where(x =>
                     x.Kind == CliCommandEntryKind.Argument &&
                     string.Equals(x.Alias, argumentAlias, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
+                .Select(x => x.Value)
+                .ToArray();
 
-            if (wantedEntries.Count == 0)
-            {
-                throw new CliException($"Argument '{argumentAlias}' not found.");
-            }
-
-            if (wantedEntries.Count > 1)
-            {
-                throw new CliException($"Argument '{argumentAlias}' appears more than one time.");
-            }
-
-            return wantedEntries.Single().Value;
+            return arguments;
         }
 
         public static string GetSingleKeyValue(this IEnumerable<CliCommandEntry> entries, string keyAlias)
@@ -286,6 +282,25 @@ namespace TauCode.Cli
             }
 
             return wantedEntries.Single().Value;
+        }
+
+        public static CliCommandEntry[] GetKeyEntries(this IEnumerable<CliCommandEntry> entries, string keyAlias)
+        {
+            if (entries == null)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
+            if (keyAlias == null)
+            {
+                throw new ArgumentNullException(nameof(keyAlias));
+            }
+
+            return entries
+                .Where(x =>
+                    x.Kind == CliCommandEntryKind.KeyValuePair &&
+                    string.Equals(x.Alias, keyAlias, StringComparison.InvariantCultureIgnoreCase))
+                .ToArray();
         }
 
         public static string[] GetKeyValues(this IEnumerable<CliCommandEntry> entries, string keyAlias)
@@ -416,5 +431,70 @@ namespace TauCode.Cli
         }
 
         #endregion
+
+        public static string GetHelp(this CliWorkerDescriptor descriptor)
+        {
+            var margin = 20;
+            var maxLength = 20;
+
+            var sb = new StringBuilder();
+            var helpBuilder = new HelpBuilder();
+
+            sb.AppendLine(descriptor.Description);
+            if (descriptor.UsageSamples.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Usage samples:");
+                foreach (var usageSample in descriptor.UsageSamples)
+                {
+                    sb.AppendLine(usageSample);
+                }
+            }
+
+            if (descriptor.Keys.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Keys:");
+
+                foreach (var key in descriptor.Keys)
+                {
+                    sb.Append(string.Join(", ", key.Keys));
+
+                    var docSubstitution = key.ValueDescriptor.DocSubstitution ?? $"{key.Alias}";
+
+                    sb.Append($" <{docSubstitution}>");
+                    
+                    helpBuilder.WriteHelp(sb, key.ValueDescriptor.Description, margin, maxLength);
+                }
+            }
+
+            if (descriptor.Arguments.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Arguments:");
+                foreach (var argument in descriptor.Arguments)
+                {
+                    var docSubstitution = argument.DocSubstitution ?? $"{argument.Alias}";
+
+                    sb.Append($"<{docSubstitution}>");
+
+                    helpBuilder.WriteHelp(sb, argument.Description, margin, maxLength);
+                }
+            }
+
+            if (descriptor.Options.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("Options:");
+                foreach (var option in descriptor.Options)
+                {
+                    sb.Append(string.Join(", ", option.Options));
+
+                    helpBuilder.WriteHelp(sb, option.Description, margin, maxLength);
+                }
+            }
+
+            return sb.ToString();
+        }
     }
 }
