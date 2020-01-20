@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TauCode.Cli.Exceptions;
+using TauCode.Cli.Help;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
@@ -28,12 +29,12 @@ namespace TauCode.Cli
             {
                 if (version != null)
                 {
-                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
 
                 if (supportsHelp)
                 {
-                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
             }
 
@@ -64,44 +65,25 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
-            var dummy = this.Node;
-
-            if (this.Name != null)
-            {
-                return "todo: write about myself.";
-            }
+            var sb = new StringBuilder();
+            var description = this.Description ?? $"Add-in '{this.GetType().FullName}' does not have a description.";
+            sb.AppendLine(description);
 
             if (_workers[0].Name == null)
             {
-                // single unnamed worker
-                try
-                {
-                    return _workers.Single().GetHelp();
-                }
-                catch
-                {
-                    return "Help is not supported.";
-                }
+                // got single unnamed worker
+
+                sb.AppendLine(_workers.Single().Descriptor.GetHelp());
             }
-
-            var sb = new StringBuilder();
-            sb.AppendLine(this.Name);
-
-            foreach (var worker in _workers)
+            else
             {
-                sb.Append(worker.Name);
-                var workerDescription = "";
-                try
+                var workers = this.GetWorkers().OrderBy(x => x.Descriptor.Verb).ToList();
+                var helpBuilder = new HelpBuilder();
+                foreach (var worker in workers)
                 {
-                    workerDescription = worker.Descriptor.Description;
+                    sb.Append(worker.Descriptor.Verb);
+                    helpBuilder.WriteHelp(sb, worker.Descriptor.Description, 20, 20);
                 }
-                catch
-                {
-                    // dismiss
-                }
-
-                sb.Append($" {workerDescription}");
-                sb.AppendLine();
             }
 
             return sb.ToString();
@@ -211,6 +193,8 @@ namespace TauCode.Cli
 
             return _workers;
         }
+
+        public string Description { get; protected set; }
 
         #endregion
     }

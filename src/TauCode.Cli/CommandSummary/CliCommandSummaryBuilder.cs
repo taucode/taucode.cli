@@ -50,25 +50,25 @@ namespace TauCode.Cli.CommandSummary
 
             #endregion
 
-            var arguments = new Dictionary<string, string>();
+            var arguments = new Dictionary<string, IList<string>>();
 
             #region arguments
 
             foreach (var argumentDescriptor in descriptor.Arguments)
             {
                 var argumentValues = entries.GetArguments(argumentDescriptor.Alias);
-                if (argumentValues.Length == 0)
+                if (argumentValues.Length == 0 && argumentDescriptor.IsMandatory)
                 {
-                    throw new CliException($"Argument with alias '{argumentDescriptor.Alias}' was not provided.");
+                    throw new CliException($"Mandatory argument with alias '{argumentDescriptor.Alias}' was not provided.");
                 }
 
-                if (argumentValues.Length > 1)
+                if (argumentValues.Length > 1 && !argumentDescriptor.AllowsMultiple)
                 {
                     throw new CliException(
                         $"Argument with alias '{argumentDescriptor.Alias}' was provided more than once: {string.Join(", ", argumentValues)}.");
                 }
 
-                arguments.Add(argumentDescriptor.Alias, argumentValues.Single());
+                arguments.Add(argumentDescriptor.Alias, argumentValues);
             }
 
             #endregion

@@ -14,8 +14,6 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo: delete un-used methods?
-    // todo: regions
     public static class CliExtensions
     {
         #region Misc
@@ -406,13 +404,17 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(resultAccumulator));
             }
 
-            if (resultAccumulator.Count == 1)
+            if (resultAccumulator.Count == 0)
             {
-                return resultAccumulator.GetLastResult<CliCommand>();
+                var command = CliCommand.CreateNamelessWorkerCommand();
+                resultAccumulator.AddResult(command);
+                return command;
             }
-
-            var command = CliCommand.CreateNamelessWorkerCommand();
-            return command;
+            else
+            {
+                var command = resultAccumulator.GetLastResult<CliCommand>();
+                return command;
+            }
         }
 
         public static CliCommand ParseLine(this ICliHost host, string line)
@@ -431,6 +433,8 @@ namespace TauCode.Cli
         }
 
         #endregion
+
+        #region Help
 
         public static string GetHelp(this CliWorkerDescriptor descriptor)
         {
@@ -463,7 +467,7 @@ namespace TauCode.Cli
                     var docSubstitution = key.ValueDescriptor.DocSubstitution ?? $"{key.Alias}";
 
                     sb.Append($" <{docSubstitution}>");
-                    
+
                     helpBuilder.WriteHelp(sb, key.ValueDescriptor.Description, margin, maxLength);
                 }
             }
@@ -496,5 +500,7 @@ namespace TauCode.Cli
 
             return sb.ToString();
         }
+
+        #endregion
     }
 }

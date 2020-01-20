@@ -34,7 +34,7 @@
 			(some-text
 				:classes term string
 				:action value
-				:description "Table to exclude from serializing"
+				:description "Table to exclude from dropping"
 				:doc-subst "table to exclude")
 		)
 		(fallback :name bad-option-or-key)

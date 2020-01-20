@@ -12,7 +12,6 @@
     <None Remove="HostResources\Git\NoName\Clone.lisp" />
     <None Remove="HostResources\Kubectl\Apply\NoName.lisp" />
     <None Remove="HostResources\Kubectl\Rollout\NoName.lisp" />
-    <None Remove="HostResources\Kubectl\Scale\NoName.lisp" />
     <None Remove="HostResources\Tau\Db\DropAllTables.lisp" />
     <None Remove="HostResources\Tau\Db\SerializeData.lisp" />
     <None Remove="HostResources\Tau\WebApi\Controller.lisp" />
@@ -29,7 +28,6 @@
     <EmbeddedResource Include="HostResources\Git\NoName\Clone.lisp" />
     <EmbeddedResource Include="HostResources\Kubectl\Apply\NoName.lisp" />
     <EmbeddedResource Include="HostResources\Kubectl\Rollout\NoName.lisp" />
-    <EmbeddedResource Include="HostResources\Kubectl\Scale\NoName.lisp" />
     <EmbeddedResource Include="HostResources\Tau\Db\DropAllTables.lisp" />
     <EmbeddedResource Include="HostResources\Tau\Db\SerializeData.lisp" />
     <EmbeddedResource Include="HostResources\Tau\WebApi\Controller.lisp" />

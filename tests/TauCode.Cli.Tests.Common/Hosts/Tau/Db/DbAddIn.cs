@@ -11,6 +11,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
         public DbAddIn()
             : base("db", CurrentVersion, true)
         {
+            this.Description = "Database-related operations";
         }
 
         protected override IReadOnlyList<ICliWorker> CreateWorkers()

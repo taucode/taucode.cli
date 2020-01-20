@@ -18,11 +18,16 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             };
         }
 
-        protected override string GetHelpImpl() => this
-            .GetAddIns()
-            .Single()
-            .GetWorkers()
-            .Single()
-            .GetHelp();
+        protected override string GetHelpImpl()
+        {
+            var worker = this
+                .GetAddIns()
+                .Single()
+                .GetWorkers()
+                .Single();
+            var descriptor = worker.Descriptor;
+            var help = descriptor.GetHelp();
+            return help;
+        }
     }
 }

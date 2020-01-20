@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using TauCode.Cli.Exceptions;
 using TauCode.Parsing.Lexing;
 using TauCode.Parsing.TinyLisp;
 using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli.Descriptors
 {
-    // todo clean
     public class CliWorkerDescriptorBuilder
     {
         private readonly PseudoList _form;
@@ -28,7 +27,7 @@ namespace TauCode.Cli.Descriptors
 
             if (supposedCommandForm.GetCarSymbolName().ToLowerInvariant() != "worker")
             {
-                throw new NotImplementedException();
+                throw new CliException($"'worker' symbol was expected.");
             }
 
             var name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
@@ -93,8 +92,13 @@ namespace TauCode.Cli.Descriptors
                                 optionList.Add(optionDescriptor);
                                 break;
 
+                            case "argument":
+                                var argumentDescriptor = this.ExtractArgumentDescriptor(subForm);
+                                argList.Add(argumentDescriptor);
+                                break;
+
                             default:
-                                throw new NotImplementedException();
+                                throw new CliException($"Unknown action: '{action}'.");
                         }
 
                         break;
@@ -108,7 +112,7 @@ namespace TauCode.Cli.Descriptors
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            throw new CliException($"Action '{action}' cannot be applied to node type '{subFormCar}'.");
                         }
 
                         break;
@@ -130,7 +134,7 @@ namespace TauCode.Cli.Descriptors
                         break;
 
                     default:
-                        throw new NotImplementedException();
+                        throw new CliException($"Unsupported node type: '{subFormCar}'.");
                 }
             }
         }
@@ -166,9 +170,14 @@ namespace TauCode.Cli.Descriptors
                     .ToList();
             }
 
+            var isMandatory = subForm.GetSingleArgumentAsBool(":is-mandatory") ?? false;
+            var allowsMultiple = subForm.GetSingleArgumentAsBool(":allows-multiple") ?? false;
+
             var argumentDescriptor = new CliWorkerArgumentDescriptor(
                 alias,
                 values,
+                isMandatory,
+                allowsMultiple,
                 description,
                 docSubstitution);
             

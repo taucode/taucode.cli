@@ -21,17 +21,17 @@ namespace TauCode.Cli.Descriptors
             var optionList = options.ToList();
             if (!optionList.Any())
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(options)}' cannot be empty.");
             }
 
             if (optionList.Any(x => x == null))
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(options)}' cannot contain nulls.");
             }
 
             if (optionList.Distinct().Count() != optionList.Count)
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(options)}' must contain unique values.");
             }
 
             this.Options = optionList;

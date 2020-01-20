@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using TauCode.Cli.Exceptions;
+using System;
 using TauCode.Cli.Tests.Common.BadHosts;
 
 namespace TauCode.Cli.Tests.UnitTests.BadHosts
@@ -13,10 +13,11 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var ex = Assert.Throws<CliException>(() => new WorkerWithNoNameButWithVersion());
+            var ex = Assert.Throws<ArgumentException>(() => new WorkerWithNoNameButWithVersion());
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("Nameless worker cannot support version."));
+            Assert.That(ex.ParamName, Is.EqualTo("version"));
+            Assert.That(ex.Message, Does.StartWith("Nameless worker cannot support version."));
         }
 
         [Test]
@@ -25,11 +26,11 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var ex = Assert.Throws<CliException>(() => new WorkerWithNoNameButWithHelp());
+            var ex = Assert.Throws<ArgumentException>(() => new WorkerWithNoNameButWithHelp());
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("Nameless worker cannot support help."));
+            Assert.That(ex.ParamName, Is.EqualTo("supportsHelp"));
+            Assert.That(ex.Message, Does.StartWith("Nameless worker cannot support help."));
         }
-
     }
 }

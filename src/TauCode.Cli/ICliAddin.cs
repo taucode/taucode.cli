@@ -6,5 +6,6 @@ namespace TauCode.Cli
     {
         ICliHost Host { get; }
         IReadOnlyList<ICliWorker> GetWorkers();
+        string Description { get; }
     }
 }

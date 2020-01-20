@@ -9,6 +9,8 @@ namespace TauCode.Cli.Descriptors
         public CliWorkerArgumentDescriptor(
             string alias,
             IEnumerable<string> values,
+            bool isMandatory,
+            bool allowsMultiple,
             string description,
             string docSubstitution)
         {
@@ -19,21 +21,24 @@ namespace TauCode.Cli.Descriptors
                 var valueList = values.ToList();
                 if (!valueList.Any())
                 {
-                    throw new NotImplementedException(); // todo
+                    throw new ArgumentException($"'{nameof(values)}' cannot be empty.");
                 }
 
                 if (valueList.Any(x => x == null))
                 {
-                    throw new NotImplementedException(); // todo
+                    throw new ArgumentException($"'{nameof(values)}' cannot contain nulls.");
                 }
 
                 if (valueList.Distinct().Count() != valueList.Count)
                 {
-                    throw new NotImplementedException(); // todo
+                    throw new ArgumentException($"'{nameof(values)}' must contain unique values.");
                 }
 
                 this.Values = new HashSet<string>(valueList);
             }
+
+            this.IsMandatory = isMandatory;
+            this.AllowsMultiple = allowsMultiple;
 
             this.Description = description;
             this.DocSubstitution = docSubstitution;
@@ -41,6 +46,8 @@ namespace TauCode.Cli.Descriptors
 
         public string Alias { get; }
         public HashSet<string> Values { get; }
+        public bool IsMandatory { get; }
+        public bool AllowsMultiple { get; }
         public string Description { get; }
         public string DocSubstitution { get; }
     }
