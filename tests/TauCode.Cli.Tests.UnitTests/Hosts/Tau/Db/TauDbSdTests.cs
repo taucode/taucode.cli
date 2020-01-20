@@ -40,8 +40,13 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
             var output = this.GetOutput();
 
             // Assert
-            Assert.That(output, Is.EqualTo(@"Serialize Data
-Provider: sqlserver; Excluded Tables: table1, table2; Connection String: Server=.;Database=mydb;Trusted_Connection=True;; 
+            Assert.That(output, Is.EqualTo(@"Keys:
+provider : sqlserver
+exclude-table : table1, table2
+Arguments:
+connection-string : Server=.;Database=mydb;Trusted_Connection=True;
+Options:
+
 "));
         }
 
@@ -58,8 +63,14 @@ Provider: sqlserver; Excluded Tables: table1, table2; Connection String: Server=
             var output = this.GetOutput();
 
             // Assert
-            Assert.That(output, Is.EqualTo(@"Serialize Data
-Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose; 
+            Assert.That(output, Is.EqualTo(@"Keys:
+provider : sqlserver
+exclude-table : 
+Arguments:
+connection-string : my_conn
+Options:
+verbose
+
 "));
         }
 
@@ -87,7 +98,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("Key is missing. Alias: 'provider'."));
+            Assert.That(ex.Message, Is.EqualTo("Mandatory key with alias 'provider' (-p, --provider) was not provided."));
         }
 
         [Test]
@@ -101,7 +112,7 @@ Provider: sqlserver; Excluded Tables: ; Connection String: my_conn; Verbose;
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("Multiple keys. Alias: 'provider'."));
+            Assert.That(ex.Message, Is.EqualTo("Key with alias 'provider' (-p, --provider) does not allow multiple entries. Your provided: sqlserver, postgresql."));
         }
 
         [Test]

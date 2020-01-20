@@ -39,7 +39,7 @@ namespace TauCode.Cli.Tests.Common
                 sb.AppendLine();
                 foreach (var pair in commandSummary.Arguments)
                 {
-                    sb.AppendLine($"{pair.Key} : {pair.Value}");
+                    sb.AppendLine($"{pair.Key} : {string.Join(", ", pair.Value)}");
                 }
             }
 

@@ -35,11 +35,15 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Git
             var output = this.GetOutput();
 
             // Assert
-            Assert.That(output, Is.EqualTo(@"Git Checkout
-Options: quiet, new-branch
+            Assert.That(output, Is.EqualTo(@"Keys: none
 Arguments:
-new-branch-name = feature/new-branch
-base-branch-name = master
+new-branch-name : feature/new-branch
+base-branch-name : master
+existing-branch-name : 
+Options:
+quiet
+new-branch
+
 "));
 
         }
@@ -57,10 +61,13 @@ base-branch-name = master
             var output = this.GetOutput();
 
             // Assert
-            Assert.That(output, Is.EqualTo(@"Git Checkout
-Options: 
+            Assert.That(output, Is.EqualTo(@"Keys: none
 Arguments:
-existing-branch-name = feature/existing-branch
+new-branch-name : 
+base-branch-name : 
+existing-branch-name : feature/existing-branch
+Options:
+
 "));
 
         }
