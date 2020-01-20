@@ -25,17 +25,17 @@ namespace TauCode.Cli.Descriptors
             var keyList = keys.ToList();
             if (!keyList.Any())
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(keys)}' cannot be empty.");
             }
 
             if (keyList.Any(x => x == null))
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(keys)}' cannot contain nulls.");
             }
 
             if (keyList.Distinct().Count() != keyList.Count)
             {
-                throw new NotImplementedException(); // todo
+                throw new ArgumentException($"'{nameof(keys)}' must contain unique values.");
             }
 
             this.Keys = keyList;

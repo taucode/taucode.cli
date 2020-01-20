@@ -7,7 +7,6 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli.Descriptors
 {
-    // todo clean
     public class CliWorkerDescriptorBuilder
     {
         private readonly PseudoList _form;

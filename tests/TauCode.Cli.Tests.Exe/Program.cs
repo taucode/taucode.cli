@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TauCode.Cli.Exceptions;
-using TauCode.Cli.Help;
-using TauCode.Cli.Tests.Common;
 using TauCode.Cli.Tests.Common.Hosts.Curl;
 using TauCode.Cli.Tests.Common.Hosts.Git;
 using TauCode.Cli.Tests.Common.Hosts.Kubectl;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
 using TauCode.Cli.TextClasses;
-using TauCode.Extensions;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
 
@@ -117,17 +114,6 @@ namespace TauCode.Cli.Tests.Exe
 
         private void Run()
         {
-
-            try
-            {
-                _currentHost.ParseLine("db sd --help");
-            }
-
-            catch
-            {
-                // todo temp
-            }
-
             while (true)
             {
                 Console.Write(this.MakePrompt());

@@ -28,12 +28,12 @@ namespace TauCode.Cli
             {
                 if (version != null)
                 {
-                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
 
                 if (supportsHelp)
                 {
-                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version)); // todo ut
+                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
             }
 
