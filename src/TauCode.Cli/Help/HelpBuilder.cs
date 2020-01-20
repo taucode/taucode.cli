@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TauCode.Cli.Help.Tokens;
 using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
+using TauCode.Parsing.TextClasses;
+using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Help
 {
@@ -54,10 +55,10 @@ namespace TauCode.Cli.Help
                         sbLine.Append(" ");
                         lineLength += 1;
                     }
-                    else if (token is HelpTextToken helpToken)
+                    else if (token is TextToken textToken && textToken.Class is CharSequenceTextClass)
                     {
-                        sbLine.Append(helpToken.Text);
-                        lineLength += helpToken.ConsumedLength;
+                        sbLine.Append(textToken.Text);
+                        lineLength += textToken.ConsumedLength;
                     }
                     else
                     {
