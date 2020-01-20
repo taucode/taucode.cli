@@ -2,7 +2,7 @@
 	(worker
 		:worker-name serialize-data
 		:verb "sd"
-		:description "Serialize data"
+		:description "Serialize DB data into JSON format"
 		:usage-samples (
 			"sd -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
 			"sd --provider postgresql 'Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;'"
