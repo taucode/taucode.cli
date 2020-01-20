@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using TauCode.Cli.Exceptions;
 using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Lexing;
@@ -62,7 +62,7 @@ namespace TauCode.Cli.Help
                     }
                     else
                     {
-                        throw new NotImplementedException(); // cannot be.
+                        throw new CliException("Internal error."); // cannot happen.
                     }
 
                     firstToken = false;
