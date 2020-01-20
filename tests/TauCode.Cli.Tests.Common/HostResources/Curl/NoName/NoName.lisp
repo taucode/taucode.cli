@@ -1,9 +1,9 @@
 (defblock :name curl :is-top t
 	(worker
-		:doc "Sends HTTP requests to hosts."
+		:description "Sends HTTP requests to hosts."
 		:usage-samples (
-			"<todo>"
-			"<todo>"))
+			"curl -H 'x-my-header:somevalue' http://k.me"
+			"curl https://google.com"))
 
 	(opt :name pre-url-keys
 		(alt
@@ -13,11 +13,14 @@
 					:values "-H"
 					:alias header
 					:action key
+					:allows-multiple t
 				)
 				(some-text
 					:classes string
 					:alias header-value
-					:action value)
+					:action value
+					:description "Header to add to request"
+					:doc-subst "header")
 			)
 		)
 	)
@@ -29,6 +32,8 @@
 		:classes url
 		:alias url
 		:action argument
+		:description "URL to send to"
+		:doc-subst "url"
 	)
 
 	(opt
@@ -37,6 +42,7 @@
 			:values "-v" "--verbose"
 			:alias verbose
 			:action option
+			:description "Verbose output"
 		)
 	)
 

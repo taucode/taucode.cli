@@ -23,8 +23,7 @@
 				:values "sqlserver" "postgresql"
 				:action value
 				:description "DB provider identifier"
-				:doc-subst "db provider"
-				)
+				:doc-subst "db provider")
 		)
 		(seq
 			(multi-text

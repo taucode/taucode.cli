@@ -406,13 +406,17 @@ namespace TauCode.Cli
                 throw new ArgumentNullException(nameof(resultAccumulator));
             }
 
-            if (resultAccumulator.Count == 1)
+            if (resultAccumulator.Count == 0)
             {
-                return resultAccumulator.GetLastResult<CliCommand>();
+                var command = CliCommand.CreateNamelessWorkerCommand();
+                resultAccumulator.AddResult(command);
+                return command;
             }
-
-            var command = CliCommand.CreateNamelessWorkerCommand();
-            return command;
+            else
+            {
+                var command = resultAccumulator.GetLastResult<CliCommand>();
+                return command;
+            }
         }
 
         public static CliCommand ParseLine(this ICliHost host, string line)
