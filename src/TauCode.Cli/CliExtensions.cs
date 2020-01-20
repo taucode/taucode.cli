@@ -14,8 +14,6 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    // todo: delete un-used methods?
-    // todo: regions
     public static class CliExtensions
     {
         #region Misc
@@ -436,6 +434,8 @@ namespace TauCode.Cli
 
         #endregion
 
+        #region Help
+
         public static string GetHelp(this CliWorkerDescriptor descriptor)
         {
             var margin = 20;
@@ -467,7 +467,7 @@ namespace TauCode.Cli
                     var docSubstitution = key.ValueDescriptor.DocSubstitution ?? $"{key.Alias}";
 
                     sb.Append($" <{docSubstitution}>");
-                    
+
                     helpBuilder.WriteHelp(sb, key.ValueDescriptor.Description, margin, maxLength);
                 }
             }
@@ -500,5 +500,7 @@ namespace TauCode.Cli
 
             return sb.ToString();
         }
+
+        #endregion
     }
 }
