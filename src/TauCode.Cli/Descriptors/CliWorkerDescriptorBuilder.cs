@@ -92,6 +92,11 @@ namespace TauCode.Cli.Descriptors
                                 optionList.Add(optionDescriptor);
                                 break;
 
+                            case "argument":
+                                var argumentDescriptor = this.ExtractArgumentDescriptor(subForm);
+                                argList.Add(argumentDescriptor);
+                                break;
+
                             default:
                                 throw new NotImplementedException();
                         }
