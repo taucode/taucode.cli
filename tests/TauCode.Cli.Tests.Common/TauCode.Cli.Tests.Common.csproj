@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="BadHostResources\UnnamedWorker.lisp" />
+    <None Remove="HostResources\Curl\NoName\NoName.lisp" />
+    <None Remove="HostResources\Git\NoName\Branch.lisp" />
+    <None Remove="HostResources\Git\NoName\Checkout.lisp" />
+    <None Remove="HostResources\Git\NoName\Clone.lisp" />
+    <None Remove="HostResources\Kubectl\Apply\NoName.lisp" />
+    <None Remove="HostResources\Kubectl\Rollout\NoName.lisp" />
+    <None Remove="HostResources\Tau\Db\DropAllTables.lisp" />
+    <None Remove="HostResources\Tau\Db\SerializeData.lisp" />
+    <None Remove="HostResources\Tau\WebApi\Controller.lisp" />
+    <None Remove="HostResources\Tau\WebApi\Cqrs.lisp" />
+    <None Remove="HostResources\Text.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="BadHostResources\UnnamedWorker.lisp" />
+    <EmbeddedResource Include="BadHostResources\NamedWorker.lisp" />
+    <EmbeddedResource Include="HostResources\Curl\NoName\NoName.lisp" />
+    <EmbeddedResource Include="HostResources\Git\NoName\Branch.lisp" />
+    <EmbeddedResource Include="HostResources\Git\NoName\Checkout.lisp" />
+    <EmbeddedResource Include="HostResources\Git\NoName\Clone.lisp" />
+    <EmbeddedResource Include="HostResources\Kubectl\Apply\NoName.lisp" />
+    <EmbeddedResource Include="HostResources\Kubectl\Rollout\NoName.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\DropAllTables.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\SerializeData.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\WebApi\Controller.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\WebApi\Cqrs.lisp" />
+    <EmbeddedResource Include="HostResources\Text.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+  </ItemGroup>
+
+</Project>
