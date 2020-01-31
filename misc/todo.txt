@@ -13,3 +13,7 @@ db sd -c / - c .
     2. UT kubectl (including port forwarding) and curl, and others.
     3. Support integer args
     4. Support help for hosts, add-ins and workers.
+
+2020-01-31
+==========
+    1. Consider 'NotSetTextWriter' to designate that Host's output was not set.

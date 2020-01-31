@@ -34,7 +34,7 @@ namespace TauCode.Cli
 
                 if (supportsHelp)
                 {
-                    throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
+                    throw new ArgumentException("Nameless add-in cannot support help.", nameof(version));
                 }
             }
 
