@@ -26,6 +26,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.Exe", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.UnitTests", "tests\TauCode.Cli.Tests.UnitTests\TauCode.Cli.Tests.UnitTests.csproj", "{152C360D-5B50-4A09-8BBE-D1DDA31FFC0A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A19795C7-E7D2-4515-96EE-19EA79EF573C}"
+	ProjectSection(SolutionItems) = preProject
+		build\azure-pipelines-dev.yml = build\azure-pipelines-dev.yml
+		build\azure-pipelines.yml = build\azure-pipelines.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
