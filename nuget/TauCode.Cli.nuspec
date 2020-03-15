@@ -21,7 +21,7 @@
   </metadata>
   <files>
     <file src="..\LICENSE.txt" target="" />
-    <file src="..\src\TauCode.Cli\bin\Release\netstandard2.0\TauCode.Cli.dll" target="lib\netstandard2.0" />
-    <file src="..\src\TauCode.Cli\bin\Release\netstandard2.0\TauCode.Cli.pdb" target="lib\netstandard2.0" />
+    <file src="..\src\TauCode.Cli\bin\Release\netstandard2.1\TauCode.Cli.dll" target="lib\netstandard2.1" />
+    <file src="..\src\TauCode.Cli\bin\Release\netstandard2.1\TauCode.Cli.pdb" target="lib\netstandard2.1" />
   </files>
 </package>
