@@ -1,9 +1,8 @@
 ﻿using System.Text;
-using TauCode.Cli.CommandSummary;
 
-namespace TauCode.Cli.Tests.Common
+namespace TauCode.Cli.CommandSummary
 {
-    public static class CommonHelper
+    public static class CliCommandSummaryExtensions
     {
         public static string FormatCommandSummary(this CliCommandSummary commandSummary)
         {
