@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TauCode.Cli.Exceptions;
-using TauCode.Cli.Tests.Common.Hosts.Curl;
-using TauCode.Cli.Tests.Common.Hosts.Git;
-using TauCode.Cli.Tests.Common.Hosts.Kubectl;
-using TauCode.Cli.Tests.Common.Hosts.Tau;
 using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
 
-namespace TauCode.Cli.Tests.Exe
+namespace TauCode.Cli.HostRunners
 {
-    public class Program
+    public class DemoHostRunner : CliHostRunnerBase
     {
         #region Nested
 
@@ -21,45 +17,53 @@ namespace TauCode.Cli.Tests.Exe
 
         #endregion
 
-        #region Static
-
-        private static void Main()
-        {
-            var program = new Program();
-            program.Run();
-        }
-
-        #endregion
-
         #region Fields
 
-        private readonly IDictionary<string, ICliHost> _hosts;
+        private readonly CustomCliHost _idle;
+        private readonly Dictionary<string, ICliHost> _hosts;
         private ICliHost _currentHost;
+
 
         #endregion
 
         #region Constructor
 
-        private Program()
+        public DemoHostRunner(
+            string idleHostName,
+            IEnumerable<ICliHost> hosts)
         {
-            var idleHost = new IdleHost();
-            idleHost
+            _idle = new CustomCliHost(idleHostName);
+
+            if (hosts == null)
+            {
+                throw new ArgumentNullException(nameof(hosts));
+            }
+
+            var hostList = hosts.ToList();
+
+            if (hostList.Any(x => x == null))
+            {
+                throw new ArgumentException($"'{nameof(hosts)}' must not contain nulls.", nameof(hosts));
+            }
+
+            hostList.Add(_idle);
+            _hosts = hostList.ToDictionary(x => x.Name, x => x);
+        }
+
+
+        #endregion
+
+        #region Protected
+
+        protected virtual void InitHosts()
+        {
+            _idle
                 .AddCustomHandler(
                     () => Console.WriteLine(this.GetHelp()),
                     "--help")
                 .AddCustomHandler(
-                    () => Console.WriteLine(this.GetAllHostsName()),
+                    () => Console.WriteLine(this.GetAllHostNames()),
                     "--all-hosts");
-
-            _hosts = new ICliHost[]
-                {
-                    new TauHost(),
-                    new GitHost(),
-                    new CurlHost(),
-                    new KubectlHost(),
-                    idleHost,
-                }
-                .ToDictionary(x => x.Name, x => x);
 
             _hosts.Values.ToList().ForEach(x =>
             {
@@ -90,17 +94,10 @@ namespace TauCode.Cli.Tests.Exe
 
             });
 
-            _currentHost = _hosts.Values.Single(x => x is TauHost);
+            _currentHost = _idle;
         }
 
-        private string GetAllHostsName()
-        {
-            return string.Join(
-                Environment.NewLine,
-                _hosts.Values.Select(x => x.Name));
-        }
-
-        private string GetHelp()
+        protected virtual string GetHelp()
         {
             var sb = new StringBuilder();
             sb.AppendLine("--help               Shows available commands");
@@ -110,10 +107,27 @@ namespace TauCode.Cli.Tests.Exe
             return sb.ToString();
         }
 
+        protected virtual string GetAllHostNames()
+        {
+            return string.Join(
+                Environment.NewLine,
+                _hosts.Values.Select(x => x.Name));
+        }
+
+        protected virtual string MakePrompt()
+        {
+            return $"{_currentHost.Name} >";
+        }
+
+
         #endregion
 
-        private void Run()
+        #region Overridden
+
+        public override int Run(string[] args)
         {
+            this.InitHosts();
+
             while (true)
             {
                 Console.Write(this.MakePrompt());
@@ -156,11 +170,10 @@ namespace TauCode.Cli.Tests.Exe
                     Console.WriteLine(ex);
                 }
             }
+
+            return 0;
         }
 
-        private string MakePrompt()
-        {
-            return $"{_currentHost.Name} >";
-        }
+        #endregion
     }
 }
