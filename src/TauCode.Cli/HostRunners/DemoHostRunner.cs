@@ -7,7 +7,6 @@ using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Tokens;
 
-// todo nice regions
 namespace TauCode.Cli.HostRunners
 {
     public class DemoHostRunner : CliHostRunnerBase
@@ -18,9 +17,16 @@ namespace TauCode.Cli.HostRunners
 
         #endregion
 
+        #region Fields
+
         private readonly CustomCliHost _idle;
         private readonly Dictionary<string, ICliHost> _hosts;
         private ICliHost _currentHost;
+
+
+        #endregion
+
+        #region Constructor
 
         public DemoHostRunner(
             string idleHostName,
@@ -44,55 +50,10 @@ namespace TauCode.Cli.HostRunners
             _hosts = hostList.ToDictionary(x => x.Name, x => x);
         }
 
-        public override int Run(string[] args)
-        {
-            this.InitHosts();
 
-            while (true)
-            {
-                Console.Write(this.MakePrompt());
-                var line = Console.ReadLine();
+        #endregion
 
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    var command = _currentHost.ParseLine(line);
-                    _currentHost.DispatchCommand(command);
-                }
-                catch (UnexpectedTokenException ex)
-                {
-                    Console.WriteLine(ex);
-                    Console.WriteLine("type --help for help.");
-                }
-                catch (ExitException)
-                {
-                    break;
-                }
-                catch (CliCustomHandlerException)
-                {
-                    // ignore.
-                }
-                catch (FallbackInterceptedCliException)
-                {
-                    // ignore.
-                }
-                catch (CliException ex)
-                {
-                    Console.Write("CLI Error: ");
-                    Console.WriteLine(ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-
-            return 0;
-        }
+        #region Protected
 
         protected virtual void InitHosts()
         {
@@ -157,5 +118,62 @@ namespace TauCode.Cli.HostRunners
         {
             return $"{_currentHost.Name} >";
         }
+
+
+        #endregion
+
+        #region Overridden
+
+        public override int Run(string[] args)
+        {
+            this.InitHosts();
+
+            while (true)
+            {
+                Console.Write(this.MakePrompt());
+                var line = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var command = _currentHost.ParseLine(line);
+                    _currentHost.DispatchCommand(command);
+                }
+                catch (UnexpectedTokenException ex)
+                {
+                    Console.WriteLine(ex);
+                    Console.WriteLine("type --help for help.");
+                }
+                catch (ExitException)
+                {
+                    break;
+                }
+                catch (CliCustomHandlerException)
+                {
+                    // ignore.
+                }
+                catch (FallbackInterceptedCliException)
+                {
+                    // ignore.
+                }
+                catch (CliException ex)
+                {
+                    Console.Write("CLI Error: ");
+                    Console.WriteLine(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
+            return 0;
+        }
+
+        #endregion
     }
 }
