@@ -6,10 +6,12 @@ namespace TauCode.Cli.HostRunners
     public class ProductionHostRunner : CliHostRunnerBase
     {
         private readonly ICliHost _host;
+        private readonly bool _showLine;
 
-        public ProductionHostRunner(ICliHost host)
+        public ProductionHostRunner(ICliHost host, bool showLine = false)
         {
             _host = host ?? throw new ArgumentNullException(nameof(host));
+            _showLine = showLine;
         }
 
         public override int Run(string[] args)
@@ -26,6 +28,11 @@ namespace TauCode.Cli.HostRunners
 
             var line = string.Join(" ", args);
 
+            if (_showLine)
+            {
+                _host.Output.WriteLine(line);
+            }
+
             try
             {
                 var command = _host.ParseLine(line);
@@ -34,7 +41,7 @@ namespace TauCode.Cli.HostRunners
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _host.Output.WriteLine(ex);
                 return -1;
             }
         }

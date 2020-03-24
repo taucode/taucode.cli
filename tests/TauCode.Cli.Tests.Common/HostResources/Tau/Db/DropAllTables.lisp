@@ -2,9 +2,10 @@
 	(worker
 		:worker-name drop-all-tables
 		:verb "drop-all-tables"
-		:description "Drop all tables of a database."
+		:description "Drops all tables in a database"
 		:usage-samples (
-			"drop-all-tables -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
+			"tau db drop-all-tables -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
+			"tau db drop-all-tables --provider postgresql 'Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;'"
 		)
 	)
 
@@ -16,11 +17,10 @@
 				:values "-p" "--provider"
 				:alias provider
 				:action key
-				:is-mandatory t
-				:is-single t)
+				:is-mandatory t)
 			(multi-text
 				:classes term
-				:values "sqlserver" "postgresql"
+				:values "sqlserver" "postgresql" "mysql"
 				:action value
 				:description "DB provider identifier"
 				:doc-subst "db provider")
@@ -30,11 +30,12 @@
 				:classes key
 				:values "-e" "--exclude"
 				:alias exclude-table
-				:action key)
+				:action key
+				:allows-multiple t)
 			(some-text
 				:classes term string
 				:action value
-				:description "Table to exclude from dropping"
+				:description "Table to exclude from being dropped"
 				:doc-subst "table to exclude")
 		)
 		(fallback :name bad-option-or-key)
@@ -51,21 +52,12 @@
 
 	(idle :name options)
 	(opt
-		(alt
-			(multi-text
-				:classes key
-				:values "-v" "--verbose"
-				:alias verbose
-				:action option
-				:description "Verbose output")
-
-			(multi-text
-				:classes key
-				:values "-q" "--quiet"
-				:alias quiet
-				:action option
-				:description "Don't show output")
-		)
+		(multi-text
+			:classes key
+			:values "-v" "--verbose"
+			:alias verbose
+			:action option
+			:description "Verbose output")
 	)
 	(idle :links options next)
 

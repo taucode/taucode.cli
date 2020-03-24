@@ -77,7 +77,7 @@ namespace TauCode.Cli.TokenProducers
                         continue;
                     }
 
-                    if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c) || c == '=')
+                    if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
                     {
                         if (text[index - 1] == '-')
                         {

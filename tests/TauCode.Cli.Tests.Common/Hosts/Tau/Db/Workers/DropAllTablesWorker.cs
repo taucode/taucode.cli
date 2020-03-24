@@ -12,8 +12,8 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
     {
         public DropAllTablesWorker()
             : base(
-                typeof(DropAllTablesWorker).Assembly.GetResourceText(".Tau.Db.DropAllTables.lisp", true),
-                "dat-1.0",
+                typeof(DbAddIn).Assembly.GetResourceText("DropAllTables.lisp", true),
+                null,
                 true)
         {
         }

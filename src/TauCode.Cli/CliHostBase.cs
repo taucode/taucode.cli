@@ -135,9 +135,9 @@ namespace TauCode.Cli
 
         #region Protected
 
-        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
+        protected ILexer Lexer => _lexer ??= this.CreateLexer();
 
-        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
+        protected IParser Parser => _parser ??= this.CreateParser();
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 
@@ -149,7 +149,7 @@ namespace TauCode.Cli
 
         protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
 
-        protected IReadOnlyDictionary<INode, ICliWorker> NodesByWorkers => _nodesByWorkers ?? (_nodesByWorkers = CreateNodesByWorkers());
+        protected IReadOnlyDictionary<INode, ICliWorker> NodesByWorkers => _nodesByWorkers ??= CreateNodesByWorkers();
 
         protected Dictionary<INode, ICliWorker> CreateNodesByWorkers()
         {
