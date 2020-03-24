@@ -48,7 +48,7 @@ namespace TauCode.Cli.TokenProducers
                         continue;
                     }
 
-                    if (c == '=' || LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
+                    if (LexingHelper.IsInlineWhiteSpaceOrCaretControl(c))
                     {
                         if (text[index - 1] == '-')
                         {

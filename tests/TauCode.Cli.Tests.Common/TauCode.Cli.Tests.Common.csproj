@@ -12,8 +12,12 @@
     <None Remove="HostResources\Git\NoName\Clone.lisp" />
     <None Remove="HostResources\Kubectl\Apply\NoName.lisp" />
     <None Remove="HostResources\Kubectl\Rollout\NoName.lisp" />
+    <None Remove="HostResources\Tau\Db\ClearAllTables.lisp" />
+    <None Remove="HostResources\Tau\Db\ConvertMetadata.lisp" />
     <None Remove="HostResources\Tau\Db\DropAllTables.lisp" />
+    <None Remove="HostResources\Tau\Db\Migrate.lisp" />
     <None Remove="HostResources\Tau\Db\SerializeData.lisp" />
+    <None Remove="HostResources\Tau\Db\SerializeMetadata.lisp" />
     <None Remove="HostResources\Tau\WebApi\Controller.lisp" />
     <None Remove="HostResources\Tau\WebApi\Cqrs.lisp" />
     <None Remove="HostResources\Text.txt" />
@@ -28,8 +32,12 @@
     <EmbeddedResource Include="HostResources\Git\NoName\Clone.lisp" />
     <EmbeddedResource Include="HostResources\Kubectl\Apply\NoName.lisp" />
     <EmbeddedResource Include="HostResources\Kubectl\Rollout\NoName.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\ClearAllTables.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\ConvertMetadata.lisp" />
     <EmbeddedResource Include="HostResources\Tau\Db\DropAllTables.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\Migrate.lisp" />
     <EmbeddedResource Include="HostResources\Tau\Db\SerializeData.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\Db\SerializeMetadata.lisp" />
     <EmbeddedResource Include="HostResources\Tau\WebApi\Controller.lisp" />
     <EmbeddedResource Include="HostResources\Tau\WebApi\Cqrs.lisp" />
     <EmbeddedResource Include="HostResources\Text.txt" />

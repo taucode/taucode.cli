@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
-using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class SerializeDataWorker : CommonWorker
+    public class SerializeMetadataWorker : CommonWorker
     {
-        public const string DefaultVersion = "sd-1.0";
-        public static string CurrentVersion { get; set; } = DefaultVersion;
-
-        public SerializeDataWorker()
+        public SerializeMetadataWorker()
             : base(
-                typeof(SerializeDataWorker).Assembly.GetResourceText("SerializeData.lisp", true),
-                CurrentVersion,
+                typeof(DbAddIn).Assembly.GetResourceText("SerializeMetadata.lisp", true),
+                null,
                 true)
         {
         }
@@ -41,11 +36,6 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
             }
 
             return false;
-        }
-
-        public override FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
-        {
-            return new FallbackInterceptedCliException($"Bad option or key: '{ex.Token}'.");
         }
     }
 }
