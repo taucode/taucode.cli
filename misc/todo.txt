@@ -17,3 +17,7 @@ db sd -c / - c .
 2020-01-31
 ==========
     1. Consider 'NotSetTextWriter' to designate that Host's output was not set.
+
+2020-03-24
+==========
+    1. Add 'ConnectionStringProducer' since 'PathProducer' isn't good at connection strings.

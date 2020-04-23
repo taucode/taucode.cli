@@ -16,10 +16,14 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
 
         protected override IReadOnlyList<ICliWorker> CreateWorkers()
         {
-            return new ICliWorker[]
+            return new List<ICliWorker>
             {
-                new SerializeDataWorker(),
+                new ClearAllTablesWorker(),
+                new ConvertMetadataWorker(),
                 new DropAllTablesWorker(),
+                new SerializeDataWorker(),
+                new SerializeMetadataWorker(),
+                new MigrateWorker(),
             };
         }
     }

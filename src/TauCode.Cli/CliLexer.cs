@@ -6,12 +6,15 @@ namespace TauCode.Cli
 {
     public class CliLexer : LexerBase
     {
+        public CliLexer()
+        {   
+        }
+
         protected override ITokenProducer[] CreateProducers()
         {
             return new ITokenProducer[]
             {
                 new WhiteSpaceProducer(),
-                new EqualsProducer(),
                 new IntegerProducer(IsAcceptableIntegerTerminator),
                 new TermProducer(),
                 new KeyProducer(),
