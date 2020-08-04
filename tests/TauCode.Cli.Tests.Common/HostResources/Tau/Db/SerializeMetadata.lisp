@@ -1,11 +1,11 @@
-(defblock :name serialize-data :is-top t
+(defblock :name serialize-metadata :is-top t
 	(worker
-		:worker-name serialize-data
-		:verb "sd"
-		:description "Serialize DB data into JSON format"
+		:worker-name serialize-metadata
+		:verb "sm"
+		:description "Serialize DB metadata into JSON format"
 		:usage-samples (
-			"tau db sd -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
-			"tau db sd --provider postgresql 'Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;'"
+			"tau db sm -p sqlserver -e table1 --exclude table2 Server=.;Database=mydb;Trusted_Connection=True;"
+			"tau db sm --provider postgresql 'Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;'"
 		)
 	)
 

@@ -41,9 +41,9 @@ namespace TauCode.Cli
 
         #region Protected
 
-        protected ILexer Lexer => _lexer ?? (_lexer = this.CreateLexer());
+        protected ILexer Lexer => _lexer ??= this.CreateLexer();
 
-        protected IParser Parser => _parser ?? (_parser = this.CreateParser());
+        protected IParser Parser => _parser ??= this.CreateParser();
 
         protected virtual ILexer CreateLexer() => new CliLexer();
 

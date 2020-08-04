@@ -13,15 +13,14 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau
         public TauHost(string version, bool supportsHelp)
             : base("tau", version, supportsHelp)
         {
-            
+
         }
 
         protected override IReadOnlyList<ICliAddIn> CreateAddIns()
         {
-            return new ICliAddIn[]
+            return new List<ICliAddIn>
             {
                 new DbAddIn(),
-                //new WebApiAddIn(),
             };
         }
     }

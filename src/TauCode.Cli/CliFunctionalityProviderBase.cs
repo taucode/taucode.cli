@@ -46,9 +46,10 @@ namespace TauCode.Cli
         #region ICliFunctionalityProvider Members
 
         public string Name { get; }
-        public abstract TextWriter Output { get; set; }
-        public abstract TextReader Input { get; set; }
 
+        public abstract TextWriter Output { get; set; }
+
+        public abstract TextReader Input { get; set; }
 
         public INode Node
         {

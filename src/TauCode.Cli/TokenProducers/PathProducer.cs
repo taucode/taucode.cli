@@ -69,9 +69,9 @@ namespace TauCode.Cli.TokenProducers
         public static bool IsPathFirstChar(char c) =>
             LexingHelper.IsDigit(c) ||
             LexingHelper.IsLatinLetter(c) ||
-            c.IsIn('\\', '/', '.', '!', '~', '$', '%', ';');
+            c.IsIn('\\', '/', '.', '!', '~', '$', '%', ';', '_');
 
         public static bool IsPathInnerChar(char c) =>
-            IsPathFirstChar(c) || c.IsIn(':', '-');
+            IsPathFirstChar(c) || c.IsIn(':', '-', '=');
     }
 }
