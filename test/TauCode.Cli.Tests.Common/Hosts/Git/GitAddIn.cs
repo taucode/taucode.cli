@@ -21,9 +21,8 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
         {
             return new ICliExecutor[]
             {
-                new BranchWorker(),
-                new CheckoutWorker(),
-                //new CloneWorker(),
+                new BranchExecutor(),
+                new CheckoutExecutor(),
             };
         }
     }

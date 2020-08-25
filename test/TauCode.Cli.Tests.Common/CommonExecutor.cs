@@ -4,9 +4,9 @@ using TauCode.Cli.Data;
 
 namespace TauCode.Cli.Tests.Common
 {
-    public class CommonWorker : CliExecutorBase
+    public class CommonExecutor : CliExecutorBase
     {
-        public CommonWorker(string grammar, string version, bool supportsHelp)
+        public CommonExecutor(string grammar, string version, bool supportsHelp)
             : base(grammar, version, supportsHelp)
         {
         }

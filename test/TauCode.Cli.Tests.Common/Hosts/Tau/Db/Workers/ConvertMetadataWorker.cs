@@ -2,7 +2,7 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class ConvertMetadataWorker : CommonWorker
+    public class ConvertMetadataWorker : CommonExecutor
     {
         public ConvertMetadataWorker()
             : base(

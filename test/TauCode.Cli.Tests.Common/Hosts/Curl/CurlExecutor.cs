@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Curl
 {
-    public class CurlWorker : CommonWorker
+    public class CurlExecutor : CommonExecutor
     {
-        public CurlWorker()
+        public CurlExecutor()
             : base(
-                typeof(CurlWorker).Assembly.GetResourceText(".Curl.NoName.NoName.lisp", true),
+                typeof(CurlExecutor).Assembly.GetResourceText(".Curl.NoName.NoName.lisp", true),
                 null,
                 false)
         {

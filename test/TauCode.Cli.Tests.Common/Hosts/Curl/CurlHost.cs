@@ -20,12 +20,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
 
         protected override string GetHelpImpl()
         {
-            var worker = this
+            var executor = this
                 .GetAddIns()
                 .Single()
                 .GetExecutors()
                 .Single();
-            var descriptor = worker.Descriptor;
+            var descriptor = executor.Descriptor;
             var help = descriptor.GetHelp();
             return help;
         }

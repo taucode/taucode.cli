@@ -2,7 +2,7 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Workers
 {
-    public class CqrsWorker : CommonWorker
+    public class CqrsWorker : CommonExecutor
     {
         public CqrsWorker()
             : base(

@@ -2,7 +2,7 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class MigrateWorker : CommonWorker
+    public class MigrateWorker : CommonExecutor
     {
         public MigrateWorker()
             : base(

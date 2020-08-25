@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 {
-    public class BranchWorker : CommonWorker
+    public class BranchExecutor : CommonExecutor
     {
-        public BranchWorker()
+        public BranchExecutor()
             : base(
-                typeof(BranchWorker).Assembly.GetResourceText(".Git.NoName.Branch.lisp", true),
+                typeof(BranchExecutor).Assembly.GetResourceText(".Git.NoName.Branch.lisp", true),
                 null,
                 true)
         {

@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Apply
 {
-    public class ApplyWorker : CommonWorker
+    public class ApplyExecutor : CommonExecutor
     {
-        public ApplyWorker()
+        public ApplyExecutor()
             : base(
-                typeof(ApplyWorker).Assembly.GetResourceText(".Kubectl.Apply.NoName.lisp", true),
+                typeof(ApplyExecutor).Assembly.GetResourceText(".Kubectl.Apply.NoName.lisp", true),
                 null,
                 false)
         {

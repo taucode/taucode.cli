@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Rollout
 {
-    public class RolloutWorker : CommonWorker
+    public class RolloutExecutor : CommonExecutor
     {
-        public RolloutWorker()
+        public RolloutExecutor()
             : base(
-                typeof(RolloutWorker).Assembly.GetResourceText(".Kubectl.Rollout.NoName.lisp", true),
+                typeof(RolloutExecutor).Assembly.GetResourceText(".Kubectl.Rollout.NoName.lisp", true),
                 null,
                 false)
         {

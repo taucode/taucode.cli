@@ -8,7 +8,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class DropAllTablesWorker : CommonWorker
+    public class DropAllTablesWorker : CommonExecutor
     {
         public DropAllTablesWorker()
             : base(

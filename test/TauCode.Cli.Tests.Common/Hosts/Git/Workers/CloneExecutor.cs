@@ -2,11 +2,11 @@
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 {
-    public class CloneWorker : CommonWorker
+    public class CloneExecutor : CommonExecutor
     {
-        public CloneWorker()
+        public CloneExecutor()
             : base(
-                typeof(CloneWorker).Assembly.GetResourceText(".Git.NoName.Clone.lisp", true),
+                typeof(CloneExecutor).Assembly.GetResourceText(".Git.NoName.Clone.lisp", true),
                 null,
                 true)
         {

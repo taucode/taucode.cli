@@ -13,7 +13,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Apply
         {
             return new ICliExecutor[]
             {
-                new ApplyWorker(),
+                new ApplyExecutor(),
             };
         }
     }

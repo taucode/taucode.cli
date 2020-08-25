@@ -50,7 +50,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             var ex = Assert.Throws<CliException>(() => dummy = host.Node);
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("'CreateExecutors' must return either all workers having non-null name, or exactly one worker with null name."));
+            Assert.That(ex.Message, Is.EqualTo("'CreateExecutors' must return either all executors having non-null name, or exactly one executor with null name."));
         }
     }
 }

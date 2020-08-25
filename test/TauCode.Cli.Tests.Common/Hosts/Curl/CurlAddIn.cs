@@ -11,7 +11,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
         {
             return new ICliExecutor[]
             {
-                new CurlWorker(),
+                new CurlExecutor(),
             };
         }
     }

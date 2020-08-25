@@ -10,7 +10,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
 {
-    public class SerializeDataWorker : CommonWorker
+    public class SerializeDataWorker : CommonExecutor
     {
         public const string DefaultVersion = "sd-1.0";
         public static string CurrentVersion { get; set; } = DefaultVersion;

@@ -45,12 +45,12 @@ namespace TauCode.Cli.Data
         {
             if (this.AddInName == null)
             {
-                throw new CliException("Worker name can only be set if add-in name is not null.");
+                throw new CliException("Executor name can only be set if add-in name is not null.");
             }
 
             if (this.ExecutorName != null)
             {
-                throw new CliException("Cannot change already existing worker name.");
+                throw new CliException("Cannot change already existing executor name.");
             }
 
             this.ExecutorName = executorName ?? throw new ArgumentNullException(nameof(executorName));

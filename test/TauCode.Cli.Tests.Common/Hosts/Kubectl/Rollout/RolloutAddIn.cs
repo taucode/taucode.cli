@@ -13,7 +13,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Rollout
         {
             return new ICliExecutor[]
             {
-                new RolloutWorker(),
+                new RolloutExecutor(),
             };
         }
     }

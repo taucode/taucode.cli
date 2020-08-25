@@ -112,39 +112,39 @@ namespace TauCode.Cli
                 addInNode.Properties["add-in-name"] = this.Name;
             }
 
-            var workers = this.CreateExecutors();
+            var executors = this.CreateExecutors();
 
-            if (workers == null)
+            if (executors == null)
             {
                 throw new CliException($"'{nameof(CreateExecutors)}' must not return null.");
             }
 
-            if (workers.Count == 0)
+            if (executors.Count == 0)
             {
                 throw new CliException($"'{nameof(CreateExecutors)}' must not return empty collection.");
             }
 
-            var validTypes = workers.All(x => x is CliExecutorBase);
+            var validTypes = executors.All(x => x is CliExecutorBase);
             if (!validTypes)
             {
                 throw new CliException($"'{nameof(CreateExecutors)}' must return instances of type '{typeof(CliExecutorBase).FullName}'.");
             }
 
-            if (workers.Any(x => x.Name == null) && workers.Count > 1)
+            if (executors.Any(x => x.Name == null) && executors.Count > 1)
             {
-                throw new CliException($"'{nameof(CreateExecutors)}' must return either all workers having non-null name, or exactly one worker with null name.");
+                throw new CliException($"'{nameof(CreateExecutors)}' must return either all executors having non-null name, or exactly one executor with null name.");
             }
 
-            foreach (var worker in workers)
+            foreach (var executor in executors)
             {
-                ((CliExecutorBase)worker).AddIn = this;
+                ((CliExecutorBase)executor).AddIn = this;
             }
 
-            _executors.AddRange(workers);
+            _executors.AddRange(executors);
 
-            foreach (var worker in workers)
+            foreach (var executor in executors)
             {
-                addInNode.EstablishLink(worker.Node);
+                addInNode.EstablishLink(executor.Node);
             }
 
             return addInNode;

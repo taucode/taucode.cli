@@ -11,11 +11,11 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
 {
-    public class CheckoutWorker : CommonWorker
+    public class CheckoutExecutor : CommonExecutor
     {
-        public CheckoutWorker()
+        public CheckoutExecutor()
             : base(
-                typeof(CheckoutWorker).Assembly.GetResourceText(".Git.NoName.Checkout.lisp", true),
+                typeof(CheckoutExecutor).Assembly.GetResourceText(".Git.NoName.Checkout.lisp", true),
                 null,
                 true)
         {
