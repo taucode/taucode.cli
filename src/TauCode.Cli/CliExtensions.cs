@@ -376,7 +376,7 @@ namespace TauCode.Cli
             return command;
         }
 
-        public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator, string workerName)
+        public static CliCommand EnsureExecutorCommand(this IResultAccumulator resultAccumulator, string executorName)
         {
             if (resultAccumulator == null)
             {
@@ -385,19 +385,19 @@ namespace TauCode.Cli
 
             if (resultAccumulator.Count == 0)
             {
-                var command = CliCommand.CreateExecutorCommand(workerName);
+                var command = CliCommand.CreateExecutorCommand(executorName);
                 resultAccumulator.AddResult(command);
                 return command;
             }
             else
             {
                 var command = resultAccumulator.GetLastResult<CliCommand>();
-                command.SetExecutorName(workerName);
+                command.SetExecutorName(executorName);
                 return command;
             }
         }
 
-        public static CliCommand EnsureWorkerCommand(this IResultAccumulator resultAccumulator)
+        public static CliCommand EnsureExecutorCommand(this IResultAccumulator resultAccumulator)
         {
             if (resultAccumulator == null)
             {
@@ -436,7 +436,7 @@ namespace TauCode.Cli
 
         #region Help
 
-        public static string GetHelp(this CliWorkerDescriptor descriptor)
+        public static string GetHelp(this CliExecutorDescriptor descriptor)
         {
             var margin = 20;
             var maxLength = 20;

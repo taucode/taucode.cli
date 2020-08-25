@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerArgumentDescriptor
+    public class CliExecutorArgumentDescriptor
     {
-        public CliWorkerArgumentDescriptor(
+        public CliExecutorArgumentDescriptor(
             string alias,
             IEnumerable<string> values,
             bool isMandatory,

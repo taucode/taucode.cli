@@ -7,11 +7,11 @@ using TauCode.Parsing.TinyLisp.Data;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerDescriptorBuilder
+    public class CliExecutorDescriptorBuilder
     {
         private readonly PseudoList _form;
 
-        public CliWorkerDescriptorBuilder(string workerGrammar)
+        public CliExecutorDescriptorBuilder(string workerGrammar)
         {
             ILexer lexer = new TinyLispLexer();
             var tokens = lexer.Lexize(workerGrammar);
@@ -19,7 +19,7 @@ namespace TauCode.Cli.Descriptors
             _form = reader.Read(tokens);
         }
 
-        public CliWorkerDescriptor Build()
+        public CliExecutorDescriptor Build()
         {
             var topDefblock = _form.Single(x => x.GetSingleArgumentAsBool(":is-top") ?? false);
 
@@ -39,9 +39,9 @@ namespace TauCode.Cli.Descriptors
                 .Select(x => x.Value)
                 .ToList();
 
-            var keyList = new List<CliWorkerKeyDescriptor>();
-            var argumentList = new List<CliWorkerArgumentDescriptor>();
-            var optionList = new List<CliWorkerOptionDescriptor>();
+            var keyList = new List<CliExecutorKeyDescriptor>();
+            var argumentList = new List<CliExecutorArgumentDescriptor>();
+            var optionList = new List<CliExecutorOptionDescriptor>();
 
             this.CollectItems(
                 topDefblock.AsPseudoList().GetFreeArguments(),
@@ -49,7 +49,7 @@ namespace TauCode.Cli.Descriptors
                 argumentList,
                 optionList);
 
-            var descriptor = new CliWorkerDescriptor(
+            var descriptor = new CliExecutorDescriptor(
                 name,
                 verb,
                 description,
@@ -63,9 +63,9 @@ namespace TauCode.Cli.Descriptors
 
         private void CollectItems(
             PseudoList list,
-            List<CliWorkerKeyDescriptor> keyList,
-            List<CliWorkerArgumentDescriptor> argList,
-            List<CliWorkerOptionDescriptor> optionList)
+            List<CliExecutorKeyDescriptor> keyList,
+            List<CliExecutorArgumentDescriptor> argList,
+            List<CliExecutorOptionDescriptor> optionList)
         {
             for (var i = 0; i < list.Count; i++)
             {
@@ -139,7 +139,7 @@ namespace TauCode.Cli.Descriptors
             }
         }
 
-        private CliWorkerOptionDescriptor ExtractOptionDescriptor(PseudoList subForm)
+        private CliExecutorOptionDescriptor ExtractOptionDescriptor(PseudoList subForm)
         {
             var alias = subForm.GetSingleKeywordArgument<Symbol>(":alias").Name.ToLowerInvariant();
             var options = subForm
@@ -149,12 +149,12 @@ namespace TauCode.Cli.Descriptors
                 .ToList();
             var description = subForm.GetSingleKeywordArgument<StringAtom>(":description", true)?.Value;
 
-            var optionDescriptor = new CliWorkerOptionDescriptor(alias, options, description);
+            var optionDescriptor = new CliExecutorOptionDescriptor(alias, options, description);
 
             return optionDescriptor;
         }
 
-        private CliWorkerArgumentDescriptor ExtractArgumentDescriptor(PseudoList subForm)
+        private CliExecutorArgumentDescriptor ExtractArgumentDescriptor(PseudoList subForm)
         {
             var alias = subForm.GetSingleKeywordArgument<Symbol>(":alias").Name.ToLowerInvariant();
             var description = subForm.GetSingleKeywordArgument<StringAtom>(":description", true)?.Value;
@@ -173,7 +173,7 @@ namespace TauCode.Cli.Descriptors
             var isMandatory = subForm.GetSingleArgumentAsBool(":is-mandatory") ?? false;
             var allowsMultiple = subForm.GetSingleArgumentAsBool(":allows-multiple") ?? false;
 
-            var argumentDescriptor = new CliWorkerArgumentDescriptor(
+            var argumentDescriptor = new CliExecutorArgumentDescriptor(
                 alias,
                 values,
                 isMandatory,
@@ -184,7 +184,7 @@ namespace TauCode.Cli.Descriptors
             return argumentDescriptor;
         }
 
-        private CliWorkerKeyDescriptor ExtractKeyDescriptor(PseudoList list, int index)
+        private CliExecutorKeyDescriptor ExtractKeyDescriptor(PseudoList list, int index)
         {
             var keySubForm = list[index];
             var alias = keySubForm.GetSingleKeywordArgument<Symbol>(":alias").Name.ToLowerInvariant();
@@ -210,7 +210,7 @@ namespace TauCode.Cli.Descriptors
             var valueDescription = valueSubForm.GetSingleKeywordArgument<StringAtom>(":description", true)?.Value;
             var valueDocSubstitution = valueSubForm.GetSingleKeywordArgument<StringAtom>(":doc-subst", true)?.Value;
 
-            var keyDescriptor = new CliWorkerKeyDescriptor(
+            var keyDescriptor = new CliExecutorKeyDescriptor(
                 alias,
                 keys,
                 isMandatory,

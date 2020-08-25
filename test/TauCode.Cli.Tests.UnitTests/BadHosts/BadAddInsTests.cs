@@ -9,7 +9,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
     public class BadAddInsTests
     {
         [Test]
-        public void Constructor_AddInWithCustomWorkers_ThrowsCliException()
+        public void Constructor_AddInWithCustomExecutors_ThrowsCliException()
         {
             // Arrange
 
@@ -19,35 +19,35 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must return instances of type 'TauCode.Cli.CliExecutorBase'."));
+            Assert.That(ex.Message, Is.EqualTo("'CreateExecutors' must return instances of type 'TauCode.Cli.CliExecutorBase'."));
         }
 
         [Test]
-        public void Constructor_AddInWithNullWorkers_ThrowsCliException()
+        public void Constructor_AddInWithNullExecutors_ThrowsCliException()
         {
             // Arrange
 
             // Act
-            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.NullWorkers);
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.NullExecutors);
             INode dummy;
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must not return null."));
+            Assert.That(ex.Message, Is.EqualTo("'CreateExecutors' must not return null."));
         }
 
         [Test]
-        public void Constructor_AddInWithEmptyWorkers_ThrowsCliException()
+        public void Constructor_AddInWithEmptyExecutors_ThrowsCliException()
         {
             // Arrange
 
             // Act
-            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyWorkers);
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyExecutors);
             INode dummy;
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must not return empty collection."));
+            Assert.That(ex.Message, Is.EqualTo("'CreateExecutors' must not return empty collection."));
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyWorkers);
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.EmptyExecutors);
             string help;
             var ex = Assert.Throws<CliException>(() => help = addIn.GetHelp());
             

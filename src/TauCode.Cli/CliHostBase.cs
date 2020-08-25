@@ -19,31 +19,31 @@ namespace TauCode.Cli
 
         private class AddInRecord
         {
-            private readonly Dictionary<string, ICliExecutor> _workers;
-            private readonly ICliExecutor _singleUnnamedWorker;
+            private readonly Dictionary<string, ICliExecutor> _executorss;
+            private readonly ICliExecutor _singleUnnamedExecutor;
 
-            public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliExecutor> workers)
+            public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliExecutor> executors)
             {
                 this.AddIn = addIn;
 
-                if (workers.Count == 0)
+                if (executors.Count == 0)
                 {
-                    throw new CliException("Add-in cannot have zero workers."); // actually, will never happen; CliAddInBase checks it.
+                    throw new CliException("Add-in cannot have zero executors."); // actually, will never happen; CliAddInBase checks it.
                 }
 
-                if (workers.Any(x => x.Name == null))
+                if (executors.Any(x => x.Name == null))
                 {
-                    if (workers.Count > 1)
+                    if (executors.Count > 1)
                     {
                         // actually, won't ever get here, since this thing is checked by CliAddInBase.
-                        throw new CliException("Add-in can have either exactly one nameless worker, or more than one workers all named.");
+                        throw new CliException("Add-in can have either exactly one nameless executor, or more than one executors all named.");
                     }
 
-                    _singleUnnamedWorker = workers.Single();
+                    _singleUnnamedExecutor = executors.Single();
                 }
                 else
                 {
-                    _workers = workers.ToDictionary(
+                    _executorss = executors.ToDictionary(
                         x => x.Name,
                         x => x);
                 }
@@ -51,19 +51,19 @@ namespace TauCode.Cli
 
             public ICliAddIn AddIn { get; }
 
-            public ICliExecutor GetWorker(string workerName)
+            public ICliExecutor GetExecutor(string executorName)
             {
-                if (workerName == null)
+                if (executorName == null)
                 {
-                    if (_singleUnnamedWorker == null)
+                    if (_singleUnnamedExecutor == null)
                     {
                         throw new CliException("Internal error.");
                     }
 
-                    return _singleUnnamedWorker;
+                    return _singleUnnamedExecutor;
                 }
 
-                return _workers[workerName];
+                return _executorss[executorName];
             }
         }
 
@@ -82,7 +82,7 @@ namespace TauCode.Cli
         private AddInRecord _singleUnnamedAddInRecord;
 
         private List<ICliAddIn> _addInList;
-        private Dictionary<INode, ICliExecutor> _nodesByWorkers;
+        private Dictionary<INode, ICliExecutor> _nodesByExecutorss;
 
         #endregion
 
@@ -149,24 +149,24 @@ namespace TauCode.Cli
 
         protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
 
-        protected IReadOnlyDictionary<INode, ICliExecutor> NodesByWorkers => _nodesByWorkers ??= CreateNodesByWorkers();
+        protected IReadOnlyDictionary<INode, ICliExecutor> NodesByExecutors => _nodesByExecutorss ??= CreateNodesByExecutors();
 
-        protected Dictionary<INode, ICliExecutor> CreateNodesByWorkers()
+        protected Dictionary<INode, ICliExecutor> CreateNodesByExecutors()
         {
             var result = new Dictionary<INode, ICliExecutor>();
 
             var addIns = this.GetAddIns();
             foreach (var addIn in addIns)
             {
-                var workers = addIn.GetExecutors();
-                foreach (var worker in workers)
+                var executors = addIn.GetExecutors();
+                foreach (var executor in executors)
                 {
-                    var workerRoot = worker.Node;
-                    var workerTree = workerRoot.FetchTree().Where(x => !(x is EndNode || x is IdleNode));
+                    var executorRoot = executor.Node;
+                    var executorTree = executorRoot.FetchTree().Where(x => !(x is EndNode || x is IdleNode));
 
-                    foreach (var node in workerTree)
+                    foreach (var node in executorTree)
                     {
-                        result.Add(node, worker);
+                        result.Add(node, executor);
                     }
                 }
             }
@@ -327,7 +327,7 @@ namespace TauCode.Cli
             }
             catch (FallbackNodeAcceptedTokenException ex)
             {
-                var worker = this.NodesByWorkers[ex.FallbackNode];
+                var worker = this.NodesByExecutors[ex.FallbackNode];
 
                 FallbackInterceptedCliException interceptEx;
 
@@ -360,7 +360,7 @@ namespace TauCode.Cli
             }
 
             var addInRecord = this.GetAddInRecord(command.AddInName);
-            var worker = addInRecord.GetWorker(command.ExecutorName);
+            var worker = addInRecord.GetExecutor(command.ExecutorName);
 
             worker.Process(command.Entries);
         }

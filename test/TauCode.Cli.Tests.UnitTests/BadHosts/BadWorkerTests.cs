@@ -17,7 +17,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
 
             // Assert
             Assert.That(ex.ParamName, Is.EqualTo("version"));
-            Assert.That(ex.Message, Does.StartWith("Nameless worker cannot support version."));
+            Assert.That(ex.Message, Does.StartWith("Nameless executor cannot support version."));
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
 
             // Assert
             Assert.That(ex.ParamName, Is.EqualTo("supportsHelp"));
-            Assert.That(ex.Message, Does.StartWith("Nameless worker cannot support help."));
+            Assert.That(ex.Message, Does.StartWith("Nameless executor cannot support help."));
         }
     }
 }

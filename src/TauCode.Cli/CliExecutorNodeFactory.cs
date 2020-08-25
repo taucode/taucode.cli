@@ -161,12 +161,12 @@ namespace TauCode.Cli
 
         private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            resultAccumulator.EnsureWorkerCommand(node.Properties["worker-name"]);
+            resultAccumulator.EnsureExecutorCommand(node.Properties["worker-name"]);
         }
 
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.EnsureWorkerCommand();
+            var command = resultAccumulator.EnsureExecutorCommand();
             var alias = node.Properties["alias"];
             var key = TokenToKey(token);
 
@@ -195,7 +195,7 @@ namespace TauCode.Cli
 
         private void ArgumentAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            var command = resultAccumulator.EnsureWorkerCommand();
+            var command = resultAccumulator.EnsureExecutorCommand();
 
             var alias = node.Properties["alias"];
             var argument = TokenToArgument(token);

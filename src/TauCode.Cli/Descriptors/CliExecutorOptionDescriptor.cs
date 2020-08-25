@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerOptionDescriptor
+    public class CliExecutorOptionDescriptor
     {
-        public CliWorkerOptionDescriptor(
+        public CliExecutorOptionDescriptor(
             string alias,
             IEnumerable<string> options,
             string description)

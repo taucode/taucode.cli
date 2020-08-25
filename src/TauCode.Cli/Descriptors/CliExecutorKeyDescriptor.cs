@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerKeyDescriptor
+    public class CliExecutorKeyDescriptor
     {
-        public CliWorkerKeyDescriptor(
+        public CliExecutorKeyDescriptor(
             string alias,
             IEnumerable<string> keys,
             bool isMandatory,
@@ -43,13 +43,13 @@ namespace TauCode.Cli.Descriptors
             this.IsMandatory = isMandatory;
             this.AllowsMultiple = allowsMultiple;
 
-            this.ValueDescriptor = new CliWorkerValueDescriptor(values, valueDescription, docSubstitution);
+            this.ValueDescriptor = new CliExecutorValueDescriptor(values, valueDescription, docSubstitution);
         }
 
         public string Alias { get; }
         public IReadOnlyList<string> Keys { get; }
         public bool IsMandatory { get; }
         public bool AllowsMultiple { get; }
-        public CliWorkerValueDescriptor ValueDescriptor { get; }
+        public CliExecutorValueDescriptor ValueDescriptor { get; }
     }
 }

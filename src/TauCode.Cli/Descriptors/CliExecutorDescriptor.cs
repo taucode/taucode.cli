@@ -4,16 +4,16 @@ using System.Linq;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerDescriptor
+    public class CliExecutorDescriptor
     {
-        public CliWorkerDescriptor(
+        public CliExecutorDescriptor(
             string name,
             string verb,
             string description,
             IEnumerable<string> usageSamples,
-            IEnumerable<CliWorkerKeyDescriptor> keys,
-            IEnumerable<CliWorkerArgumentDescriptor> arguments,
-            IEnumerable<CliWorkerOptionDescriptor> options)
+            IEnumerable<CliExecutorKeyDescriptor> keys,
+            IEnumerable<CliExecutorArgumentDescriptor> arguments,
+            IEnumerable<CliExecutorOptionDescriptor> options)
         {
             this.Name = name;
             this.Verb = verb;
@@ -87,8 +87,8 @@ namespace TauCode.Cli.Descriptors
         public string Verb { get; }
         public string Description { get; }
         public IReadOnlyList<string> UsageSamples { get; }
-        public IReadOnlyList<CliWorkerKeyDescriptor> Keys { get; }
-        public IReadOnlyList<CliWorkerArgumentDescriptor> Arguments { get; }
-        public IReadOnlyList<CliWorkerOptionDescriptor> Options { get; }
+        public IReadOnlyList<CliExecutorKeyDescriptor> Keys { get; }
+        public IReadOnlyList<CliExecutorArgumentDescriptor> Arguments { get; }
+        public IReadOnlyList<CliExecutorOptionDescriptor> Options { get; }
     }
 }

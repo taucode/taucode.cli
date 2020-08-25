@@ -33,24 +33,24 @@ namespace TauCode.Cli
             var lispTokens = tinyLispLexer.Lexize(grammar);
             _form = tinyLispPseudoReader.Read(lispTokens);
 
-            this.Descriptor = (new CliWorkerDescriptorBuilder(grammar)).Build();
+            this.Descriptor = (new CliExecutorDescriptorBuilder(grammar)).Build();
 
             if (this.Name == null)
             {
                 if (this.Version != null)
                 {
-                    throw new ArgumentException("Nameless worker cannot support version.", nameof(version));
+                    throw new ArgumentException("Nameless executor cannot support version.", nameof(version));
                 }
 
                 if (this.SupportsHelp)
                 {
-                    throw new ArgumentException("Nameless worker cannot support help.", nameof(supportsHelp));
+                    throw new ArgumentException("Nameless executor cannot support help.", nameof(supportsHelp));
                 }
             }
 
             try
             {
-                var helper = new CliWorkerDescriptorBuilder(grammar);
+                var helper = new CliExecutorDescriptorBuilder(grammar);
                 this.Descriptor = helper.Build();
             }
             catch (CliException)
@@ -109,7 +109,7 @@ namespace TauCode.Cli
 
         protected virtual string CreateNodeFactoryName()
         {
-            return $"Worker node factory. Worker name:'{this.Name}'. Worker type: '{this.GetType().FullName}'.";
+            return $"Executor node factory. Executor name:'{this.Name}'. Executor type: '{this.GetType().FullName}'.";
         }
 
         protected virtual CliExecutorNodeFactory CreateNodeFactory()
@@ -121,7 +121,7 @@ namespace TauCode.Cli
 
         #region Private
 
-        private static string ExtractName(string grammar) => (new CliWorkerDescriptorBuilder(grammar)).Build().Name;
+        private static string ExtractName(string grammar) => (new CliExecutorDescriptorBuilder(grammar)).Build().Name;
 
         #endregion
 
@@ -136,7 +136,7 @@ namespace TauCode.Cli
 
         public abstract void Process(IList<CliCommandEntry> entries);
 
-        public CliWorkerDescriptor Descriptor { get; }
+        public CliExecutorDescriptor Descriptor { get; }
 
         #endregion
     }

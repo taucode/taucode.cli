@@ -14,6 +14,6 @@ namespace TauCode.Cli
         ICliAddIn AddIn { get; }
         FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex);
         void Process(IList<CliCommandEntry> entries);
-        CliWorkerDescriptor Descriptor { get; }
+        CliExecutorDescriptor Descriptor { get; }
     }
 }

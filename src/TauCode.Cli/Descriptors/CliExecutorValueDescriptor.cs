@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace TauCode.Cli.Descriptors
 {
-    public class CliWorkerValueDescriptor
+    public class CliExecutorValueDescriptor
     {
-        public CliWorkerValueDescriptor(
+        public CliExecutorValueDescriptor(
             IEnumerable<string> values,
             string description,
             string docSubstitution)

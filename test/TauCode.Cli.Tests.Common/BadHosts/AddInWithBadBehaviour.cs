@@ -39,7 +39,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
                 // void
             }
 
-            public CliWorkerDescriptor Descriptor { get; }
+            public CliExecutorDescriptor Descriptor { get; }
         }
 
         private class StandardWorker : CliExecutorBase
@@ -63,8 +63,8 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
         public enum BadBehaviour
         {
-            NullWorkers = 1,
-            EmptyWorkers = 2,
+            NullExecutors = 1,
+            EmptyExecutors = 2,
             CustomWorker = 3,
             GoodButNoName = 4,
         }
@@ -87,10 +87,10 @@ namespace TauCode.Cli.Tests.Common.BadHosts
                         new CustomWorker(),
                     };
 
-                case BadBehaviour.EmptyWorkers:
+                case BadBehaviour.EmptyExecutors:
                     return new List<ICliExecutor>();
 
-                case BadBehaviour.NullWorkers:
+                case BadBehaviour.NullExecutors:
                     return null;
 
                 case BadBehaviour.GoodButNoName:
