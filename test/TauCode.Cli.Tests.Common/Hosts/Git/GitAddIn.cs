@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Tests.Common.Hosts.Git.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Git.Executors;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git
 {

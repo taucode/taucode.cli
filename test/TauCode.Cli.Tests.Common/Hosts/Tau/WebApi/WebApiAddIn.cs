@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Executors;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi
 {
@@ -15,8 +15,8 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi
         {
             return new ICliExecutor[]
             {
-                new CqrsWorker(),
-                new ControllerWorker(),
+                new CqrsExecutor(),
+                new ControllerExecutor(),
             };
         }
     }

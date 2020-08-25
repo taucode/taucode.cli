@@ -3,7 +3,7 @@ using System.Linq;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.Tests.Common.Hosts.Tau;
 using TauCode.Cli.Tests.Common.Hosts.Tau.Db;
-using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors;
 using TauCode.Parsing.Exceptions;
 
 namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
@@ -21,7 +21,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
         public void SetUp()
         {
             DbAddIn.CurrentVersion = DbAddIn.DefaultVersion;
-            SerializeDataWorker.CurrentVersion = SerializeDataWorker.DefaultVersion;
+            SerializeDataExecutor.CurrentVersion = SerializeDataExecutor.DefaultVersion;
             this.SetUpBase();
         }
 
@@ -236,7 +236,7 @@ verbose
         public void TauDbSdVersion_VersionDoesNotExist_ThrowsFallbackInterceptedCliException()
         {
             // Arrange
-            SerializeDataWorker.CurrentVersion = null;
+            SerializeDataExecutor.CurrentVersion = null;
 
             this.Host = new TauHost
             {

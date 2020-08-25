@@ -1,10 +1,10 @@
 ﻿using TauCode.Extensions;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors
 {
-    public class MigrateWorker : CommonExecutor
+    public class MigrateExecutor : CommonExecutor
     {
-        public MigrateWorker()
+        public MigrateExecutor()
             : base(
                 typeof(DbAddIn).Assembly.GetResourceText("Migrate.lisp", true),
                 null,

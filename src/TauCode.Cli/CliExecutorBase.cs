@@ -125,7 +125,7 @@ namespace TauCode.Cli
 
         #endregion
 
-        #region ICliWorker Members
+        #region ICliExecutor Members
 
         public ICliAddIn AddIn { get; internal set; }
 

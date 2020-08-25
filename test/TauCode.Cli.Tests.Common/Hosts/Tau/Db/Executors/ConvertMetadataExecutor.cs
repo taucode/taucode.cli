@@ -1,10 +1,10 @@
 ﻿using TauCode.Extensions;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors
 {
-    public class ConvertMetadataWorker : CommonExecutor
+    public class ConvertMetadataExecutor : CommonExecutor
     {
-        public ConvertMetadataWorker()
+        public ConvertMetadataExecutor()
             : base(
                 typeof(DbAddIn).Assembly.GetResourceText("ConvertMetadata.lisp", true),
                 null,

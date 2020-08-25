@@ -9,7 +9,7 @@ using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Git.Executors
 {
     public class CheckoutExecutor : CommonExecutor
     {

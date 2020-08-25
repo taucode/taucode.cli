@@ -1,6 +1,6 @@
 ﻿using TauCode.Extensions;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Git.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Git.Executors
 {
     public class BranchExecutor : CommonExecutor
     {

@@ -6,13 +6,13 @@ using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors
 {
-    public class DropAllTablesWorker : CommonExecutor
+    public class SerializeMetadataExecutor : CommonExecutor
     {
-        public DropAllTablesWorker()
+        public SerializeMetadataExecutor()
             : base(
-                typeof(DbAddIn).Assembly.GetResourceText("DropAllTables.lisp", true),
+                typeof(DbAddIn).Assembly.GetResourceText("SerializeMetadata.lisp", true),
                 null,
                 true)
         {

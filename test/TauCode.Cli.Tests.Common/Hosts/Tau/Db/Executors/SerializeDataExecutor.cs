@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
 using TauCode.Extensions;
 using TauCode.Parsing;
+using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Nodes;
 using TauCode.Parsing.Tokens;
 
-namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
+namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors
 {
-    public class ClearAllTablesWorker : CommonExecutor
+    public class SerializeDataExecutor : CommonExecutor
     {
-        public ClearAllTablesWorker()
+        public const string DefaultVersion = "sd-1.0";
+        public static string CurrentVersion { get; set; } = DefaultVersion;
+
+        public SerializeDataExecutor()
             : base(
-                typeof(DbAddIn).Assembly.GetResourceText("ClearAllTables.lisp", true),
-                null,
+                typeof(SerializeDataExecutor).Assembly.GetResourceText("SerializeData.lisp", true),
+                CurrentVersion,
                 true)
         {
         }
@@ -36,6 +41,11 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
             }
 
             return false;
+        }
+
+        public override FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
+        {
+            return new FallbackInterceptedCliException($"Bad option or key: '{ex.Token}'.");
         }
     }
 }
