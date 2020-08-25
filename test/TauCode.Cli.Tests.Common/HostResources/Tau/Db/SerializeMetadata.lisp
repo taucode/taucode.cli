@@ -1,6 +1,6 @@
 (defblock :name serialize-metadata :is-top t
-	(worker
-		:worker-name serialize-metadata
+	(executor
+		:executor-name serialize-metadata
 		:verb "sm"
 		:description "Serialize DB metadata into JSON format"
 		:usage-samples (

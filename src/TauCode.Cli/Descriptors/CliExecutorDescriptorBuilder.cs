@@ -11,10 +11,10 @@ namespace TauCode.Cli.Descriptors
     {
         private readonly PseudoList _form;
 
-        public CliExecutorDescriptorBuilder(string workerGrammar)
+        public CliExecutorDescriptorBuilder(string executorGrammar)
         {
             ILexer lexer = new TinyLispLexer();
-            var tokens = lexer.Lexize(workerGrammar);
+            var tokens = lexer.Lexize(executorGrammar);
             ITinyLispPseudoReader reader = new TinyLispPseudoReader();
             _form = reader.Read(tokens);
         }
@@ -25,12 +25,12 @@ namespace TauCode.Cli.Descriptors
 
             var supposedCommandForm = topDefblock.GetFreeArguments().First();
 
-            if (supposedCommandForm.GetCarSymbolName().ToLowerInvariant() != "worker")
+            if (supposedCommandForm.GetCarSymbolName().ToLowerInvariant() != "executor")
             {
-                throw new CliException($"'worker' symbol was expected.");
+                throw new CliException($"'executor' symbol was expected.");
             }
 
-            var name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
+            var name = supposedCommandForm.GetSingleKeywordArgument<Symbol>(":executor-name", true)?.Name;
             var verb = supposedCommandForm.GetSingleKeywordArgument<StringAtom>(":verb", true)?.Value;
             var description = supposedCommandForm.GetSingleKeywordArgument<StringAtom>(":description", true)?.Value;
             var usageSamples = supposedCommandForm.GetSingleKeywordArgument(":usage-samples", true)?
@@ -117,7 +117,7 @@ namespace TauCode.Cli.Descriptors
 
                         break;
 
-                    case "worker":
+                    case "executor":
                     case "idle":
                     case "fallback":
                     case "end":

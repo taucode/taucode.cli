@@ -1,6 +1,6 @@
 (defblock :name clear-all-tables :is-top t
-	(worker
-		:worker-name clear-all-tables
+	(executor
+		:executor-name clear-all-tables
 		:verb "clear-all-tables"
 		:description "Clears all tables in a database"
 		:usage-samples (

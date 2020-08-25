@@ -1,5 +1,5 @@
 (defblock :name curl :is-top t
-	(worker
+	(executor
 		:description "Sends HTTP requests to hosts."
 		:usage-samples (
 			"curl -H 'x-my-header:somevalue' http://k.me"

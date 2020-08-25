@@ -1,6 +1,6 @@
 (defblock :name serialize-data :is-top t
-	(worker
-		:worker-name serialize-data
+	(executor
+		:executor-name serialize-data
 		:verb "sd"
 		:description "Serialize DB data into JSON format"
 		:usage-samples (

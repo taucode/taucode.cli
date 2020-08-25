@@ -54,32 +54,32 @@ namespace TauCode.Cli
         public override INode CreateNode(PseudoList item)
         {
             var car = item.GetCarSymbolName().ToLowerInvariant();
-            if (car == "worker")
+            if (car == "executor")
             {
-                INode workerNode;
+                INode executorNode;
 
-                var workerName = item.GetSingleKeywordArgument<Symbol>(":worker-name", true)?.Name;
-                if (workerName == null)
+                var executorName = item.GetSingleKeywordArgument<Symbol>(":executor-name", true)?.Name;
+                if (executorName == null)
                 {
-                    workerNode = new IdleNode(this.NodeFamily, $"Root node for unnamed worker of type {this.GetType().FullName}");
+                    executorNode = new IdleNode(this.NodeFamily, $"Root node for unnamed executor of type {this.GetType().FullName}");
                 }
                 else
                 {
-                    workerNode = new MultiTextNode(
+                    executorNode = new MultiTextNode(
                         new string[] { item.GetSingleKeywordArgument<StringAtom>(":verb").Value },
                         new ITextClass[]
                         {
                             TermTextClass.Instance,
                         },
                         true,
-                        WorkerAction,
+                        ExecutorAction,
                         this.NodeFamily,
-                        $"Worker Node. Name: [{workerName}]");
+                        $"Executor Node. Name: [{executorName}]");
 
-                    workerNode.Properties["worker-name"] = workerName;
+                    executorNode.Properties["executor-name"] = executorName;
                 }
 
-                return workerNode;
+                return executorNode;
             }
 
             var node = base.CreateNode(item);
@@ -159,9 +159,9 @@ namespace TauCode.Cli
 
         #region Node Actions
 
-        private void WorkerAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
+        private void ExecutorAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)
         {
-            resultAccumulator.EnsureExecutorCommand(node.Properties["worker-name"]);
+            resultAccumulator.EnsureExecutorCommand(node.Properties["executor-name"]);
         }
 
         private void KeyAction(ActionNode node, IToken token, IResultAccumulator resultAccumulator)

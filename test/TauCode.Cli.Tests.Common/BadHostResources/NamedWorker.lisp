@@ -1,6 +1,6 @@
 (defblock :name drop-all-tables :is-top t
-	(worker
-		:worker-name dummy-but-named
+	(executor
+		:executor-name dummy-but-named
 		:verbs "dummy")
 	(end)
 )
