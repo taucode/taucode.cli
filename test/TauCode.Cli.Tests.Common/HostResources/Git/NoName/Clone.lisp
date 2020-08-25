@@ -1,6 +1,6 @@
 (defblock :name clone :is-top t
-	(worker
-		:worker-name clone
+	(executor
+		:executor-name clone
 		:verb "clone"
 		:doc "Clone a repo."
 		:usage-samples (

@@ -16,7 +16,7 @@ namespace TauCode.Cli
         #region Fields
 
         private readonly INodeFamily _nodeFamily;
-        private readonly List<ICliWorker> _workers;
+        private readonly List<ICliExecutor> _executors;
 
         #endregion
 
@@ -39,7 +39,7 @@ namespace TauCode.Cli
             }
 
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");
-            _workers = new List<ICliWorker>();
+            _executors = new List<ICliExecutor>();
         }
 
         protected CliAddInBase()
@@ -69,20 +69,20 @@ namespace TauCode.Cli
             var description = this.Description ?? $"Add-in '{this.GetType().FullName}' does not have a description.";
             sb.AppendLine(description);
 
-            if (_workers[0].Name == null)
+            if (_executors[0].Name == null)
             {
-                // got single unnamed worker
+                // got single unnamed executor
 
-                sb.AppendLine(_workers.Single().Descriptor.GetHelp());
+                sb.AppendLine(_executors.Single().Descriptor.GetHelp());
             }
             else
             {
-                var workers = this.GetWorkers().OrderBy(x => x.Descriptor.Verb).ToList();
+                var executors = this.GetExecutors().OrderBy(x => x.Descriptor.Verb).ToList();
                 var helpBuilder = new HelpBuilder();
-                foreach (var worker in workers)
+                foreach (var executor in executors)
                 {
-                    sb.Append(worker.Descriptor.Verb);
-                    helpBuilder.WriteHelp(sb, worker.Descriptor.Description, 20, 20);
+                    sb.Append(executor.Descriptor.Verb);
+                    helpBuilder.WriteHelp(sb, executor.Descriptor.Description, 20, 20);
                 }
             }
 
@@ -112,39 +112,39 @@ namespace TauCode.Cli
                 addInNode.Properties["add-in-name"] = this.Name;
             }
 
-            var workers = this.CreateWorkers();
+            var executors = this.CreateExecutors();
 
-            if (workers == null)
+            if (executors == null)
             {
-                throw new CliException($"'{nameof(CreateWorkers)}' must not return null.");
+                throw new CliException($"'{nameof(CreateExecutors)}' must not return null.");
             }
 
-            if (workers.Count == 0)
+            if (executors.Count == 0)
             {
-                throw new CliException($"'{nameof(CreateWorkers)}' must not return empty collection.");
+                throw new CliException($"'{nameof(CreateExecutors)}' must not return empty collection.");
             }
 
-            var validTypes = workers.All(x => x is CliWorkerBase);
+            var validTypes = executors.All(x => x is CliExecutorBase);
             if (!validTypes)
             {
-                throw new CliException($"'{nameof(CreateWorkers)}' must return instances of type '{typeof(CliWorkerBase).FullName}'.");
+                throw new CliException($"'{nameof(CreateExecutors)}' must return instances of type '{typeof(CliExecutorBase).FullName}'.");
             }
 
-            if (workers.Any(x => x.Name == null) && workers.Count > 1)
+            if (executors.Any(x => x.Name == null) && executors.Count > 1)
             {
-                throw new CliException($"'{nameof(CreateWorkers)}' must return either all workers having non-null name, or exactly one worker with null name.");
+                throw new CliException($"'{nameof(CreateExecutors)}' must return either all executors having non-null name, or exactly one executor with null name.");
             }
 
-            foreach (var worker in workers)
+            foreach (var executor in executors)
             {
-                ((CliWorkerBase)worker).AddIn = this;
+                ((CliExecutorBase)executor).AddIn = this;
             }
 
-            _workers.AddRange(workers);
+            _executors.AddRange(executors);
 
-            foreach (var worker in workers)
+            foreach (var executor in executors)
             {
-                addInNode.EstablishLink(worker.Node);
+                addInNode.EstablishLink(executor.Node);
             }
 
             return addInNode;
@@ -176,7 +176,7 @@ namespace TauCode.Cli
 
         #region Protected
 
-        protected abstract IReadOnlyList<ICliWorker> CreateWorkers();
+        protected abstract IReadOnlyList<ICliExecutor> CreateExecutors();
 
         #endregion
 
@@ -184,14 +184,14 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; internal set; }
 
-        public IReadOnlyList<ICliWorker> GetWorkers()
+        public IReadOnlyList<ICliExecutor> GetExecutors()
         {
-            if (_workers.Count == 0)
+            if (_executors.Count == 0)
             {
                 var dummy = this.Node;
             }
 
-            return _workers;
+            return _executors;
         }
 
         public string Description { get; protected set; }

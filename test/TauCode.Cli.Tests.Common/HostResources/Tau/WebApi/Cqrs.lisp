@@ -1,6 +1,6 @@
 (defblock :name serialize-data :is-top t
-	(worker
-		:worker-name serialize-data
+	(executor
+		:executor-name serialize-data
 		:verbs "serialize-data" "sd"
 		:doc "Serializes all tables' data."
 		:usage-samples (

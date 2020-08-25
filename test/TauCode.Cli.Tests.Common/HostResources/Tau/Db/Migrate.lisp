@@ -1,6 +1,6 @@
 (defblock :name migrate :is-top t
-	(worker
-		:worker-name migrate
+	(executor
+		:executor-name migrate
 		:verb "migrate"
 		:description "Migrate database"
 		:usage-samples (

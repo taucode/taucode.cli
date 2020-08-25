@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Tests.Common.Hosts.Git.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Git.Executors;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Git
 {
@@ -17,13 +17,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
         {   
         }
 
-        protected override IReadOnlyList<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
-            return new ICliWorker[]
+            return new ICliExecutor[]
             {
-                new BranchWorker(),
-                new CheckoutWorker(),
-                //new CloneWorker(),
+                new BranchExecutor(),
+                new CheckoutExecutor(),
             };
         }
     }

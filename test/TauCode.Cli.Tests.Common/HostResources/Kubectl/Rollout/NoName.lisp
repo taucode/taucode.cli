@@ -1,5 +1,5 @@
 (defblock :name dummy-block-name :is-top t
-	(worker
+	(executor
 		:description "Manage the rollout of a resource."
 		:usage-samples (
 			"kubectl rollout undo deployment/abc"

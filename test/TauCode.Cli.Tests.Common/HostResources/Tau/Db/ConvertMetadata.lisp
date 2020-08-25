@@ -1,6 +1,6 @@
 (defblock :name convert-metadata :is-top t
-	(worker
-		:worker-name convert-metadata
+	(executor
+		:executor-name convert-metadata
 		:verb "cm"
 		:description "Convert DB metadata stored as a JSON file"
 		:usage-samples (
