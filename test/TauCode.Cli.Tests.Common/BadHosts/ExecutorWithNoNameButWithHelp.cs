@@ -4,11 +4,11 @@ using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {
-    public class WorkerWithNoNameButWithHelp : CliExecutorBase
+    public class ExecutorWithNoNameButWithHelp : CliExecutorBase
     {
-        public WorkerWithNoNameButWithHelp()
+        public ExecutorWithNoNameButWithHelp()
             : base(
-                typeof(WorkerWithNoNameButWithHelp).Assembly.GetResourceText(".BadHostResources.UnnamedWorker.lisp", true),
+                typeof(ExecutorWithNoNameButWithHelp).Assembly.GetResourceText(".BadHostResources.UnnamedExecutor.lisp", true),
                 null,
                 true)
         {

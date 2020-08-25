@@ -5,7 +5,7 @@ using TauCode.Cli.Tests.Common.BadHosts;
 namespace TauCode.Cli.Tests.UnitTests.BadHosts
 {
     [TestFixture]
-    public class BadWorkerTests
+    public class BadExecutorTests
     {
         [Test]
         public void Constructor_NoNameButHasVersion_ThrowsCliException()
@@ -13,7 +13,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var ex = Assert.Throws<ArgumentException>(() => new WorkerWithNoNameButWithVersion());
+            var ex = Assert.Throws<ArgumentException>(() => new ExecutorWithNoNameButWithVersion());
 
             // Assert
             Assert.That(ex.ParamName, Is.EqualTo("version"));
@@ -26,7 +26,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var ex = Assert.Throws<ArgumentException>(() => new WorkerWithNoNameButWithHelp());
+            var ex = Assert.Throws<ArgumentException>(() => new ExecutorWithNoNameButWithHelp());
 
             // Assert
             Assert.That(ex.ParamName, Is.EqualTo("supportsHelp"));

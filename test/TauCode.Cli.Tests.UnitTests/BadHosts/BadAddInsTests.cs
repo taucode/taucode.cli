@@ -14,7 +14,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             // Arrange
 
             // Act
-            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.CustomWorker);
+            var addIn = new AddInWithBadBehaviour(AddInWithBadBehaviour.BadBehaviour.CustomExecutor);
             INode dummy;
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 

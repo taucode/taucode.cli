@@ -327,25 +327,25 @@ namespace TauCode.Cli
             }
             catch (FallbackNodeAcceptedTokenException ex)
             {
-                var worker = this.NodesByExecutors[ex.FallbackNode];
+                var executor = this.NodesByExecutors[ex.FallbackNode];
 
                 FallbackInterceptedCliException interceptEx;
 
                 try
                 {
-                    interceptEx = worker.HandleFallback(ex);
+                    interceptEx = executor.HandleFallback(ex);
                 }
-                catch (Exception workerEx)
+                catch (Exception executorEx)
                 {
                     throw new CliException(
-                        $"Worker's '{nameof(ICliExecutor.HandleFallback)}' thrown an exception when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.",
-                        workerEx);
+                        $"Executor's '{nameof(ICliExecutor.HandleFallback)}' thrown an exception when requested to handle fallback. Executor name: '{executor.Name}'. Executor type: '{executor.GetType().FullName}'.",
+                        executorEx);
                 }
 
                 if (interceptEx == null)
                 {
                     throw new CliException(
-                        $"Worker's '{nameof(ICliExecutor.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.");
+                        $"Executor's '{nameof(ICliExecutor.HandleFallback)}' returned null when requested to handle fallback. Executor name: '{executor.Name}'. Executor type: '{executor.GetType().FullName}'.");
                 }
 
                 throw interceptEx;
@@ -360,9 +360,9 @@ namespace TauCode.Cli
             }
 
             var addInRecord = this.GetAddInRecord(command.AddInName);
-            var worker = addInRecord.GetExecutor(command.ExecutorName);
+            var executor = addInRecord.GetExecutor(command.ExecutorName);
 
-            worker.Process(command.Entries);
+            executor.Process(command.Entries);
         }
 
         #endregion

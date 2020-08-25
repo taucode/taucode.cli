@@ -14,7 +14,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
     {
         #region Nested
 
-        private class CustomWorker : ICliExecutor
+        private class CustomExecutor : ICliExecutor
         {
             public string Name { get; }
             public TextWriter Output { get; set; }
@@ -42,11 +42,11 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             public CliExecutorDescriptor Descriptor { get; }
         }
 
-        private class StandardWorker : CliExecutorBase
+        private class StandardExecutor : CliExecutorBase
         {
-            public StandardWorker()
+            public StandardExecutor()
                 : base(
-                    typeof(StandardWorker).Assembly.GetResourceText(".BadHostResources.NamedWorker.lisp", true),
+                    typeof(StandardExecutor).Assembly.GetResourceText(".BadHostResources.NamedExecutor.lisp", true),
                     null,
                     false)
             {
@@ -65,7 +65,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
         {
             NullExecutors = 1,
             EmptyExecutors = 2,
-            CustomWorker = 3,
+            CustomExecutor = 3,
             GoodButNoName = 4,
         }
 
@@ -80,11 +80,11 @@ namespace TauCode.Cli.Tests.Common.BadHosts
         {
             switch (_behaviour)
             {
-                case BadBehaviour.CustomWorker:
+                case BadBehaviour.CustomExecutor:
                     return new List<ICliExecutor>
                     {
-                        new StandardWorker(),
-                        new CustomWorker(),
+                        new StandardExecutor(),
+                        new CustomExecutor(),
                     };
 
                 case BadBehaviour.EmptyExecutors:
@@ -96,7 +96,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
                 case BadBehaviour.GoodButNoName:
                     return new List<ICliExecutor>
                     {
-                        new StandardWorker(),
+                        new StandardExecutor(),
                     };
 
                 default:

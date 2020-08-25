@@ -6,11 +6,11 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 {
     public class HostWithBadAddIn : CliHostBase
     {
-        private class NamedWorker : CliExecutorBase
+        private class NamedExecutor : CliExecutorBase
         {
-            public NamedWorker()
+            public NamedExecutor()
                 : base(
-                    typeof(NamedWorker).Assembly.GetResourceText(".BadHostResources.NamedWorker.lisp", true), 
+                    typeof(NamedExecutor).Assembly.GetResourceText(".BadHostResources.NamedExecutor.lisp", true), 
                     null,
                     false)
             {
@@ -22,11 +22,11 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             }
         }
 
-        private class UnnamedWorker : CliExecutorBase
+        private class UnnamedExecutor : CliExecutorBase
         {
-            public UnnamedWorker()
+            public UnnamedExecutor()
                 : base(
-                    typeof(UnnamedWorker).Assembly.GetResourceText(".BadHostResources.UnnamedWorker.lisp", true),
+                    typeof(UnnamedExecutor).Assembly.GetResourceText(".BadHostResources.UnnamedExecutor.lisp", true),
                     null,
                     false)
             {
@@ -50,8 +50,8 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             {
                 return new List<ICliExecutor>
                 {
-                    new NamedWorker(),
-                    new UnnamedWorker(),
+                    new NamedExecutor(),
+                    new UnnamedExecutor(),
                 };
             }
         }
