@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Tau.Db.Executors;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
 {
@@ -14,16 +14,16 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
             this.Description = "Database-related operations";
         }
 
-        protected override IReadOnlyList<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
-            return new List<ICliWorker>
+            return new List<ICliExecutor>
             {
-                new ClearAllTablesWorker(),
-                new ConvertMetadataWorker(),
-                new DropAllTablesWorker(),
-                new SerializeDataWorker(),
-                new SerializeMetadataWorker(),
-                new MigrateWorker(),
+                new ClearAllTablesExecutor(),
+                new ConvertMetadataExecutor(),
+                new DropAllTablesExecutor(),
+                new SerializeDataExecutor(),
+                new SerializeMetadataExecutor(),
+                new MigrateExecutor(),
             };
         }
     }

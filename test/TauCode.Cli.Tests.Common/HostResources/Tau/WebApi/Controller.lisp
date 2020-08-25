@@ -1,6 +1,6 @@
 (defblock :name drop-all-tables :is-top t
-	(worker
-		:worker-name drop-all-tables
+	(executor
+		:executor-name drop-all-tables
 		:verbs "drop-all-tables" "dat"
 		:doc "Drop all tables of a database."
 		:usage-samples (

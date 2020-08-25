@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Workers;
+using TauCode.Cli.Tests.Common.Hosts.Tau.WebApi.Executors;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi
 {
@@ -11,12 +11,12 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi
 
         }
 
-        protected override IReadOnlyList<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
-            return new ICliWorker[]
+            return new ICliExecutor[]
             {
-                new CqrsWorker(),
-                new ControllerWorker(),
+                new CqrsExecutor(),
+                new ControllerExecutor(),
             };
         }
     }

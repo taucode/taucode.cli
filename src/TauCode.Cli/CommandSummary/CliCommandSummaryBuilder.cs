@@ -8,7 +8,7 @@ namespace TauCode.Cli.CommandSummary
 {
     public class CliCommandSummaryBuilder
     {
-        public CliCommandSummary Build(CliWorkerDescriptor descriptor, IList<CliCommandEntry> entries)
+        public CliCommandSummary Build(CliExecutorDescriptor descriptor, IList<CliCommandEntry> entries)
         {
             var keys = new Dictionary<string, IList<string>>();
 

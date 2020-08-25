@@ -6,14 +6,14 @@ namespace TauCode.Cli.Data
 {
     public class CliCommand
     {
-        private CliCommand(string addInName, string workerName)
+        private CliCommand(string addInName, string executorName)
         {
             this.AddInName = addInName;
-            this.WorkerName = workerName;
+            this.ExecutorName = executorName;
         }
 
         public string AddInName { get; }
-        public string WorkerName { get; private set; }
+        public string ExecutorName { get; private set; }
         public IList<CliCommandEntry> Entries { get; } = new List<CliCommandEntry>();
 
         public static CliCommand CreateAddInCommand(string addInName)
@@ -26,34 +26,34 @@ namespace TauCode.Cli.Data
             return new CliCommand(addInName, null);
         }
 
-        public static CliCommand CreateWorkerCommand(string workerName)
+        public static CliCommand CreateExecutorCommand(string executorName)
         {
-            if (workerName == null)
+            if (executorName == null)
             {
-                throw new ArgumentNullException(nameof(workerName));
+                throw new ArgumentNullException(nameof(executorName));
             }
 
-            return new CliCommand(null, workerName);
+            return new CliCommand(null, executorName);
         }
 
-        public static CliCommand CreateNamelessWorkerCommand()
+        public static CliCommand CreateNamelessExecutorCommand()
         {
             return new CliCommand(null, null);
         }
 
-        public void SetWorkerName(string workerName)
+        public void SetExecutorName(string executorName)
         {
             if (this.AddInName == null)
             {
-                throw new CliException("Worker name can only be set if add-in name is not null.");
+                throw new CliException("Executor name can only be set if add-in name is not null.");
             }
 
-            if (this.WorkerName != null)
+            if (this.ExecutorName != null)
             {
-                throw new CliException("Cannot change already existing worker name.");
+                throw new CliException("Cannot change already existing executor name.");
             }
 
-            this.WorkerName = workerName ?? throw new ArgumentNullException(nameof(workerName));
+            this.ExecutorName = executorName ?? throw new ArgumentNullException(nameof(executorName));
         }
     }
 }

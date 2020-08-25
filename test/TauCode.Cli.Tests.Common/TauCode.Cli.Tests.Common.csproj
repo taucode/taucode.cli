@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="BadHostResources\UnnamedWorker.lisp" />
+    <None Remove="BadHostResources\UnnamedExecutor.lisp" />
     <None Remove="HostResources\Curl\NoName\NoName.lisp" />
     <None Remove="HostResources\Git\NoName\Branch.lisp" />
     <None Remove="HostResources\Git\NoName\Checkout.lisp" />
@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="BadHostResources\UnnamedWorker.lisp" />
-    <EmbeddedResource Include="BadHostResources\NamedWorker.lisp" />
+    <EmbeddedResource Include="BadHostResources\UnnamedExecutor.lisp" />
+    <EmbeddedResource Include="BadHostResources\NamedExecutor.lisp" />
     <EmbeddedResource Include="HostResources\Curl\NoName\NoName.lisp" />
     <EmbeddedResource Include="HostResources\Git\NoName\Branch.lisp" />
     <EmbeddedResource Include="HostResources\Git\NoName\Checkout.lisp" />

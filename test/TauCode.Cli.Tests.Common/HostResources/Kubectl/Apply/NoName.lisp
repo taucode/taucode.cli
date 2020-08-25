@@ -1,5 +1,5 @@
 (defblock :name dummy-block-name :is-top t
-	(worker
+	(executor
 		:description "Apply a configuration to a resource by filename or stdin"
 		:usage-samples (
 			"kubectl apply -f ./pod.json"

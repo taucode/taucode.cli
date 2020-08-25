@@ -1,7 +1,7 @@
 (defblock :name checkout :is-top t
-	(worker
+	(executor
 		:description "Checkouts a branch."
-		:worker-name checkout
+		:executor-name checkout
 		:verb "checkout"
 		:usage-samples (
 			"git checkout branch-name"
