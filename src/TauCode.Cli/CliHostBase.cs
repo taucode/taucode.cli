@@ -19,10 +19,10 @@ namespace TauCode.Cli
 
         private class AddInRecord
         {
-            private readonly Dictionary<string, ICliWorker> _workers;
-            private readonly ICliWorker _singleUnnamedWorker;
+            private readonly Dictionary<string, ICliExecutor> _workers;
+            private readonly ICliExecutor _singleUnnamedWorker;
 
-            public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliWorker> workers)
+            public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliExecutor> workers)
             {
                 this.AddIn = addIn;
 
@@ -51,7 +51,7 @@ namespace TauCode.Cli
 
             public ICliAddIn AddIn { get; }
 
-            public ICliWorker GetWorker(string workerName)
+            public ICliExecutor GetWorker(string workerName)
             {
                 if (workerName == null)
                 {
@@ -82,7 +82,7 @@ namespace TauCode.Cli
         private AddInRecord _singleUnnamedAddInRecord;
 
         private List<ICliAddIn> _addInList;
-        private Dictionary<INode, ICliWorker> _nodesByWorkers;
+        private Dictionary<INode, ICliExecutor> _nodesByWorkers;
 
         #endregion
 
@@ -149,11 +149,11 @@ namespace TauCode.Cli
 
         protected abstract IReadOnlyList<ICliAddIn> CreateAddIns();
 
-        protected IReadOnlyDictionary<INode, ICliWorker> NodesByWorkers => _nodesByWorkers ??= CreateNodesByWorkers();
+        protected IReadOnlyDictionary<INode, ICliExecutor> NodesByWorkers => _nodesByWorkers ??= CreateNodesByWorkers();
 
-        protected Dictionary<INode, ICliWorker> CreateNodesByWorkers()
+        protected Dictionary<INode, ICliExecutor> CreateNodesByWorkers()
         {
-            var result = new Dictionary<INode, ICliWorker>();
+            var result = new Dictionary<INode, ICliExecutor>();
 
             var addIns = this.GetAddIns();
             foreach (var addIn in addIns)
@@ -338,14 +338,14 @@ namespace TauCode.Cli
                 catch (Exception workerEx)
                 {
                     throw new CliException(
-                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' thrown an exception when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.",
+                        $"Worker's '{nameof(ICliExecutor.HandleFallback)}' thrown an exception when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.",
                         workerEx);
                 }
 
                 if (interceptEx == null)
                 {
                     throw new CliException(
-                        $"Worker's '{nameof(ICliWorker.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.");
+                        $"Worker's '{nameof(ICliExecutor.HandleFallback)}' returned null when requested to handle fallback. Worker name: '{worker.Name}'. Worker type: '{worker.GetType().FullName}'.");
                 }
 
                 throw interceptEx;

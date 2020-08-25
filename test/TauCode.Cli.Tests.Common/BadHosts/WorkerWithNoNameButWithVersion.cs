@@ -4,7 +4,7 @@ using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {
-    public class WorkerWithNoNameButWithVersion : CliWorkerBase
+    public class WorkerWithNoNameButWithVersion : CliExecutorBase
     {
         public WorkerWithNoNameButWithVersion()
             : base(

@@ -9,9 +9,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Rollout
         {
         }
 
-        protected override IReadOnlyList<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
         {
-            return new ICliWorker[]
+            return new ICliExecutor[]
             {
                 new RolloutWorker(),
             };

@@ -9,7 +9,7 @@ namespace TauCode.Cli
     /// <summary>
     /// Provides a piece of functionality, e.g. serializes SQL data within "db" add-in.
     /// </summary>
-    public interface ICliWorker : ICliFunctionalityProvider
+    public interface ICliExecutor : ICliFunctionalityProvider
     {
         ICliAddIn AddIn { get; }
         FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex);

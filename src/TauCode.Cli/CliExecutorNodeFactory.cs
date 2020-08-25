@@ -15,7 +15,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli
 {
-    public class CliWorkerNodeFactory : NodeFactoryBase
+    public class CliExecutorNodeFactory : NodeFactoryBase
     {
         #region Fields
 
@@ -25,7 +25,7 @@ namespace TauCode.Cli
 
         #region Constructor
 
-        public CliWorkerNodeFactory(
+        public CliExecutorNodeFactory(
             string nodeFamilyName,
             IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> fallbackPredicates = null)
             : base(

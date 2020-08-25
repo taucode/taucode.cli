@@ -14,7 +14,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
     {
         #region Nested
 
-        private class CustomWorker : ICliWorker
+        private class CustomWorker : ICliExecutor
         {
             public string Name { get; }
             public TextWriter Output { get; set; }
@@ -42,7 +42,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             public CliWorkerDescriptor Descriptor { get; }
         }
 
-        private class StandardWorker : CliWorkerBase
+        private class StandardWorker : CliExecutorBase
         {
             public StandardWorker()
                 : base(
@@ -76,25 +76,25 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             _behaviour = behaviour;
         }
 
-        protected override IReadOnlyList<ICliWorker> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
         {
             switch (_behaviour)
             {
                 case BadBehaviour.CustomWorker:
-                    return new List<ICliWorker>
+                    return new List<ICliExecutor>
                     {
                         new StandardWorker(),
                         new CustomWorker(),
                     };
 
                 case BadBehaviour.EmptyWorkers:
-                    return new List<ICliWorker>();
+                    return new List<ICliExecutor>();
 
                 case BadBehaviour.NullWorkers:
                     return null;
 
                 case BadBehaviour.GoodButNoName:
-                    return new List<ICliWorker>
+                    return new List<ICliExecutor>
                     {
                         new StandardWorker(),
                     };

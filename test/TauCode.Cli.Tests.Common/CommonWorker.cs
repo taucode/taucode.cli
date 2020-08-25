@@ -4,7 +4,7 @@ using TauCode.Cli.Data;
 
 namespace TauCode.Cli.Tests.Common
 {
-    public class CommonWorker : CliWorkerBase
+    public class CommonWorker : CliExecutorBase
     {
         public CommonWorker(string grammar, string version, bool supportsHelp)
             : base(grammar, version, supportsHelp)

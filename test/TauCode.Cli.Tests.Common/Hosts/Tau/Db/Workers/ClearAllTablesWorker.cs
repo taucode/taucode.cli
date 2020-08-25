@@ -18,9 +18,9 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db.Workers
         {
         }
 
-        protected override CliWorkerNodeFactory CreateNodeFactory()
+        protected override CliExecutorNodeFactory CreateNodeFactory()
         {
-            return new CliWorkerNodeFactory(
+            return new CliExecutorNodeFactory(
                 this.CreateNodeFactoryName(),
                 new Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>>
                 {

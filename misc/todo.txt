@@ -21,3 +21,8 @@ db sd -c / - c .
 2020-03-24
 ==========
     1. Add 'ConnectionStringProducer' since 'PathProducer' isn't good at connection strings.
+
+2020-08-25
+==========
+    1. CliWorker is not much good (confusing with TauCode.Working library); consider CliExecutor (e.g.).
+

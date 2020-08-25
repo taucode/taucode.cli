@@ -16,7 +16,7 @@ namespace TauCode.Cli
         #region Fields
 
         private readonly INodeFamily _nodeFamily;
-        private readonly List<ICliWorker> _workers;
+        private readonly List<ICliExecutor> _workers;
 
         #endregion
 
@@ -39,7 +39,7 @@ namespace TauCode.Cli
             }
 
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");
-            _workers = new List<ICliWorker>();
+            _workers = new List<ICliExecutor>();
         }
 
         protected CliAddInBase()
@@ -124,10 +124,10 @@ namespace TauCode.Cli
                 throw new CliException($"'{nameof(CreateWorkers)}' must not return empty collection.");
             }
 
-            var validTypes = workers.All(x => x is CliWorkerBase);
+            var validTypes = workers.All(x => x is CliExecutorBase);
             if (!validTypes)
             {
-                throw new CliException($"'{nameof(CreateWorkers)}' must return instances of type '{typeof(CliWorkerBase).FullName}'.");
+                throw new CliException($"'{nameof(CreateWorkers)}' must return instances of type '{typeof(CliExecutorBase).FullName}'.");
             }
 
             if (workers.Any(x => x.Name == null) && workers.Count > 1)
@@ -137,7 +137,7 @@ namespace TauCode.Cli
 
             foreach (var worker in workers)
             {
-                ((CliWorkerBase)worker).AddIn = this;
+                ((CliExecutorBase)worker).AddIn = this;
             }
 
             _workers.AddRange(workers);
@@ -176,7 +176,7 @@ namespace TauCode.Cli
 
         #region Protected
 
-        protected abstract IReadOnlyList<ICliWorker> CreateWorkers();
+        protected abstract IReadOnlyList<ICliExecutor> CreateWorkers();
 
         #endregion
 
@@ -184,7 +184,7 @@ namespace TauCode.Cli
 
         public ICliHost Host { get; internal set; }
 
-        public IReadOnlyList<ICliWorker> GetWorkers()
+        public IReadOnlyList<ICliExecutor> GetWorkers()
         {
             if (_workers.Count == 0)
             {

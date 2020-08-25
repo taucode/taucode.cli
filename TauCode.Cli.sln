@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.DemoProd"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TauCode.Cli.Tests.UnitTests", "test\TauCode.Cli.Tests.UnitTests\TauCode.Cli.Tests.UnitTests.csproj", "{6AEB168E-9453-4B6C-A9CD-A6A32400C55A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-demo", "test-demo", "{FD6F00AA-C40C-492D-9355-F6337418FBAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

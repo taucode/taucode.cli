@@ -6,7 +6,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 {
     public class HostWithBadAddIn : CliHostBase
     {
-        private class NamedWorker : CliWorkerBase
+        private class NamedWorker : CliExecutorBase
         {
             public NamedWorker()
                 : base(
@@ -22,7 +22,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             }
         }
 
-        private class UnnamedWorker : CliWorkerBase
+        private class UnnamedWorker : CliExecutorBase
         {
             public UnnamedWorker()
                 : base(
@@ -46,9 +46,9 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             {
             }
 
-            protected override IReadOnlyList<ICliWorker> CreateWorkers()
+            protected override IReadOnlyList<ICliExecutor> CreateWorkers()
             {
-                return new List<ICliWorker>
+                return new List<ICliExecutor>
                 {
                     new NamedWorker(),
                     new UnnamedWorker(),

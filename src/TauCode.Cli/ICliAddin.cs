@@ -5,7 +5,7 @@ namespace TauCode.Cli
     public interface ICliAddIn : ICliFunctionalityProvider
     {
         ICliHost Host { get; }
-        IReadOnlyList<ICliWorker> GetWorkers();
+        IReadOnlyList<ICliExecutor> GetWorkers();
         string Description { get; }
     }
 }
