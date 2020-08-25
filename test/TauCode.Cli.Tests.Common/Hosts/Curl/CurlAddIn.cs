@@ -7,7 +7,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
     /// </summary>
     public class CurlAddIn : CliAddInBase
     {
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             return new ICliExecutor[]
             {

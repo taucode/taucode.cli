@@ -197,7 +197,7 @@ verbose
                 Is.EqualTo(this.Host
                     .GetAddIns()
                     .Single(x => x.Name == "db")
-                    .GetWorkers()
+                    .GetExecutors()
                     .Single(x => x.Name.ToLowerInvariant() == "serialize-data")
                     .Version));
         }

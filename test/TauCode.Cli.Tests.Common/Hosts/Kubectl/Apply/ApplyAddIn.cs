@@ -9,7 +9,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Kubectl.Apply
         {
         }
 
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             return new ICliExecutor[]
             {

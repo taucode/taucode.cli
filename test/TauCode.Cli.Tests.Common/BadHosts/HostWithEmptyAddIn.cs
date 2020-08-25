@@ -6,7 +6,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
     {
         private class EmptyAddIn : CliAddInBase
         {
-            protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+            protected override IReadOnlyList<ICliExecutor> CreateExecutors()
             {
                 return new List<ICliExecutor>();
             }

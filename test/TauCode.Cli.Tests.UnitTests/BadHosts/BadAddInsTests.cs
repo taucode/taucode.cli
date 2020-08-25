@@ -19,7 +19,7 @@ namespace TauCode.Cli.Tests.UnitTests.BadHosts
             var ex = Assert.Throws<CliException>(() => dummy = addIn.Node);
 
             // Assert
-            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must return instances of type 'TauCode.Cli.CliWorkerBase'."));
+            Assert.That(ex.Message, Is.EqualTo("'CreateWorkers' must return instances of type 'TauCode.Cli.CliExecutorBase'."));
         }
 
         [Test]

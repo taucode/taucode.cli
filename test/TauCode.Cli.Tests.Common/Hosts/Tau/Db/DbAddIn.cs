@@ -14,7 +14,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.Db
             this.Description = "Database-related operations";
         }
 
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             return new List<ICliExecutor>
             {

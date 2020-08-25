@@ -17,7 +17,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
         {   
         }
 
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             return new ICliExecutor[]
             {

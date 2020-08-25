@@ -76,7 +76,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             _behaviour = behaviour;
         }
 
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             switch (_behaviour)
             {

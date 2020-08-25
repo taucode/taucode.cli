@@ -11,7 +11,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Tau.WebApi
 
         }
 
-        protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+        protected override IReadOnlyList<ICliExecutor> CreateExecutors()
         {
             return new ICliExecutor[]
             {

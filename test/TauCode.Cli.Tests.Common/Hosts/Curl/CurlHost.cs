@@ -23,7 +23,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Curl
             var worker = this
                 .GetAddIns()
                 .Single()
-                .GetWorkers()
+                .GetExecutors()
                 .Single();
             var descriptor = worker.Descriptor;
             var help = descriptor.GetHelp();

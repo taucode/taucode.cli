@@ -46,7 +46,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             {
             }
 
-            protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+            protected override IReadOnlyList<ICliExecutor> CreateExecutors()
             {
                 return new List<ICliExecutor>
                 {

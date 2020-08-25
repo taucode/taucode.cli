@@ -158,7 +158,7 @@ namespace TauCode.Cli
             var addIns = this.GetAddIns();
             foreach (var addIn in addIns)
             {
-                var workers = addIn.GetWorkers();
+                var workers = addIn.GetExecutors();
                 foreach (var worker in workers)
                 {
                     var workerRoot = worker.Node;
@@ -222,7 +222,7 @@ namespace TauCode.Cli
                 }
 
                 var singleUnnamedAddIn = addIns.Single();
-                _singleUnnamedAddInRecord = new AddInRecord(singleUnnamedAddIn, singleUnnamedAddIn.GetWorkers());
+                _singleUnnamedAddInRecord = new AddInRecord(singleUnnamedAddIn, singleUnnamedAddIn.GetExecutors());
             }
 
             foreach (var addIn in addIns)
@@ -241,7 +241,7 @@ namespace TauCode.Cli
 
                     var record = new AddInRecord(
                         addIn,
-                        addIn.GetWorkers());
+                        addIn.GetExecutors());
                     _addInRecords.Add(addIn.Name, record);
                 }
 
@@ -360,7 +360,7 @@ namespace TauCode.Cli
             }
 
             var addInRecord = this.GetAddInRecord(command.AddInName);
-            var worker = addInRecord.GetWorker(command.WorkerName);
+            var worker = addInRecord.GetWorker(command.ExecutorName);
 
             worker.Process(command.Entries);
         }

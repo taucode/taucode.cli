@@ -25,7 +25,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
             }
 
-            protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+            protected override IReadOnlyList<ICliExecutor> CreateExecutors()
             {
                 return null; // will throw; postponed.
             }
@@ -33,7 +33,7 @@ namespace TauCode.Cli.Tests.Common.BadHosts
 
         private class UnnamedAddIn : CliAddInBase
         {
-            protected override IReadOnlyList<ICliExecutor> CreateWorkers()
+            protected override IReadOnlyList<ICliExecutor> CreateExecutors()
             {
                 return null; // will throw; postponed.
             }

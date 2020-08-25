@@ -385,14 +385,14 @@ namespace TauCode.Cli
 
             if (resultAccumulator.Count == 0)
             {
-                var command = CliCommand.CreateWorkerCommand(workerName);
+                var command = CliCommand.CreateExecutorCommand(workerName);
                 resultAccumulator.AddResult(command);
                 return command;
             }
             else
             {
                 var command = resultAccumulator.GetLastResult<CliCommand>();
-                command.SetWorkerName(workerName);
+                command.SetExecutorName(workerName);
                 return command;
             }
         }
@@ -406,7 +406,7 @@ namespace TauCode.Cli
 
             if (resultAccumulator.Count == 0)
             {
-                var command = CliCommand.CreateNamelessWorkerCommand();
+                var command = CliCommand.CreateNamelessExecutorCommand();
                 resultAccumulator.AddResult(command);
                 return command;
             }
