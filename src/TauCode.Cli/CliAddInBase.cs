@@ -9,6 +9,7 @@ using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
 
+// todo clean up
 namespace TauCode.Cli
 {
     public abstract class CliAddInBase : CliFunctionalityProviderBase, ICliAddIn
@@ -32,10 +33,10 @@ namespace TauCode.Cli
                     throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
 
-                if (supportsHelp)
-                {
-                    throw new ArgumentException("Nameless add-in cannot support help.", nameof(version));
-                }
+                //if (supportsHelp)
+                //{
+                //    throw new ArgumentException("Nameless add-in cannot support help.", nameof(supportsHelp));
+                //}
             }
 
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");
@@ -65,6 +66,11 @@ namespace TauCode.Cli
 
         protected override string GetHelpImpl()
         {
+            if (this.Name == null)
+            {
+                throw new NotSupportedException($"Default implementation does not support nameless add-ins. You might need to override '{nameof(GetHelpImpl)}'.");
+            }
+
             var sb = new StringBuilder();
             var description = this.Description ?? $"Add-in '{this.GetType().FullName}' does not have a description.";
             sb.AppendLine(description);
@@ -72,7 +78,6 @@ namespace TauCode.Cli
             if (_executors[0].Name == null)
             {
                 // got single unnamed executor
-
                 sb.AppendLine(_executors.Single().Descriptor.GetHelp());
             }
             else
