@@ -3,5 +3,6 @@
     public interface ICliHostRunner
     {
         int Run(string[] args);
+        ICliHost Host { get; }
     }
 }
