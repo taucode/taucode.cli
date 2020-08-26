@@ -3,10 +3,16 @@ using System.Linq;
 
 namespace TauCode.Cli.HostRunners
 {
-    public class ProductionHostRunner : CliHostRunnerBase
+    public class ProductionHostRunner : ICliHostRunner
     {
+        #region Fields
+
         private readonly ICliHost _host;
         private readonly bool _showLine;
+
+        #endregion
+
+        #region Constructor
 
         public ProductionHostRunner(ICliHost host, bool showLine = false)
         {
@@ -14,7 +20,11 @@ namespace TauCode.Cli.HostRunners
             _showLine = showLine;
         }
 
-        public override int Run(string[] args)
+        #endregion
+
+        #region ICliHostRunner Members
+
+        public virtual int Run(string[] args)
         {
             if (args == null)
             {
@@ -45,5 +55,10 @@ namespace TauCode.Cli.HostRunners
                 return -1;
             }
         }
+
+        public ICliHost Host => _host;
+
+
+        #endregion
     }
 }
