@@ -1,4 +1,4 @@
-2019-11-22
+2020-08-25
 ==========
-    Version: v3.0.0
-    1. Migrated from TauCode.Utils.
+    1. 'Worker' renamed to 'Executor'.
+
