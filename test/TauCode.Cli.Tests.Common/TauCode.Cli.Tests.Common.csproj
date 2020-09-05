@@ -20,6 +20,7 @@
     <None Remove="HostResources\Tau\Db\SerializeMetadata.lisp" />
     <None Remove="HostResources\Tau\WebApi\Controller.lisp" />
     <None Remove="HostResources\Tau\WebApi\Cqrs.lisp" />
+    <None Remove="HostResources\Tau\WebApi\EchoInt.lisp" />
     <None Remove="HostResources\Text.txt" />
   </ItemGroup>
 
@@ -39,6 +40,7 @@
     <EmbeddedResource Include="HostResources\Tau\Db\SerializeData.lisp" />
     <EmbeddedResource Include="HostResources\Tau\Db\SerializeMetadata.lisp" />
     <EmbeddedResource Include="HostResources\Tau\WebApi\Controller.lisp" />
+    <EmbeddedResource Include="HostResources\Tau\WebApi\EchoInt.lisp" />
     <EmbeddedResource Include="HostResources\Tau\WebApi\Cqrs.lisp" />
     <EmbeddedResource Include="HostResources\Text.txt" />
   </ItemGroup>
