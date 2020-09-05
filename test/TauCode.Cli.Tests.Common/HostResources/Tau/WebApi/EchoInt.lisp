@@ -1,5 +1,4 @@
-; todo: not ready. should not go to master.
-(defblock :name serialize-data :is-top t
+(defblock :name echo-int :is-top t
 	(executor
 		:executor-name serialize-data
 		:verbs "serialize-data" "sd"

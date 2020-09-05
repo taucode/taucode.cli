@@ -9,7 +9,7 @@ namespace TauCode.Cli.Tests.Common.Hosts.Git
     public class GitAddIn : CliAddInBase
     {
         public GitAddIn()
-            : base(null, null, false)
+            : base(null, null, true)
         {
         }
 

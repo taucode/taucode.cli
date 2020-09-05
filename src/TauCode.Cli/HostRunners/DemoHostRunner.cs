@@ -9,7 +9,7 @@ using TauCode.Parsing.Tokens;
 
 namespace TauCode.Cli.HostRunners
 {
-    public class DemoHostRunner : CliHostRunnerBase
+    public class DemoHostRunner : ICliHostRunner
     {
         #region Nested
 
@@ -22,7 +22,6 @@ namespace TauCode.Cli.HostRunners
         private readonly CustomCliHost _idle;
         private readonly Dictionary<string, ICliHost> _hosts;
         private ICliHost _currentHost;
-
 
         #endregion
 
@@ -49,7 +48,6 @@ namespace TauCode.Cli.HostRunners
             hostList.Add(_idle);
             _hosts = hostList.ToDictionary(x => x.Name, x => x);
         }
-
 
         #endregion
 
@@ -119,12 +117,23 @@ namespace TauCode.Cli.HostRunners
             return $"{_currentHost.Name} >";
         }
 
+        #endregion
+
+        #region Public
+
+        public IReadOnlyDictionary<string, ICliHost> Hosts => _hosts;
+
+        public void SetHost(string hostName)
+        {
+            // todo: checks + ut
+            _currentHost = _hosts[hostName];
+        }
 
         #endregion
 
-        #region Overridden
+        #region ICliHostRunner Members
 
-        public override int Run(string[] args)
+        public virtual int Run(string[] args)
         {
             this.InitHosts();
 
@@ -173,6 +182,8 @@ namespace TauCode.Cli.HostRunners
 
             return 0;
         }
+
+        public ICliHost Host => _currentHost;
 
         #endregion
     }
