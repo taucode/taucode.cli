@@ -9,7 +9,6 @@ using TauCode.Cli.TextClasses;
 using TauCode.Parsing;
 using TauCode.Parsing.Nodes;
 
-// todo clean up
 namespace TauCode.Cli
 {
     public abstract class CliAddInBase : CliFunctionalityProviderBase, ICliAddIn
@@ -32,11 +31,6 @@ namespace TauCode.Cli
                 {
                     throw new ArgumentException("Nameless add-in cannot have version.", nameof(version));
                 }
-
-                //if (supportsHelp)
-                //{
-                //    throw new ArgumentException("Nameless add-in cannot support help.", nameof(supportsHelp));
-                //}
             }
 
             _nodeFamily = new NodeFamily($"Add-in node family: {this.Name ?? string.Empty}. Add-in type is '{this.GetType().FullName}'.");

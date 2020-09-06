@@ -19,7 +19,7 @@ namespace TauCode.Cli
 
         private class AddInRecord
         {
-            private readonly Dictionary<string, ICliExecutor> _executorss;
+            private readonly Dictionary<string, ICliExecutor> _executors;
             private readonly ICliExecutor _singleUnnamedExecutor;
 
             public AddInRecord(ICliAddIn addIn, IReadOnlyCollection<ICliExecutor> executors)
@@ -43,7 +43,7 @@ namespace TauCode.Cli
                 }
                 else
                 {
-                    _executorss = executors.ToDictionary(
+                    _executors = executors.ToDictionary(
                         x => x.Name,
                         x => x);
                 }
@@ -63,7 +63,7 @@ namespace TauCode.Cli
                     return _singleUnnamedExecutor;
                 }
 
-                return _executorss[executorName];
+                return _executors[executorName];
             }
         }
 
