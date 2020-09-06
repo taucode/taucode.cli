@@ -202,8 +202,7 @@ namespace TauCode.Cli
             var entry = CliCommandEntry.CreateArgument(alias, argument);
             command.Entries.Add(entry);
         }
-
-
+        
         #endregion
 
         #region Misc
@@ -222,8 +221,18 @@ namespace TauCode.Cli
 
         private string TokenToArgument(IToken token)
         {
-            var textToken = (TextToken)token;
-            return textToken.Text;
+            if (token is TextToken textToken)
+            {
+                return textToken.Text;
+            }
+            else if (token is IntegerToken integerToken)
+            {
+                return integerToken.Value;
+            }
+            else
+            {
+                throw new NotSupportedException($"Token of type {token.GetType().FullName} cannot be converted to argument.");
+            }
         }
 
         #endregion

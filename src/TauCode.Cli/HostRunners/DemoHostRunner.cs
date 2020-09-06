@@ -125,7 +125,16 @@ namespace TauCode.Cli.HostRunners
 
         public void SetHost(string hostName)
         {
-            // todo: checks + ut
+            if (hostName == null)
+            {
+                throw new ArgumentNullException(nameof(hostName));
+            }
+
+            if (!_hosts.ContainsKey(hostName))
+            {
+                throw new InvalidOperationException($"Host '{hostName}' not found.");
+            }
+
             _currentHost = _hosts[hostName];
         }
 

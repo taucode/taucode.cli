@@ -104,6 +104,7 @@ namespace TauCode.Cli.Descriptors
                         break;
 
                     case "some-text":
+                    case "some-integer":
                         action = subForm.GetSingleKeywordArgument<Symbol>(":action").Name.ToLowerInvariant();
                         if (action == "argument")
                         {
