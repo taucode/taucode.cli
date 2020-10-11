@@ -19,7 +19,7 @@ namespace TauCode.Cli
     {
         #region Fields
 
-        private readonly IDictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> _fallbackPredicates;
+        private readonly Dictionary<string, Func<FallbackNode, IToken, IResultAccumulator, bool>> _fallbackPredicates;
 
         #endregion
 
@@ -145,7 +145,7 @@ namespace TauCode.Cli
 
             var key = nodeName.ToLowerInvariant();
 
-            var predicate = _fallbackPredicates.GetOrDefault(key);
+            var predicate = _fallbackPredicates.GetValueOrDefault(key);
             if (predicate == null)
             {
                 throw new CliException($"Fallback predicate not found for node '{key}'.");

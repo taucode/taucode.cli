@@ -78,7 +78,7 @@ namespace TauCode.Cli
         private IParser _parser;
         private readonly INodeFamily _nodeFamily;
 
-        private readonly IDictionary<string, AddInRecord> _addInRecords;
+        private readonly Dictionary<string, AddInRecord> _addInRecords;
         private AddInRecord _singleUnnamedAddInRecord;
 
         private List<ICliAddIn> _addInList;
@@ -122,7 +122,7 @@ namespace TauCode.Cli
                 return _singleUnnamedAddInRecord;
             }
 
-            var record = _addInRecords.GetOrDefault(addInName);
+            var record = _addInRecords.GetValueOrDefault(addInName);
             if (record == null)
             {
                 throw new CliException($"Add-in not found: '{addInName}'.");
