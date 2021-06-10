@@ -18,6 +18,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
             return new List<ICliExecutor>
             {
                 new DependenciesExecutor(),
+                new ChangeDirectoryExecutor(),
             };
         }
 

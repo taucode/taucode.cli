@@ -35,7 +35,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Work
             var input = "start good-worker";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
 
             // Assert
@@ -49,7 +49,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Work
             var input = "timeout good-worker";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
 
             var output = this.GetOutput();
@@ -65,7 +65,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Work
             var input = "timeout good-worker 777";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
 
             var output = this.GetOutput();

@@ -192,6 +192,12 @@ namespace TauCode.Cli
                 "--help");
         }
 
+        public static ICliAddIn AddShellExit(this ICliAddIn addIn, string exitTokenText = "exit")
+        {
+            addIn.AddCustomHandler(x => throw new ExitShellException(), exitTokenText);
+            return addIn;
+        }
+
         #endregion
 
         #region Cli Command Contents Support
@@ -417,20 +423,20 @@ namespace TauCode.Cli
             }
         }
 
-        public static CliCommand ParseLine(this ICliHost host, string line)
-        {
-            if (host == null)
-            {
-                throw new ArgumentNullException(nameof(host));
-            }
+        //public static CliCommand ParseLine(this ICliHost host, string line)
+        //{
+        //    if (host == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(host));
+        //    }
 
-            if (line == null)
-            {
-                throw new ArgumentNullException(nameof(line));
-            }
+        //    if (line == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(line));
+        //    }
 
-            return host.ParseCommand(new[] { line });
-        }
+        //    return host.ParseCommand(new[] { line });
+        //}
 
         #endregion
 

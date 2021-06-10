@@ -306,20 +306,14 @@ namespace TauCode.Cli
             return _addInList;
         }
 
-        public CliCommand ParseCommand(string[] input)
+        public CliCommand ParseCommand(string input)
         {
             if (input == null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
 
-            if (input.Any(x => x == null))
-            {
-                throw new ArgumentException($"'{nameof(input)}' cannot contain nulls.", nameof(input));
-            }
-
-            var inputString = string.Join(" ", input);
-            var tokens = this.Lexer.Lexize(inputString);
+            var tokens = this.Lexer.Lexize(input);
 
             try
             {

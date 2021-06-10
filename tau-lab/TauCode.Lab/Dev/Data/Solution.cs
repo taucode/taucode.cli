@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TauCode.Lab.Dev.Data.SolutionItems;
 
 // todo clean
 namespace TauCode.Lab.Dev.Data
 {
+    [DebuggerDisplay("{" + nameof(Name) + "}")]
     public class Solution
     {
         private readonly List<IPrincipalSolutionItem> _principalSolutionItems;
@@ -109,12 +111,5 @@ namespace TauCode.Lab.Dev.Data
             // todo: check strings correct; not existing already
             _configurationPlatforms.Add(configurationPlatform);
         }
-
-        //public void RelocateToDirectory(string destinationDirectory)
-        //{
-        //    // todo checks
-
-        //    this.Directory = destinationDirectory;
-        //}
     }
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using TauCode.Cli.Exceptions;
 
 namespace TauCode.Cli
 {
@@ -31,6 +32,8 @@ namespace TauCode.Cli
         public int Run(string[] args)
         {
             this.Host = this.CreateHost();
+            this.Host.Input = this.Input;
+            this.Host.Output = this.Output;
 
             if (this.SupportsShell)
             {
@@ -42,12 +45,15 @@ namespace TauCode.Cli
 
             try
             {
-                var command = this.Host.ParseCommand(args);
+                var line = string.Join(" ", args);
+                var command = this.Host.ParseCommand(line);
                 this.Host.DispatchCommand(command);
             }
             catch (ShellRequestedException ex)
             {
-                this.RunShell(ex.FunctionalityProvider as ICliAddIn);
+                var addIn = ex.FunctionalityProvider as ICliAddIn;
+                this.OnShellRequested(addIn);
+                this.RunShell(addIn);
             }
             catch (Exception ex)
             {
@@ -56,6 +62,11 @@ namespace TauCode.Cli
             }
 
             return 0;
+        }
+
+        protected virtual void OnShellRequested(ICliAddIn addIn)
+        {
+            addIn.AddShellExit();
         }
 
         private void RunShell(ICliAddIn addIn)
@@ -76,9 +87,19 @@ namespace TauCode.Cli
 
                 var fullInput = $"{addIn.Name} {input}";
 
-
-                var command = this.Host.ParseCommand(new[] { fullInput });
-                this.Host.DispatchCommand(command);
+                try
+                {
+                    var command = this.Host.ParseCommand(fullInput);
+                    this.Host.DispatchCommand(command);
+                }
+                catch (ExitShellException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    this.Host.Output.WriteLine(ex.Message);
+                }
             }
         }
 

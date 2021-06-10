@@ -27,15 +27,36 @@ namespace TauCode.Lab.Dev.Data
 
             [TextNodeElementValue]
             public string DockerfileContext { get; set; }
+
+            [TextNodeElementValue]
+            public string AssemblyName { get; set; }
+
         }
 
         public class PackageReference : ComplexElementBase
         {
             public string Include { get; set; }
             public string Version { get; set; }
+
+            [TextNodeElementValue]
+            public string PrivateAssets { get; set; }
+
+
+            [TextNodeElementValue]
+            public string IncludeAssets { get; set; }
         }
 
         public class Folder : ComplexElementBase
+        {
+            public string Include { get; set; }
+        }
+
+        public class None : ComplexElementBase
+        {
+            public string Remove { get; set; }
+        }
+
+        public class EmbeddedResource : ComplexElementBase
         {
             public string Include { get; set; }
         }
@@ -51,6 +72,8 @@ namespace TauCode.Lab.Dev.Data
             public IList<PackageReference> PackageReferences { get; set; } = new List<PackageReference>();
             public IList<Folder> Folders { get; set; } = new List<Folder>();
             public IList<ProjectReference> ProjectReferences { get; set; } = new List<ProjectReference>();
+            public IList<None> Nones { get; set; } = new List<None>();
+            public IList<EmbeddedResource> EmbeddedResources { get; set; } = new List<EmbeddedResource>();
         }
 
         #endregion
@@ -63,12 +86,6 @@ namespace TauCode.Lab.Dev.Data
         public IList<PropertyGroup> PropertyGroups { get; set; } = new List<PropertyGroup>();
 
         public IList<ItemGroup> ItemGroups { get; set; } = new List<ItemGroup>();
-
-        //public IList<PackageReference> PackageReferences { get; } = new List<PackageReference>();
-        //public IList<ProjectReference> ProjectReferences { get; } = new List<ProjectReference>();
-        //public IList<LocalFileReference> ExcludedFiles { get; } = new List<LocalFileReference>();
-        //public IList<LocalFileReference> EmbeddedResources { get; } = new List<LocalFileReference>();
-        //public IList<LocalFileReference> Folders { get; } = new List<LocalFileReference>();
 
         [XmlIgnore]
         public Declaration Declaration { get; set; }

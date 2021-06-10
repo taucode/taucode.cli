@@ -35,7 +35,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Tau.Db
             // Arrange
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
             var output = this.GetOutput();
 
@@ -58,7 +58,7 @@ Options:
             // Arrange
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
             var output = this.GetOutput();
 
@@ -81,7 +81,7 @@ verbose
             var input = "db sd -p sqlserver -bad-option badvalue 'my_conn' --verbose";
 
             // Act
-            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseCommand(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Bad option or key: '-bad-option'."));
@@ -94,7 +94,7 @@ verbose
             var input = "db sd -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
@@ -108,7 +108,7 @@ verbose
             var input = "db sd -p sqlserver -p postgresql -e table1 --exclude \"table2\" 'Server=.;Database=mydb;Trusted_Connection=True;'";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
@@ -122,7 +122,7 @@ verbose
             var input = "db sd -p sqlserver 'my_conn' --verbose -v";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
@@ -138,7 +138,7 @@ verbose
             // Act
             try
             {
-                this.Host.ParseLine(input);
+                this.Host.ParseCommand(input);
             }
             catch (CliCustomHandlerException)
             {
@@ -160,7 +160,7 @@ verbose
             // Act
             try
             {
-                this.Host.ParseLine(input);
+                this.Host.ParseCommand(input);
             }
             catch (CliCustomHandlerException)
             {
@@ -182,7 +182,7 @@ verbose
             // Act
             try
             {
-                this.Host.ParseLine(input);
+                this.Host.ParseCommand(input);
             }
             catch (CliCustomHandlerException)
             {
@@ -210,7 +210,7 @@ verbose
             var input = "--version";
             
             // Act
-            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseCommand(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));
@@ -226,7 +226,7 @@ verbose
             var input = "db --version";
 
             // Act
-            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseCommand(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Unexpected token: '--version'."));
@@ -246,7 +246,7 @@ verbose
             var input = "db sd --version";
 
             // Act
-            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseCommand(input));
 
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Bad option or key: '--version'."));

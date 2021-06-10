@@ -8,7 +8,7 @@ namespace TauCode.Cli
     public interface ICliHost : ICliFunctionalityProvider
     {
         IReadOnlyList<ICliAddIn> GetAddIns();
-        CliCommand ParseCommand(string[] input);
+        CliCommand ParseCommand(string input);
         void DispatchCommand(CliCommand command);
         Task DispatchCommandAsync(CliCommand command, CancellationToken cancellationToken = default);
     }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
+    <None Remove="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\DependenciesExecutor.lisp" />
     <None Remove="AddIns\Mq\Executors\FluentMigrateExecutor.lisp" />
     <None Remove="AddIns\Mq\Executors\StartPublisherExecutor.lisp" />
@@ -15,12 +16,14 @@
 
   <ItemGroup>
     <EmbeddedResource Include="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
+    <EmbeddedResource Include="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\DependenciesExecutor.lisp" />
     <EmbeddedResource Include="AddIns\Mq\Executors\StartPublisherExecutor.lisp" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+    <ProjectReference Include="..\..\tau-lab\TauCode.Lab\TauCode.Lab.csproj" />
   </ItemGroup>
 
   <ItemGroup>

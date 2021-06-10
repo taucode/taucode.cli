@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace TauCode.Cli
+namespace TauCode.Cli.Exceptions
 {
     [Serializable]
     public class ShellRequestedException : Exception

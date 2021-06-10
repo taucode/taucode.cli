@@ -29,7 +29,7 @@ namespace TauCode.Cli.Tests.UnitTests.Hosts.Git
             var input = "checkout --quiet -b feature/new-branch master";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
 
             var output = this.GetOutput();
@@ -55,7 +55,7 @@ new-branch
             var input = "checkout feature/existing-branch";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             this.Host.DispatchCommand(command);
 
             var output = this.GetOutput();
@@ -79,7 +79,7 @@ Options:
             var input = "checkout feature/existing-branch master";
 
             // Act
-            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedTokenException>(() => this.Host.ParseCommand(input));
 
             // Assert
             Assert.That(ex.Token.ToString(), Is.EqualTo("master"));
@@ -92,7 +92,7 @@ Options:
             var input = "checkout";
 
             // Act
-            var ex = Assert.Throws<UnexpectedEndOfClauseException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<UnexpectedEndOfClauseException>(() => this.Host.ParseCommand(input));
 
             // Assert
         }
@@ -104,7 +104,7 @@ Options:
             var input = "checkout -bad-key";
 
             // Act
-            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseLine(input));
+            var ex = Assert.Throws<FallbackInterceptedCliException>(() => this.Host.ParseCommand(input));
             
             // Assert
             Assert.That(ex.Message, Is.EqualTo("Bad key or option: -bad-key."));
@@ -117,7 +117,7 @@ Options:
             var input = "checkout --quiet --quiet my-branch";
 
             // Act
-            var command = this.Host.ParseLine(input);
+            var command = this.Host.ParseCommand(input);
             var ex = Assert.Throws<CliException>(() => this.Host.DispatchCommand(command));
 
             // Assert
