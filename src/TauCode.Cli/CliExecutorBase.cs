@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using TauCode.Cli.Data;
 using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
@@ -131,10 +133,16 @@ namespace TauCode.Cli
 
         public virtual FallbackInterceptedCliException HandleFallback(FallbackNodeAcceptedTokenException ex)
         {
-            throw new NotSupportedException($"If you want to support fallbacks, override '{nameof(HandleFallback)}' in your '{nameof(CliExecutorBase)}' implementation.");
+            throw new NotSupportedException(
+                $"If you want to support fallbacks, override '{nameof(HandleFallback)}' in your '{nameof(CliExecutorBase)}' implementation.");
         }
 
         public abstract void Process(IList<CliCommandEntry> entries);
+
+        public Task ProcessAsync(IList<CliCommandEntry> entries, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public CliExecutorDescriptor Descriptor { get; }
 

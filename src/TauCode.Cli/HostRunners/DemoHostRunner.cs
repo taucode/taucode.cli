@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TauCode.Cli.Exceptions;
-using TauCode.Cli.TextClasses;
 using TauCode.Parsing.Exceptions;
-using TauCode.Parsing.Tokens;
 
+// todo get rid of.
 namespace TauCode.Cli.HostRunners
 {
     public class DemoHostRunner : ICliHostRunner
@@ -55,44 +54,45 @@ namespace TauCode.Cli.HostRunners
 
         protected virtual void InitHosts()
         {
-            _idle
-                .AddCustomHandler(
-                    () => Console.WriteLine(this.GetHelp()),
-                    "--help")
-                .AddCustomHandler(
-                    () => Console.WriteLine(this.GetAllHostNames()),
-                    "--all-hosts");
+            throw new NotImplementedException();
+            //_idle
+            //    .AddCustomHandler(
+            //        () => Console.WriteLine(this.GetHelp()),
+            //        "--help")
+            //    .AddCustomHandler(
+            //        () => Console.WriteLine(this.GetAllHostNames()),
+            //        "--all-hosts");
 
-            _hosts.Values.ToList().ForEach(x =>
-            {
-                x.Output = Console.Out;
-                x.Input = Console.In;
+            //_hosts.Values.ToList().ForEach(x =>
+            //{
+            //    x.Output = Console.Out;
+            //    x.Input = Console.In;
 
-                x
-                    .AddCustomHandler(
-                        Console.Clear,
-                        "cls")
-                    .AddCustomHandler(
-                        () => throw new ExitException(),
-                        "exit")
-                    .AddCustomHandlerWithParameter(
-                        (token) =>
-                        {
-                            if (token is TextToken textToken && textToken.Class is TermTextClass)
-                            {
-                                var name = textToken.Text;
-                                _currentHost = _hosts[name];
-                            }
-                            else
-                            {
-                                throw new CliException("Host ID expected.");
-                            }
-                        },
-                        "--host");
+            //    x
+            //        .AddCustomHandler(
+            //            Console.Clear,
+            //            "cls")
+            //        .AddCustomHandler(
+            //            () => throw new ExitException(),
+            //            "exit")
+            //        .AddCustomHandlerWithParameter(
+            //            (token) =>
+            //            {
+            //                if (token is TextToken textToken && textToken.Class is TermTextClass)
+            //                {
+            //                    var name = textToken.Text;
+            //                    _currentHost = _hosts[name];
+            //                }
+            //                else
+            //                {
+            //                    throw new CliException("Host ID expected.");
+            //                }
+            //            },
+            //            "--host");
 
-            });
+            //});
 
-            _currentHost = _idle;
+            //_currentHost = _idle;
         }
 
         protected virtual string GetHelp()

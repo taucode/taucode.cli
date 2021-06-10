@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using TauCode.Cli.Data;
 
 namespace TauCode.Cli
@@ -8,5 +10,6 @@ namespace TauCode.Cli
         IReadOnlyList<ICliAddIn> GetAddIns();
         CliCommand ParseCommand(string[] input);
         void DispatchCommand(CliCommand command);
+        Task DispatchCommandAsync(CliCommand command, CancellationToken cancellationToken = default);
     }
 }

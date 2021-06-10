@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using TauCode.Cli.Data;
 using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
@@ -37,6 +39,11 @@ namespace TauCode.Cli.Tests.Common.BadHosts
             public void Process(IList<CliCommandEntry> entries)
             {
                 // void
+            }
+
+            public Task ProcessAsync(IList<CliCommandEntry> entries, CancellationToken cancellationToken = default)
+            {
+                throw new NotImplementedException();
             }
 
             public CliExecutorDescriptor Descriptor { get; }

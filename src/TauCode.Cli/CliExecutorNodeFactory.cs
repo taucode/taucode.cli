@@ -4,7 +4,6 @@ using System.Linq;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Cli.TextClasses;
-using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Building;
 using TauCode.Parsing.Nodes;
@@ -96,7 +95,7 @@ namespace TauCode.Cli
 
             if (!(node is ActionNode))
             {
-                throw new CliException($"'{typeof(ActionNode).Name}' instance was expected to be created.");
+                throw new CliException($"'{nameof(ActionNode)}' instance was expected to be created.");
             }
 
             var baseResult = (ActionNode)node;
@@ -140,7 +139,7 @@ namespace TauCode.Cli
         {
             if (nodeName == null)
             {
-                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node.");
+                throw new ArgumentNullException(nameof(nodeName), "Cannot resolve fallback predicated for unnamed node."); // todo: typo? 'predicateD'
             }
 
             var key = nodeName.ToLowerInvariant();

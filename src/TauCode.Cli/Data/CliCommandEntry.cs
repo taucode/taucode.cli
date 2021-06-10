@@ -21,7 +21,9 @@ namespace TauCode.Cli.Data
         public CliCommandEntryKind Kind { get; }
         public string Alias { get; }
         public string Key { get; }
-        public string Value { get; private set; }
+        public string Value { get; private set; } // todo: rename to public string StringValue { get; private set; }
+
+        // todo: public IToken Token { get; private set; }
 
         public void SetKeyValue(string value)
         {

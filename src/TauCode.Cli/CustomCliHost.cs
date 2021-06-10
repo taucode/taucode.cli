@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
@@ -90,6 +92,11 @@ namespace TauCode.Cli
 
         public void DispatchCommand(CliCommand command) =>
             throw new NotSupportedException($"Use custom handlers, or override '{nameof(BuildNode)}'.");
+
+        public Task DispatchCommandAsync(CliCommand command, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 

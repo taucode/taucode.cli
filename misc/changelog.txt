@@ -1,4 +1,16 @@
-2019-11-22
+﻿2019-11-22
 ==========
     Version: v3.0.0
     1. Migrated from TauCode.Utils.
+
+2021-05-08
+==========
+    1. Resurrection started.
+
+2021-06-05
+==========
+    1. Essential update started:
+        * async/await support
+        * shell concept
+        * tokens are passed to executors, not just strings.
+

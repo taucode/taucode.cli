@@ -177,6 +177,8 @@ namespace TauCode.Cli
 
         protected abstract IReadOnlyList<ICliExecutor> CreateExecutors();
 
+        protected virtual ICliContext CreateContext() => CliContextBase.Empty;
+
         #endregion
 
         #region ICliAddIn Members
@@ -194,6 +196,18 @@ namespace TauCode.Cli
         }
 
         public string Description { get; protected set; }
+
+        public ICliContext Context { get; protected set; }
+
+        public void InitContext()
+        {
+            if (this.Context != null)
+            {
+                throw new NotImplementedException();
+            }
+
+            this.Context = this.CreateContext();
+        }
 
         #endregion
     }

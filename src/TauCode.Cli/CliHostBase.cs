@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using TauCode.Cli.Data;
 using TauCode.Cli.Exceptions;
-using TauCode.Extensions;
 using TauCode.Parsing;
 using TauCode.Parsing.Exceptions;
 using TauCode.Parsing.Lexing;
@@ -363,6 +364,19 @@ namespace TauCode.Cli
             var executor = addInRecord.GetExecutor(command.ExecutorName);
 
             executor.Process(command.Entries);
+        }
+
+        public Task DispatchCommandAsync(CliCommand command, CancellationToken cancellationToken = default)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
+            var addInRecord = this.GetAddInRecord(command.AddInName);
+            var executor = addInRecord.GetExecutor(command.ExecutorName);
+
+            return executor.ProcessAsync(command.Entries, cancellationToken);
         }
 
         #endregion

@@ -1,4 +1,4 @@
-2020-01-01
+﻿2020-01-01
 ==========
     1. Consider Sasa.Parsing https://sourceforge.net/projects/sasa/
 
@@ -26,3 +26,9 @@ db sd -c / - c .
 ==========
 +   1. CliWeorker is not much good (confusing with TauCode.Working library); consider CliExecutor (e.g.).
 
+2021-05-08
+==========
+    1. Email text class
+    2. Consider async.
+    3. Resurrect knowledge about fallbacks.
+    4. TinyLisp supports json

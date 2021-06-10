@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TauCode.Cli.CommandSummary
+namespace TauCode.Cli.CommandSummary // todo ugly namespace
 {
     public class CliCommandSummary
     {
@@ -15,9 +15,13 @@ namespace TauCode.Cli.CommandSummary
             this.Options = new HashSet<string>(options ?? throw new ArgumentNullException(nameof(options)));
         }
 
-        public IReadOnlyDictionary<string, IList<string>> Keys { get; }
+        public IReadOnlyDictionary<string, IList<string>> Keys { get; } // todo: rename to KeyValueStrings { get; }
 
-        public IReadOnlyDictionary<string, IList<string>> Arguments { get; }
+        // todo: public IReadOnlyDictionary<string, IList<IToken>> KeyValueTokens { get; }
+
+        public IReadOnlyDictionary<string, IList<string>> Arguments { get; } // todo: rename to ArgumentStrings { get; }
+
+        // todo: public IReadOnlyDictionary<string, IList<IToken>> ArgumentTokens { get; }
 
         public HashSet<string> Options { get; }
     }
