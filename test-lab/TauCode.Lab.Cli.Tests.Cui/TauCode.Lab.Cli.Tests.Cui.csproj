@@ -10,14 +10,30 @@
     <None Remove="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\DependenciesExecutor.lisp" />
+    <None Remove="AddIns\LibDev\Executors\NewLibraryExecutor.lisp" />
+    <None Remove="AddIns\LibDev\Executors\StartReleaseExecutor.lisp" />
+    <None Remove="AddIns\LibDev\Resources\azure-pipelines-dev.yml" />
+    <None Remove="AddIns\LibDev\Resources\azure-pipelines-main.yml" />
+    <None Remove="AddIns\LibDev\Resources\LICENSE.txt" />
+    <None Remove="AddIns\LibDev\Resources\nuget.config.dev.xml" />
+    <None Remove="AddIns\LibDev\Resources\nuget.config.prod.xml" />
+    <None Remove="AddIns\LibDev\Resources\nuget.config.xml" />
     <None Remove="AddIns\Mq\Executors\FluentMigrateExecutor.lisp" />
     <None Remove="AddIns\Mq\Executors\StartPublisherExecutor.lisp" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
+    <EmbeddedResource Include="AddIns\LibDev\Executors\StartReleaseExecutor.lisp" />
+    <EmbeddedResource Include="AddIns\LibDev\Executors\NewLibraryExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\DependenciesExecutor.lisp" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\azure-pipelines-dev.yml" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\azure-pipelines-main.yml" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\LICENSE.txt" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\nuget.config.dev.xml" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\nuget.config.prod.xml" />
+    <EmbeddedResource Include="AddIns\LibDev\Resources\nuget.config.xml" />
     <EmbeddedResource Include="AddIns\Mq\Executors\StartPublisherExecutor.lisp" />
   </ItemGroup>
 
@@ -27,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.2.0" />
     <PackageReference Include="TauCode.Db.FluentMigrations" Version="1.3.2.7-dev-2021-04-22-21-47" />
     <PackageReference Include="TauCode.Db.SqlClient" Version="1.3.2.7-dev-2021-04-22-21-47" />
   </ItemGroup>

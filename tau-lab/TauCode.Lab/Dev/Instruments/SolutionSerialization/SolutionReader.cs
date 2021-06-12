@@ -309,7 +309,7 @@ namespace TauCode.Lab.Dev.Instruments.SolutionSerialization
                 var localPath = match.Groups[3].Value; // todo: localPath must be equal to name; check it.
                 var projectGuid = Guid.Parse(match.Groups[4].Value);
 
-                if (typeGuid == ProjectType.SolutionFolder.Guid)
+                if (typeGuid == SolutionProjectType.SolutionFolder.Guid)
                 {
                     this.ReadSolutionFolder(
                         name,

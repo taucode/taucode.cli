@@ -12,15 +12,13 @@ namespace TauCode.Lab.Dev.Data
         private readonly List<IPrincipalSolutionItem> _principalSolutionItems;
         private readonly List<string> _configurationPlatforms;
 
-        internal Solution(string name/*, string originalDirectory*/)
+        internal Solution(string name)
         {
             // todo checks
 
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             _principalSolutionItems = new List<IPrincipalSolutionItem>();
             _configurationPlatforms = new List<string>();
-
-            //this.OriginalDirectory = originalDirectory;
         }
 
         public void AddPrincipalSolutionItem(
@@ -28,6 +26,8 @@ namespace TauCode.Lab.Dev.Data
             SolutionFolder parentSolutionFolder)
         {
             // todo: check not added already
+            // todo: check 'parentSolutionFolder' is ours
+
             if (principalSolutionItem == null)
             {
                 throw new ArgumentNullException(nameof(principalSolutionItem));
@@ -37,7 +37,7 @@ namespace TauCode.Lab.Dev.Data
 
             if (parentSolutionFolder != null)
             {
-                throw new NotImplementedException(); // todo
+                this.MovePrincipalSolutionItem(principalSolutionItem, parentSolutionFolder);
             }
         }
 
@@ -87,8 +87,6 @@ namespace TauCode.Lab.Dev.Data
         }
 
         public string Name { get; }
-
-        //public string OriginalDirectory { get; }
 
         public string Directory { get; internal set; }
 

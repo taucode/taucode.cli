@@ -11,7 +11,7 @@ namespace TauCode.Lab.Dev.Data.SolutionItems
         private readonly List<string> _includedFileLocalPaths;
 
         public SolutionFolder(string name, Guid guid)
-            : base(ProjectType.SolutionFolder.Guid, name, guid)
+            : base(SolutionProjectType.SolutionFolder.Guid, name, guid)
         {
             _childPrincipalSolutionItems = new List<IPrincipalSolutionItem>();
             _includedFileLocalPaths = new List<string>();

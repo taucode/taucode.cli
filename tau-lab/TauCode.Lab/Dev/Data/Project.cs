@@ -78,6 +78,19 @@ namespace TauCode.Lab.Dev.Data
 
         #endregion
 
+        #region ctors
+
+        public Project()
+        {   
+        }
+
+        public Project(string name)
+        {
+            this.Name = name;
+        }
+
+        #endregion
+
         [XmlIgnore]
         public string Name { get; internal set; }
 

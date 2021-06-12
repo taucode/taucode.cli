@@ -9,6 +9,6 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
         {
         }
 
-        protected LibDevContext LibDevContext => (LibDevContext)this.AddIn.Context;
+        internal LibDevContext LibDevContext => (LibDevContext)this.AddIn.Context;
     }
 }

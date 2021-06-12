@@ -10,7 +10,7 @@ namespace TauCode.Lab.Dev.Instruments.SolutionSerialization.SolutionItems
 
         internal ReadSolutionFolder(string name, Guid guid)
             : base(
-                ProjectType.SolutionFolder.Guid,
+                SolutionProjectType.SolutionFolder.Guid,
                 name,
                 guid)
         {

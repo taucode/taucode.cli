@@ -98,5 +98,13 @@ namespace TauCode.Lab.Dev
                 solutionProject.Project = project;
             }
         }
+
+        public static byte[] GetContent(this IContentGenerator contentGenerator)
+        {
+            using var stream = new MemoryStream();
+            contentGenerator.WriteContent(stream);
+            var bytes = stream.ToArray();
+            return bytes;
+        }
     }
 }
