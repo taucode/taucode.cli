@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 using TauCode.Extensions;

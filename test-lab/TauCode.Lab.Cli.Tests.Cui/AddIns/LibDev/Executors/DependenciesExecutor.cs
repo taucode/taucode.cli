@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TauCode.Cli.CommandSummary;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 using TauCode.Extensions;
 using TauCode.Lab.Algorithms.Graphs;
 using TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Data;

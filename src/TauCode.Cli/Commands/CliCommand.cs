@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TauCode.Cli.Exceptions;
 
-namespace TauCode.Cli.Data
+namespace TauCode.Cli.Commands
 {
     public class CliCommand
     {

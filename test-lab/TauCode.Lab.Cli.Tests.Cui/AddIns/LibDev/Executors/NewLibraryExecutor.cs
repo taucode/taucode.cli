@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TauCode.Cli.CommandSummary;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 using TauCode.Extensions;
 using TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.ContentGenerators;
 using TauCode.Lab.Dev;

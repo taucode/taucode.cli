@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TauCode.Cli;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 using TauCode.Extensions;
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.Mq.Executors

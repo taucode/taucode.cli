@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.CommandSummary;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 
 namespace TauCode.Cli.Tests.Common
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace TauCode.Cli.CommandSummary
+namespace TauCode.Cli.Commands
 {
     public static class CliCommandSummaryExtensions
     {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 
 namespace TauCode.Cli.Tests.Common.BadHosts
 {

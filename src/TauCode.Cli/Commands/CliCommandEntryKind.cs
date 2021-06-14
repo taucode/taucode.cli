@@ -1,4 +1,4 @@
-﻿namespace TauCode.Cli.Data
+﻿namespace TauCode.Cli.Commands
 {
     public enum CliCommandEntryKind
     {

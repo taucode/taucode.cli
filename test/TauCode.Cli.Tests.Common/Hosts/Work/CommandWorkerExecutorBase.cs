@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TauCode.Cli.CommandSummary;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Work
 {

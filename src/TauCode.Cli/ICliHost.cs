@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 
 namespace TauCode.Cli
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TauCode.Cli.Data
+namespace TauCode.Cli.Commands
 {
     public class CliCommandEntry
     {

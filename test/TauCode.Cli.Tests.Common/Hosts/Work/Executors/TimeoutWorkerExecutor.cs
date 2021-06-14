@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using TauCode.Cli.CommandSummary;
+using TauCode.Cli.Commands;
 using TauCode.Extensions;
 
 namespace TauCode.Cli.Tests.Common.Hosts.Work.Executors

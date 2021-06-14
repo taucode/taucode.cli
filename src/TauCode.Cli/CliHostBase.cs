@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TauCode.Cli.Data;
+using TauCode.Cli.Commands;
 using TauCode.Cli.Exceptions;
 using TauCode.Parsing;
 using TauCode.Parsing.Exceptions;

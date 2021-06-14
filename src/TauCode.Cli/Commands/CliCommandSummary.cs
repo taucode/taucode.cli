@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TauCode.Cli.CommandSummary // todo ugly namespace
+namespace TauCode.Cli.Commands // todo ugly namespace
 {
     public class CliCommandSummary
     {

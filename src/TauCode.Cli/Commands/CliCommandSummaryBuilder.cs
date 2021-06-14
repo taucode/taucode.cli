@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TauCode.Cli.Data;
 using TauCode.Cli.Descriptors;
 using TauCode.Cli.Exceptions;
 
-namespace TauCode.Cli.CommandSummary
+namespace TauCode.Cli.Commands
 {
     public class CliCommandSummaryBuilder
     {
