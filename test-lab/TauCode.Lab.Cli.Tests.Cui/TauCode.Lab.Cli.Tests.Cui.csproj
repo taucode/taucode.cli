@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
-    <ProjectReference Include="..\..\tau-lab\TauCode.Lab\TauCode.Lab.csproj" />
   </ItemGroup>
 
   <ItemGroup>
