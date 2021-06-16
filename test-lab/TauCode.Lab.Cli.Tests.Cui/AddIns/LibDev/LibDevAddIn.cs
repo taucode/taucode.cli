@@ -21,6 +21,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
                 new ChangeDirectoryExecutor(),
                 new NewLibraryExecutor(),
                 new StartReleaseExecutor(),
+                new DevIdleCheckExecutor(),
             };
         }
 

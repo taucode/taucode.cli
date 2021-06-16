@@ -3,13 +3,14 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>cui</AssemblyName>
+    <AssemblyName>tau</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\DependenciesExecutor.lisp" />
+    <None Remove="AddIns\LibDev\Executors\DevIdleCheckExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\NewLibraryExecutor.lisp" />
     <None Remove="AddIns\LibDev\Executors\StartReleaseExecutor.lisp" />
     <None Remove="AddIns\LibDev\Resources\azure-pipelines-dev.yml" />
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="AddIns\Db\Executors\FluentMigrateExecutor.lisp" />
+    <EmbeddedResource Include="AddIns\LibDev\Executors\DevIdleCheckExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\StartReleaseExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\NewLibraryExecutor.lisp" />
     <EmbeddedResource Include="AddIns\LibDev\Executors\ChangeDirectoryExecutor.lisp" />
@@ -39,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TauCode.Cli\TauCode.Cli.csproj" />
+    <ProjectReference Include="..\..\tau-lab\TauCode.Lab\TauCode.Lab.csproj" />
   </ItemGroup>
 
   <ItemGroup>

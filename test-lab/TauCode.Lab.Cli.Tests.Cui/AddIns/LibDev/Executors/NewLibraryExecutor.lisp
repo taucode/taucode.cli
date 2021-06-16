@@ -4,7 +4,7 @@
 		:verb "new"
 		:description "Changes current directory"
 		:usage-samples (
-			"libdev cd c:\work"
+			"libdev new TauCode.Foo"
 		)
 	)
 

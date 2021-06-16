@@ -94,5 +94,10 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
             var nuspec = serializer.DeserializeXmlDocument<Nuspec>(xmlDocument);
             return nuspec;
         }
+
+        internal static string ToPassedString(this bool b)
+        {
+            return b ? "PASSED" : "FAILED";
+        }
     }
 }
