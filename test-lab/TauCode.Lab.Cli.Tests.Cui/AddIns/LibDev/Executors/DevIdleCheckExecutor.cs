@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using TauCode.Cli.Commands;
 using TauCode.Extensions;
 using TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools;
+using TauCode.Lab.Dev;
+using TauCode.Lab.Dev.Data;
+using TauCode.Lab.Dev.Instruments;
+using TauCode.Lab.Xml;
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 {
@@ -13,6 +18,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
         private string _solutionDirectoryPath;
         private DirectoryInfo _solutionDirectory;
         private string _solutionName;
+        private string _solutionFilePath;
 
         public DevIdleCheckExecutor()
             : base(
@@ -146,11 +152,392 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #endregion
 
+            #region nuget files
+
+            fileChecks = new FileCheck[]
+            {
+                new FileCheck(
+                    $"{_solutionName}.nuspec",
+                    true,
+                    null),
+            };
+
+            var nugetDirectoryPath = _solutionDirectory.GetDirectories("nuget").Single().FullName;
+            var nugetFilesCheckResults = fileCheckRunner.Run(nugetDirectoryPath, fileChecks);
+            var nugetFilesCheckTotalResult = this.ReportFileCheckResults(
+                nugetDirectoryPath,
+                nugetFilesCheckResults,
+                null);
+
+
+            #endregion
+
+            #region src sub-directories
+
+            directoryChecks = new DirectoryCheck[]
+            {
+                new DirectoryCheck(
+                    _solutionName,
+                    true),
+            };
+
+            var srcDirectoryPath = _solutionDirectory.GetDirectories("src").Single().FullName;
+            var srcSubdirectoriesCheckResults = directoryCheckRunner.Run(srcDirectoryPath, directoryChecks);
+            var srcSubdirectoriesTotalResult = this.ReportDirectoryCheckResults(
+                srcDirectoryPath,
+                srcSubdirectoriesCheckResults);
+
+            #endregion
+
+            #region test sub-directories
+
+            directoryChecks = new DirectoryCheck[]
+            {
+                new DirectoryCheck(
+                    $"{_solutionName}.Tests",
+                    true),
+            };
+
+            var testDirectoryPath = _solutionDirectory.GetDirectories("test").Single().FullName;
+            var testSubdirectoriesCheckResults = directoryCheckRunner.Run(testDirectoryPath, directoryChecks);
+            var testSubdirectoriesTotalResult = this.ReportDirectoryCheckResults(
+                testDirectoryPath,
+                testSubdirectoriesCheckResults);
+
+            #endregion
+
+            #region solution
+
+            var ide = new Ide();
+            _solutionFilePath = Path.Combine(_solutionDirectoryPath, $"{_solutionName}.sln");
+            ide.LoadSolution(_solutionFilePath);
+            var solution = ide.Solution;
+
+            var folders = solution.GetSolutionFolders();
+
+            bool solutionCheck;
+
+            do
+            {
+                solutionCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    LibDevHelper.CollectionsAreEquivalent(
+                        folders
+                            .Select(x => x.Name)
+                            .OrderBy(x => x),
+                        new[]
+                        {
+                            "build",
+                            "misc",
+                            "nuget",
+                            "src",
+                            "test",
+                        }),
+                    "Solution folders are correct");
+
+                if (!solutionCheck)
+                {
+                    break;
+                }
+
+                solutionCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    LibDevHelper.CollectionsAreEquivalent(
+                        folders
+                            .Single(x => x.Name == "build")
+                            .ChildPrincipalSolutionItems
+                            .Select(x => x.Name)
+                            .OrderBy(x => x),
+                        new[]
+                        {
+                            "azure-pipelines-dev.yml",
+                            "azure-pipelines-main.yml",
+                        }),
+                    "'build' solution folder items are correct");
+
+                if (!solutionCheck)
+                {
+                    break;
+                }
+
+            } while (false);
+
+            #endregion
+
+            #region nuspec
+
+            var nuspecCheck = true;
+
+            var nuspecDoc = new XmlDocument();
+            nuspecDoc.Load(@$"{_solutionDirectoryPath}\nuget\{_solutionName}.nuspec");
+            var serializer = new Serializer();
+            serializer.Settings = new SerializationSettings
+            {
+                BoundPropertyValueConverter = new Nuspec.NuspecConverter(),
+            };
+
+            var nuspec = serializer.DeserializeXmlDocument<Nuspec>(nuspecDoc);
+
+            do
+            {
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Declaration.Version == "1.0" &&
+                    nuspec.Declaration.Encoding == "utf-8" &&
+                    nuspec.Declaration.Standalone == "yes",
+                    "nuspec declaration");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Xmlns == "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd",
+                    "nuspec declaration");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata != null,
+                    "nuspec metadata not null");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Id == _solutionName,
+                    "nuspec package id");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    LibDevHelper.IsValidDevVersion(nuspec.Metadata?.Version),
+                    "nuspec version (dev)");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Authors == "TauCode",
+                    "nuspec authors");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Owners == "TauCode",
+                    "nuspec owners");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.RequireLicenseAcceptance == false,
+                    "nuspec require license acceptance");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.License?.Type == "file",
+                    "nuspec license type");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.License?.Value == "LICENSE.txt",
+                    "nuspec license file");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                var url = $"https://github.com/taucode/{_solutionName.ToLowerInvariant()}";
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.ProjectUrl == url,
+                    "nuspec project url");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Repository?.Type == "git",
+                    "nuspec repository type");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Repository?.Url == url,
+                    "nuspec repository url");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Description != null,
+                    "nuspec description");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.ReleaseNotes != null,
+                    "nuspec release notes");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspec.Metadata?.Tags?.StartsWith("taucode ") ?? false,
+                    "nuspec tags contains taucode");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    !nuspec.Metadata?.Tags.Contains("todo") ?? false,
+                    "nuspec tags doesn't contains 'to-do'");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+
+                nuspecCheck =
+                    nuspec.Metadata?.Dependencies != null &&
+                    (nuspec.Metadata?.Dependencies.Groups?.Count ?? -1) == 1 &&
+                    nuspec.Metadata.Dependencies.Groups.Single().TargetFramework == ".NETStandard2.1";
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    nuspecCheck,
+                    "nuspec dependencies group is .NETStandard2.1");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+                nuspecCheck = LibDevHelper.ReportCondition(
+                    this.Output,
+                    false,
+                    "todo - go on");
+
+                if (!nuspecCheck)
+                {
+                    break;
+                }
+
+
+            } while (false);
+
+            #endregion
+
+            #region git
+
+            var gitCheck = true;
+
+            do
+            {
+                var gitCheck1 = LibDevHelper.ReportGitResult(
+                    this.Output,
+                    _solutionDirectoryPath,
+                    "fetch",
+                    "wat");
+
+                var gitCheck2 = LibDevHelper.ReportGitResult(
+                    this.Output,
+                    _solutionDirectoryPath,
+                    "status",
+                    "wat");
+
+                var gitCheck3 = LibDevHelper.ReportGitResult(
+                    this.Output,
+                    _solutionDirectoryPath,
+                    "branch",
+                    "wat");
+
+                var gitCheck4 = LibDevHelper.ReportGitResult(
+                    this.Output,
+                    _solutionDirectoryPath,
+                    "branch --remote",
+                    "wat");
+
+                gitCheck =
+                    gitCheck1 &&
+                    gitCheck2 &&
+                    gitCheck3 &&
+                    gitCheck4 &&
+                    true;
+
+            } while (false);
+
+
+            #endregion
+
             var result =
                 rootSubdirectoriesTotalResult &&
                 rootFilesCheckTotalResult &&
                 buildFilesCheckTotalResult &&
                 miscFilesCheckTotalResult &&
+                nugetFilesCheckTotalResult &&
+                srcSubdirectoriesTotalResult &&
+                testSubdirectoriesTotalResult &&
+                solutionCheck &&
+                nuspecCheck &&
+                gitCheck &&
                 true;
 
             this.Output.WriteLine($"## Total Result: {result.ToPassedString()}");

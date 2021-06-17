@@ -1,12 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using TauCode.Cli.Commands;
+using TauCode.Extensions;
+using TauCode.Lab.Data;
 using TauCode.Lab.Dev;
 using TauCode.Lab.Dev.Data;
+using TauCode.Lab.Extensions;
 using TauCode.Lab.Xml;
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
@@ -98,6 +102,113 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
         internal static string ToPassedString(this bool b)
         {
             return b ? "PASSED" : "FAILED";
+        }
+
+        internal static bool ReportCondition(TextWriter textWriter, bool condition, string conditionDescription)
+        {
+            textWriter.WriteLine($"# Checking condition: '{conditionDescription}'");
+            textWriter.WriteLine($"# Result: '{condition.ToPassedString()}'");
+
+            textWriter.WriteLine();
+
+            return condition;
+        }
+
+        internal static bool ReportGitResult(
+            TextWriter textWriter,
+            string workingDirectory,
+            string gitArgs,
+            string expectedOutput)
+        {
+            textWriter.WriteLine($"# Checking git command: 'git {gitArgs}'");
+
+            var gitOutput = RunGitCommandReturnText(workingDirectory, gitArgs);
+            var condition = gitOutput == expectedOutput;
+
+            if (!condition)
+            {
+                textWriter.WriteLine("- Expected output was:");
+                textWriter.WriteLine(expectedOutput);
+                textWriter.WriteLine("- But actually was:");
+                textWriter.WriteLine(gitOutput);
+            }
+
+            textWriter.WriteLine($"# Result: '{condition.ToPassedString()}'");
+
+            return condition;
+        }
+
+        internal static bool ReportGitResult(
+            TextWriter textWriter,
+            string workingDirectory,
+            string gitArgs,
+            string[] expectedOutputLines)
+        {
+            textWriter.WriteLine($"# Checking git command: 'git {gitArgs}'");
+
+            var gitOutputLines = RunGitCommandReturnLines(workingDirectory, gitArgs);
+            var condition = CollectionsAreEquivalent(gitOutputLines, expectedOutputLines);
+
+            if (!condition)
+            {
+                textWriter.WriteLine("- Expected output was:");
+                foreach (var expectedOutputLine in expectedOutputLines)
+                {
+                    textWriter.WriteLine(expectedOutputLine);
+                }
+
+                textWriter.WriteLine("- But actually was:");
+                foreach (var gitOutputLine in gitOutputLines)
+                {
+                    textWriter.WriteLine(gitOutputLine);
+                }
+            }
+
+            textWriter.WriteLine($"# Result: '{condition.ToPassedString()}'");
+
+            return condition;
+        }
+
+        internal static bool CollectionsAreEquivalent(IEnumerable coll1, IEnumerable coll2)
+        {
+            bool result;
+
+            var list1 = coll1.Cast<object>().ToList();
+            var list2 = coll2.Cast<object>().ToList();
+
+            if (list1.Count == list2.Count)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        public static bool IsValidDevVersion(string version)
+        {
+            var isParsed = SemanticVersion.TryParse(version, out var v);
+            if (isParsed)
+            {
+                var suffixSegments = v.GetSuffixSegments();
+
+                if (
+                    suffixSegments.Length == 4 &&
+                    suffixSegments[0].IsIn("alpha", "beta", "rc") &&
+                    suffixSegments[1].IsInt32() &&
+                    suffixSegments[2].IsRegexMatch(@"\d\d\d\d-\d\d-\d\d") &&
+                    suffixSegments[3].IsRegexMatch(@"\d\d-\d\d") &&
+                    true
+                )
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

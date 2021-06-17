@@ -406,16 +406,16 @@ namespace TauCode.Lab.Data
 
             while (true)
             {
+                if (numberCount == 3)
+                {
+                    return false;
+                }
+
                 var dotPosition = remainingSpan.IndexOf('.');
 
                 if (dotPosition >= 0)
                 {
                     if (dotPosition == 0)
-                    {
-                        return false;
-                    }
-
-                    if (numberCount == 3)
                     {
                         return false;
                     }
@@ -496,6 +496,13 @@ namespace TauCode.Lab.Data
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {
             return !(v1 < v2);
+        }
+
+        public string[] GetSuffixSegments()
+        {
+            return _suffixSegments
+                .Select(x => x.Value)
+                .ToArray();
         }
     }
 }
