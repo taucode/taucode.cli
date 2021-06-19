@@ -27,6 +27,11 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
 
             if (directory == null)
             {
+                directory = Directory.GetCurrentDirectory();
+            }
+
+            if (directory == null)
+            {
                 throw new Exception("Directory not provided, neither explicitly nor via context.");
             }
 
@@ -61,14 +66,14 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
             var output = RunGitCommandReturnText(workingDirectory, arguments);
 
             var lines = output
-                .Split('\r', '\n')
-                .Select(x => x.Trim())
-                .Where(x => x != string.Empty)
+                .Split('\n')
+                .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();
 
             return lines;
         }
 
+        // todo wtf name
         internal static bool AreEquivalentTo(this IList<string> lines1, params string[] lines2)
         {
             if (lines1.Count != lines2.Length)
@@ -171,21 +176,27 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
 
         internal static bool CollectionsAreEquivalent(IEnumerable coll1, IEnumerable coll2)
         {
-            bool result;
-
             var list1 = coll1.Cast<object>().ToList();
             var list2 = coll2.Cast<object>().ToList();
 
             if (list1.Count == list2.Count)
             {
-                throw new NotImplementedException();
+                for (var i = 0; i < list1.Count; i++)
+                {
+                    if (Equals(list1[i], list2[i]))
+                    {
+                        continue;
+                    }
+
+                    return false;
+                }
+
+                return true;
             }
             else
             {
-                result = false;
+                return false;
             }
-
-            return result;
         }
 
         public static bool IsValidDevVersion(string version)

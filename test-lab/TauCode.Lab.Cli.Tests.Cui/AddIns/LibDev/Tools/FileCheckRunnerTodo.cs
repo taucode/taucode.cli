@@ -5,31 +5,31 @@ using System.Linq;
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 {
-    public class FileCheckRunner
+    public class FileCheckRunnerTodo
     {
-        public FileCheckRunner()
+        public FileCheckRunnerTodo()
         {
         }
 
-        public IReadOnlyDictionary<string, FileCheckResult> Run(string directory, IEnumerable<FileCheck> fileChecks)
+        public IReadOnlyDictionary<string, FileCheckResultTodo> Run(string directory, IEnumerable<FileCheckTodo> fileChecks)
         {
             var di = new DirectoryInfo(directory);
             var files = di.GetFiles();
 
             var fileChecksDictionary = fileChecks.ToDictionary(x => x.LocalName, x => x);
 
-            var result = new Dictionary<string, FileCheckResult>();
+            var result = new Dictionary<string, FileCheckResultTodo>();
 
             foreach (var fileInfo in files)
             {
-                FileCheckResult fileCheckResult;
+                FileCheckResultTodo fileCheckResult;
 
                 if (fileChecksDictionary.ContainsKey(fileInfo.Name))
                 {
                     var fileCheck = fileChecksDictionary[fileInfo.Name];
                     if (fileCheck.ExpectedContentGetter == null)
                     {
-                        fileCheckResult = FileCheckResult.Ok;
+                        fileCheckResult = FileCheckResultTodo.Ok;
                     }
                     else
                     {
@@ -40,17 +40,17 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 
                         if (match)
                         {
-                            fileCheckResult = FileCheckResult.Ok;
+                            fileCheckResult = FileCheckResultTodo.Ok;
                         }
                         else
                         {
-                            fileCheckResult = FileCheckResult.ContentMismatch;
+                            fileCheckResult = FileCheckResultTodo.ContentMismatch;
                         }
                     }
                 }
                 else
                 {
-                    fileCheckResult = FileCheckResult.Unexpected;
+                    fileCheckResult = FileCheckResultTodo.Unexpected;
                 }
 
                 result.Add(fileInfo.Name, fileCheckResult);
@@ -63,7 +63,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
                     var fileCheck = fileChecksDictionary[key];
                     if (fileCheck.IsMandatory)
                     {
-                        result.Add(key, FileCheckResult.Missing);
+                        result.Add(key, FileCheckResultTodo.Missing);
                     }
                 }
             }

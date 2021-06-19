@@ -4,30 +4,30 @@ using System.Linq;
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 {
-    public class DirectoryCheckRunner
+    public class DirectoryCheckRunnerTodo
     {
-        public IReadOnlyDictionary<string, DirectoryCheckResult> Run(
+        public IReadOnlyDictionary<string, DirectoryCheckResultTodo> Run(
             string directory,
-            IEnumerable<DirectoryCheck> directoryChecks)
+            IEnumerable<DirectoryCheckTodo> directoryChecks)
         {
             var di = new DirectoryInfo(directory);
             var directoryChecksDictionary = directoryChecks.ToDictionary(x => x.LocalName, x => x);
 
             var subDirs = di.GetDirectories();
 
-            var result = new Dictionary<string, DirectoryCheckResult>();
+            var result = new Dictionary<string, DirectoryCheckResultTodo>();
 
             foreach (var subDir in subDirs)
             {
-                DirectoryCheckResult directoryCheckResult;
+                DirectoryCheckResultTodo directoryCheckResult;
 
                 if (directoryChecksDictionary.ContainsKey(subDir.Name))
                 {
-                    directoryCheckResult = DirectoryCheckResult.Ok;
+                    directoryCheckResult = DirectoryCheckResultTodo.Ok;
                 }
                 else
                 {
-                    directoryCheckResult = DirectoryCheckResult.Unexpected;
+                    directoryCheckResult = DirectoryCheckResultTodo.Unexpected;
                 }
 
                 result.Add(subDir.Name, directoryCheckResult);
@@ -40,7 +40,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
                     var directoryCheck = directoryChecksDictionary[key];
                     if (directoryCheck.IsMandatory)
                     {
-                        result.Add(key, DirectoryCheckResult.Missing);
+                        result.Add(key, DirectoryCheckResultTodo.Missing);
                     }
                 }
             }

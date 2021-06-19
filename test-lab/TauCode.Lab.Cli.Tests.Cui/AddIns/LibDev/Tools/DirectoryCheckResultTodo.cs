@@ -1,6 +1,6 @@
 ﻿namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 {
-    public enum DirectoryCheckResult
+    public enum DirectoryCheckResultTodo
     {
         Ok = 1,
         Missing,

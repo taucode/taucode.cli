@@ -55,6 +55,10 @@ namespace TauCode.Cli
                 this.OnShellRequested(addIn);
                 this.RunShell(addIn);
             }
+            catch (CliCustomHandlerException)
+            {
+                // dismiss
+            }
             catch (Exception ex)
             {
                 this.Output.WriteLine(ex);

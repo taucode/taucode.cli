@@ -1,25 +1,26 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TauCode.Lab.Data.Graphs;
+using TauCode.Lab.Data.Graphs.Rho;
+using TauCode.Lab.Data.Graphs.Rho.Impl;
 
-// todo clean
-namespace TauCode.Lab.Algorithms.Graphs
+namespace TauCode.Lab.Algorithms.Graphs.Rho
 {
-    public class GraphSlicingAlgorithm<T> : IAlgorithm<IGraph<T>, IReadOnlyList<IGraph<T>>>
+    public class RhoGraphSlicingAlgorithm : IAlgorithm<IRhoGraph, IReadOnlyList<IRhoGraph>>
     {
-        private List<IGraph<T>> _result;
+        private List<IRhoGraph> _result;
 
-        private IGraph<T>[] Slice()
+        private IRhoGraph[] Slice()
         {
             if (this.Input == null)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException($"'{nameof(Input)}' is null.");
             }
 
-            _result = new List<IGraph<T>>();
+            _result = new List<IRhoGraph>();
 
             while (true)
             {
@@ -34,7 +35,7 @@ namespace TauCode.Lab.Algorithms.Graphs
                     break;
                 }
 
-                var slice = new Graph<T>();
+                var slice = new RhoGraph();
                 slice.CaptureNodesFrom(this.Input, nodes);
                 _result.Add(slice);
             }
@@ -42,9 +43,9 @@ namespace TauCode.Lab.Algorithms.Graphs
             return _result.ToArray();
         }
 
-        private IReadOnlyList<INode<T>> GetTopLevelNodes()
+        private IReadOnlyList<IRhoNode> GetTopLevelNodes()
         {
-            var result = new List<INode<T>>();
+            var result = new List<IRhoNode>();
 
             var nodes = this.Input.Nodes;
             foreach (var node in nodes)
@@ -87,8 +88,8 @@ namespace TauCode.Lab.Algorithms.Graphs
             return Task.CompletedTask;
         }
 
-        public IGraph<T> Input { get; set; }
+        public IRhoGraph Input { get; set; }
 
-        public IReadOnlyList<IGraph<T>> Output { get; private set; }
+        public IReadOnlyList<IRhoGraph> Output { get; private set; }
     }
 }

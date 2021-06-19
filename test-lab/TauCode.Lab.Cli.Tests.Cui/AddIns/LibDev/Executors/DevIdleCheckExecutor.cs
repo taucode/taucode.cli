@@ -28,7 +28,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
         {
         }
 
-        public override void Process(IList<CliCommandEntry> entries)
+        public void Process_TodoOld(IList<CliCommandEntry> entries)
         {
             _solutionName = null;
 
@@ -38,23 +38,23 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
             _solutionDirectory = new DirectoryInfo(_solutionDirectoryPath);
             var subDirs = _solutionDirectory.GetDirectories();
 
-            var directoryCheckRunner = new DirectoryCheckRunner();
-            var fileCheckRunner = new FileCheckRunner();
+            var directoryCheckRunner = new DirectoryCheckRunnerTodo();
+            var fileCheckRunner = new FileCheckRunnerTodo();
 
             #region root directories
 
             var directoryChecks = new[]
             {
-                new DirectoryCheck(".git", true),
-                new DirectoryCheck(".trash", false),
-                new DirectoryCheck(".vs", false),
-                new DirectoryCheck("assets", false),
-                new DirectoryCheck("build", true),
-                new DirectoryCheck("doc", false),
-                new DirectoryCheck("misc", true),
-                new DirectoryCheck("nuget", true),
-                new DirectoryCheck("src", true),
-                new DirectoryCheck("test", true),
+                new DirectoryCheckTodo(".git", true),
+                new DirectoryCheckTodo(".trash", false),
+                new DirectoryCheckTodo(".vs", false),
+                new DirectoryCheckTodo("assets", false),
+                new DirectoryCheckTodo("build", true),
+                new DirectoryCheckTodo("doc", false),
+                new DirectoryCheckTodo("misc", true),
+                new DirectoryCheckTodo("nuget", true),
+                new DirectoryCheckTodo("src", true),
+                new DirectoryCheckTodo("test", true),
             };
 
             var rootSubdirectoriesCheckResults = directoryCheckRunner.Run(_solutionDirectoryPath, directoryChecks);
@@ -68,27 +68,27 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             var fileChecks = new[]
             {
-                new FileCheck(
+                new FileCheckTodo(
                     ".gitignore",
                     true,
                     null),
-                new FileCheck(
+                new FileCheckTodo(
                     "LICENSE.txt",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("LICENSE.txt", true)),
-                new FileCheck(
+                new FileCheckTodo(
                     "nuget.config",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("nuget.config.dev.xml", true)),
-                new FileCheck(
+                new FileCheckTodo(
                     "nuget.config.dev.xml",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("nuget.config.dev.xml", true)),
-                new FileCheck(
+                new FileCheckTodo(
                     "nuget.config.prod.xml",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("nuget.config.prod.xml", true)),
-                new FileCheck(
+                new FileCheckTodo(
                     "README.md",
                     true,
                     null),
@@ -104,13 +104,13 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #region build files
 
-            fileChecks = new FileCheck[]
+            fileChecks = new FileCheckTodo[]
             {
-                new FileCheck(
+                new FileCheckTodo(
                     "azure-pipelines-dev.yml",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("azure-pipelines-dev.yml", true)),
-                new FileCheck(
+                new FileCheckTodo(
                     "azure-pipelines-main.yml",
                     true,
                     () => this.GetType().Assembly.GetResourceBytes("azure-pipelines-main.yml", true)),
@@ -127,17 +127,17 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #region misc files
 
-            fileChecks = new FileCheck[]
+            fileChecks = new FileCheckTodo[]
             {
-                new FileCheck(
+                new FileCheckTodo(
                     "changelog.txt",
                     true,
                     null),
-                new FileCheck(
+                new FileCheckTodo(
                     "links.txt",
                     false,
                     null),
-                new FileCheck(
+                new FileCheckTodo(
                     "todo.txt",
                     true,
                     null),
@@ -154,9 +154,9 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #region nuget files
 
-            fileChecks = new FileCheck[]
+            fileChecks = new FileCheckTodo[]
             {
-                new FileCheck(
+                new FileCheckTodo(
                     $"{_solutionName}.nuspec",
                     true,
                     null),
@@ -174,9 +174,9 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #region src sub-directories
 
-            directoryChecks = new DirectoryCheck[]
+            directoryChecks = new DirectoryCheckTodo[]
             {
-                new DirectoryCheck(
+                new DirectoryCheckTodo(
                     _solutionName,
                     true),
             };
@@ -191,9 +191,9 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
             #region test sub-directories
 
-            directoryChecks = new DirectoryCheck[]
+            directoryChecks = new DirectoryCheckTodo[]
             {
-                new DirectoryCheck(
+                new DirectoryCheckTodo(
                     $"{_solutionName}.Tests",
                     true),
             };
@@ -245,13 +245,12 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                     LibDevHelper.CollectionsAreEquivalent(
                         folders
                             .Single(x => x.Name == "build")
-                            .ChildPrincipalSolutionItems
-                            .Select(x => x.Name)
+                            .IncludedFileLocalPaths
                             .OrderBy(x => x),
                         new[]
                         {
-                            "azure-pipelines-dev.yml",
-                            "azure-pipelines-main.yml",
+                            @"build\azure-pipelines-dev.yml",
+                            @"build\azure-pipelines-main.yml",
                         }),
                     "'build' solution folder items are correct");
 
@@ -267,6 +266,13 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
             #region nuspec
 
             var nuspecCheck = true;
+
+            var project = solution.GetSolutionProjects().Single(x => x.Project.Name == _solutionName).Project;
+            var dependencies = project
+                .ItemGroups
+                .SelectMany(x => x.PackageReferences)
+                .Select(x => $"{x.Include}:{x.Version}")
+                .ToList();
 
             var nuspecDoc = new XmlDocument();
             nuspecDoc.Load(@$"{_solutionDirectoryPath}\nuget\{_solutionName}.nuspec");
@@ -470,17 +476,26 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                     break;
                 }
 
+                var nuspecDependencies = nuspec
+                    .Metadata
+                    .Dependencies
+                    .Groups
+                    .Single()
+                    .Dependencies
+                    .Select(x => $"{x.Id}:{x.Version}")
+                    .ToList();
+
                 nuspecCheck = LibDevHelper.ReportCondition(
                     this.Output,
-                    false,
-                    "todo - go on");
+                    LibDevHelper.CollectionsAreEquivalent(
+                        dependencies,
+                        nuspecDependencies),
+                    "nuspec dependencies");
 
                 if (!nuspecCheck)
                 {
                     break;
                 }
-
-
             } while (false);
 
             #endregion
@@ -495,25 +510,39 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                     this.Output,
                     _solutionDirectoryPath,
                     "fetch",
-                    "wat");
+                    new string[0]);
 
                 var gitCheck2 = LibDevHelper.ReportGitResult(
                     this.Output,
                     _solutionDirectoryPath,
                     "status",
-                    "wat");
+                    new []
+                    {
+                        "On branch dev",
+                        "Your branch is up to date with 'origin/dev'.",
+                        "nothing to commit, working tree clean",
+                    });
 
                 var gitCheck3 = LibDevHelper.ReportGitResult(
                     this.Output,
                     _solutionDirectoryPath,
                     "branch",
-                    "wat");
+                    new[]
+                    {
+                        "* dev",
+                        "  main",
+                    });
 
                 var gitCheck4 = LibDevHelper.ReportGitResult(
                     this.Output,
                     _solutionDirectoryPath,
                     "branch --remote",
-                    "wat");
+                    new[]
+                    {
+                        "  origin/HEAD -> origin/main",
+                        "  origin/dev",
+                        "  origin/main",
+                    });
 
                 gitCheck =
                     gitCheck1 &&
@@ -545,7 +574,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
         private bool ReportDirectoryCheckResults(
             string directory,
-            IReadOnlyDictionary<string, DirectoryCheckResult> directoryCheckResults)
+            IReadOnlyDictionary<string, DirectoryCheckResultTodo> directoryCheckResults)
         {
             this.Output.WriteLine($"# Checking sub-directories of: '{directory}'");
             this.Output.WriteLine();
@@ -557,7 +586,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                 var directoryCheckResult = directoryCheckResults[key];
                 this.Output.WriteLine($"{key.PadRight(80)}{directoryCheckResult}");
 
-                if (directoryCheckResult != DirectoryCheckResult.Ok)
+                if (directoryCheckResult != DirectoryCheckResultTodo.Ok)
                 {
                     result = false;
                 }
@@ -572,8 +601,8 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
 
         private bool ReportFileCheckResults(
             string directory,
-            IReadOnlyDictionary<string, FileCheckResult> filesCheckResults,
-            Func<string, FileCheckResult> customCheck)
+            IReadOnlyDictionary<string, FileCheckResultTodo> filesCheckResults,
+            Func<string, FileCheckResultTodo> customCheck)
         {
             this.Output.WriteLine($"# Checking files of: '{directory}'");
             this.Output.WriteLine();
@@ -585,7 +614,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                 var key = pair.Key;
                 var value = pair.Value;
 
-                if (value == FileCheckResult.Unexpected)
+                if (value == FileCheckResultTodo.Unexpected)
                 {
                     if (customCheck == null)
                     {
@@ -597,7 +626,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                     }
                 }
 
-                if (!value.IsIn(FileCheckResult.Ok, FileCheckResult.Ignored))
+                if (!value.IsIn(FileCheckResultTodo.Ok, FileCheckResultTodo.Ignored))
                 {
                     result = false;
                 }
@@ -612,7 +641,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
             return result;
         }
 
-        private FileCheckResult SolutionDirectoryCustomCheck(string localFileName)
+        private FileCheckResultTodo SolutionDirectoryCustomCheck(string localFileName)
         {
             if (localFileName.EndsWith(".sln"))
             {
@@ -627,15 +656,27 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
                 )
                 {
                     _solutionName = Path.GetFileNameWithoutExtension(localFileName);
-                    return FileCheckResult.Ok;
+                    return FileCheckResultTodo.Ok;
                 }
             }
             else if (localFileName.EndsWith(".user"))
             {
-                return FileCheckResult.Ignored;
+                return FileCheckResultTodo.Ignored;
             }
 
-            return FileCheckResult.Unexpected;
+            return FileCheckResultTodo.Unexpected;
+        }
+
+        public override void Process(IList<CliCommandEntry> entries)
+        {
+            var summary = (new CliCommandSummaryBuilder()).Build(this.Descriptor, entries);
+
+            var directory = this.ResolveDirectory(summary);
+            var solutionChecker = new SolutionChecker(directory);
+
+            solutionChecker.CheckFileSystem();
+            solutionChecker.CheckStructure();
+            solutionChecker.CheckNuspec();
         }
     }
 }

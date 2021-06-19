@@ -1,8 +1,8 @@
 ﻿namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 {
-    public class DirectoryCheck
+    public class DirectoryCheckTodo
     {
-        public DirectoryCheck(string localName, bool isMandatory)
+        public DirectoryCheckTodo(string localName, bool isMandatory)
         {
             this.LocalName = localName;
             this.IsMandatory = isMandatory;

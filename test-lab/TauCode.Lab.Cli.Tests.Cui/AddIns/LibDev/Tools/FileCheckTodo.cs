@@ -2,9 +2,9 @@
 
 namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Tools
 {
-    public class FileCheck
+    public class FileCheckTodo
     {
-        public FileCheck(
+        public FileCheckTodo(
             string localName,
             bool isMandatory,
             Func<byte[]> expectedContentGetter)

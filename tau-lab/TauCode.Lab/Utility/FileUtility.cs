@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using TauCode.Lab.Data.Graphs;
 
 namespace TauCode.Lab.Utility
 {
@@ -36,6 +37,52 @@ namespace TauCode.Lab.Utility
         {
             var directoryPath = Path.GetDirectoryName(filePath);
             Directory.CreateDirectory(directoryPath); // todo resharper checks
+        }
+
+        public static INode<FileSystemObjectInfo> ReadDirectory(
+            string directoryPath,
+            Func<INode<FileSystemObjectInfo>, FileSystemObjectType, string, bool> filter)
+        {
+            var directoryInfo = new DirectoryInfo(directoryPath);
+
+            return ReadDirectoryInternal(directoryInfo, true, filter);
+        }
+
+        private static INode<FileSystemObjectInfo> ReadDirectoryInternal(
+            DirectoryInfo directoryInfo,
+            bool isBaseDirectory,
+            Func<INode<FileSystemObjectInfo>, FileSystemObjectType, string, bool> filter)
+        {
+            var name = isBaseDirectory ? directoryInfo.FullName : directoryInfo.Name;
+
+            var node = new Node<FileSystemObjectInfo>(FileSystemObjectInfo.CreateDirectory(isBaseDirectory, name));
+
+            var subDirectories = directoryInfo.GetDirectories();
+
+            foreach (var subDirectory in subDirectories)
+            {
+                var passed = filter?.Invoke(node, FileSystemObjectType.Directory, subDirectory.Name) ?? true;
+                if (passed)
+                {
+                    var subDirectoryNode = ReadDirectoryInternal(subDirectory, false, filter);
+                    node.DrawEdgeTo(subDirectoryNode);
+                }
+            }
+
+            var files = directoryInfo.GetFiles();
+
+            foreach (var file in files)
+            {
+                var passed = filter?.Invoke(node, FileSystemObjectType.File, file.Name) ?? true;
+                if (passed)
+                {
+                    var info = FileSystemObjectInfo.CreateFile(file.Name);
+                    var fileNode = new Node<FileSystemObjectInfo>(info);
+                    node.DrawEdgeTo(fileNode);
+                }
+            }
+
+            return node;
         }
     }
 }
