@@ -10,10 +10,10 @@ namespace TauCode.Lab.Utility
             this.ContentGetter = contentGetter;
         }
 
-        public FileCheck(string localPath, bool isMandatory, string content)
+        public FileCheck(string localPath, bool isMandatory, byte[] content)
             : base(FileSystemObjectType.File, localPath, isMandatory)
         {
-            this.ContentGetter = s => throw new NotImplementedException(content); // todo
+            this.ContentGetter = s => content;
         }
 
         public FileCheck(string localPath, bool isMandatory)

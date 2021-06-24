@@ -119,6 +119,14 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
             return condition;
         }
 
+        internal static void CheckCondition(bool condition, string conditionDescription)
+        {
+            if (!condition)
+            {
+                throw new NotImplementedException(conditionDescription);
+            }
+        }
+
         internal static bool ReportGitResult(
             TextWriter textWriter,
             string workingDirectory,
@@ -208,7 +216,7 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev
 
                 if (
                     suffixSegments.Length == 4 &&
-                    suffixSegments[0].IsIn("alpha", "beta", "rc") &&
+                    suffixSegments[0].IsIn("alpha", "beta") &&
                     suffixSegments[1].IsInt32() &&
                     suffixSegments[2].IsRegexMatch(@"\d\d\d\d-\d\d-\d\d") &&
                     suffixSegments[3].IsRegexMatch(@"\d\d-\d\d") &&

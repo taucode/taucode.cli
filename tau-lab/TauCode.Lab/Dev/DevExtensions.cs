@@ -84,6 +84,15 @@ namespace TauCode.Lab.Dev
                 .Cast<SolutionFolder>()
                 .ToList();
 
+        public static IList<SolutionProject> GetSolutionFolderProjects(this SolutionFolder solutionFolder)
+        {
+            return solutionFolder
+                .ChildPrincipalSolutionItems
+                .Where(x => x is SolutionProject)
+                .Cast<SolutionProject>()
+                .ToList();
+        }
+
         public static void LoadProjects(this Solution solution)
         {
             var solutionProjects = solution.GetSolutionProjects();

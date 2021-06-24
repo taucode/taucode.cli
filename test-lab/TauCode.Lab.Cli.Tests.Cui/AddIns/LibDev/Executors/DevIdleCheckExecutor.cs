@@ -672,7 +672,10 @@ namespace TauCode.Lab.Cli.Tests.Cui.AddIns.LibDev.Executors
             var summary = (new CliCommandSummaryBuilder()).Build(this.Descriptor, entries);
 
             var directory = this.ResolveDirectory(summary);
-            var solutionChecker = new SolutionChecker(directory);
+            var solutionChecker = new SolutionChecker(directory)
+            {
+                IsDev = true,
+            };
 
             solutionChecker.CheckFileSystem();
             solutionChecker.CheckStructure();

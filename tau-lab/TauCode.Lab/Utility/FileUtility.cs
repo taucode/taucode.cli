@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
+using System.Linq;
 using TauCode.Lab.Data.Graphs;
 
 namespace TauCode.Lab.Utility
@@ -83,6 +85,32 @@ namespace TauCode.Lab.Utility
             }
 
             return node;
+        }
+
+        // todo: very not optimized.
+        internal static bool CollectionsAreEquivalent(IEnumerable coll1, IEnumerable coll2)
+        {
+            var list1 = coll1.Cast<object>().ToList();
+            var list2 = coll2.Cast<object>().ToList();
+
+            if (list1.Count == list2.Count)
+            {
+                for (var i = 0; i < list1.Count; i++)
+                {
+                    if (Equals(list1[i], list2[i]))
+                    {
+                        continue;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
